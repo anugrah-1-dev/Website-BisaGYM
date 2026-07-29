@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('member_transactions', function (Blueprint $table) {
+            $table->enum('payment_status', ['unpaid', 'paid'])->default('unpaid')->after('payment_method');
+            // Ubah payment_method jadi nullable karena saat transaksi baru dibuat, metode belum dipilih
+            $table->string('payment_method')->nullable()->change();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('member_transactions', function (Blueprint $table) {
+            $table->dropColumn('payment_status');
+        });
+    }
+};
