@@ -16,29 +16,48 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Roles
-        $adminRole = \Spatie\Permission\Models\Role::create(['name' => 'admin']);
-        $penjagaRole = \Spatie\Permission\Models\Role::create(['name' => 'penjaga']);
+        $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
+        $penjagaRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'penjaga']);
+        $developerRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'developer']);
+        $kasirRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'kasir']);
 
         // 2. Users
-        $admin = \App\Models\User::create([
-            'name' => 'Budi Santoso (Admin)',
-            'username' => 'admin',
-            'email' => 'admin@bisagym.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
-            'role' => 'admin',
-            'is_active' => true,
-        ]);
+        $admin = \App\Models\User::firstOrCreate(
+            ['email' => 'admin@bisagym.com'],
+            [
+                'name' => 'Budi Santoso (Admin)',
+                'username' => 'admin',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'role' => 'admin',
+                'is_active' => true,
+            ]
+        );
         $admin->assignRole($adminRole);
 
-        $penjaga = \App\Models\User::create([
-            'name' => 'Andi Pratama (Kasir)',
-            'username' => 'kasir',
-            'email' => 'kasir@bisagym.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
-            'role' => 'penjaga',
-            'is_active' => true,
-        ]);
+        $penjaga = \App\Models\User::firstOrCreate(
+            ['email' => 'kasir@bisagym.com'],
+            [
+                'name' => 'Andi Pratama (Kasir)',
+                'username' => 'kasir',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'role' => 'penjaga',
+                'is_active' => true,
+            ]
+        );
         $penjaga->assignRole($penjagaRole);
+        $penjaga->assignRole($kasirRole);
+
+        $developer = \App\Models\User::firstOrCreate(
+            ['email' => 'developer@bisagym.com'],
+            [
+                'name' => 'Tejo (Developer)',
+                'username' => 'developer',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'role' => 'admin', // the db column enum only has admin/penjaga, so use admin for db col
+                'is_active' => true,
+            ]
+        );
+        $developer->assignRole($developerRole);
 
         // 3. Gym Packages
         \App\Models\GymPackage::insert([
