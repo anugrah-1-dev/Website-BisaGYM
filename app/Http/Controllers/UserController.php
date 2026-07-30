@@ -35,11 +35,14 @@ class UserController extends Controller
             'role' => ['required', 'exists:roles,name', 'in:admin,developer'],
         ]);
 
+        $dbRole = ($request->role === 'developer') ? 'admin' : 'admin';
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'username' => explode('@', $request->email)[0] . rand(100, 999), // Generate unique username
             'password' => Hash::make($request->password),
+            'role' => $dbRole,
         ]);
 
         $user->assignRole($request->role);

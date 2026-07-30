@@ -51,18 +51,32 @@ class TwoFactorController extends Controller
             return back()->withErrors(['code' => 'Kode verifikasi sudah kedaluwarsa. Silakan minta kode baru.']);
         }
 
-        // Login user
-        Auth::login($user, $request->session()->get('2fa_remember', false));
+        try {
+            // Update verification time bypassing $fillable just in case
+            $user->two_factor_code = null;
+            $user->two_factor_expires_at = null;
+            $user->two_factor_verified_at = now();
+            $user->save();
 
-        // Update verification time
-        $user->update([
-            'two_factor_code' => null,
-            'two_factor_expires_at' => null,
-            'two_factor_verified_at' => now(),
-        ]);
+            // Login user
+            Auth::login($user, $request->session()->get('2fa_remember', false));
+
+            // Log activity for successful login via OTP
+            \App\Models\ActivityLog::create([
+                'user_id' => $user->id,
+                'action' => 'LOGIN_SUCCESS',
+                'module' => 'Auth',
+                'description' => 'Berhasil login setelah verifikasi OTP.'
+            ]);
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('OTP Login Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->withErrors(['code' => 'Terjadi kesalahan sistem saat memproses login. Silakan hubungi admin.']);
+        }
 
         $request->session()->forget('2fa_user_id');
         $request->session()->forget('2fa_remember');
+
 
         $request->session()->regenerate();
 
