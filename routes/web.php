@@ -11,6 +11,10 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Public Self-Registration Member (Tanpa Login / Password)
+Route::get('/pendaftaran', [\App\Http\Controllers\PublicRegistrationController::class, 'index'])->name('public.registration.index');
+Route::post('/pendaftaran', [\App\Http\Controllers\PublicRegistrationController::class, 'store'])->name('public.registration.store');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
