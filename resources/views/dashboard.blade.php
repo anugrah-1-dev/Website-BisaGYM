@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="space-y-8">
+    <div class="space-y-8 md:space-y-10">
         
         {{-- Welcome Banner --}}
         <div class="bg-gradient-to-r from-dark to-gray-900 rounded-xl border border-gray-800 p-8 shadow-lg relative overflow-hidden">
@@ -19,10 +19,10 @@
         </div>
 
         {{-- 4 Summary Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             
             {{-- Total Member Aktif --}}
-            <div class="bg-card rounded-xl border border-gray-800 p-6 shadow-lg relative overflow-hidden group hover:border-neon/50 transition-colors">
+            <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg relative overflow-hidden group hover:border-neon/50 transition-colors">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <i class="ph ph-users text-7xl text-neon"></i>
                 </div>
@@ -36,7 +36,7 @@
             </div>
 
             {{-- Pendapatan Bulan Ini --}}
-            <div class="bg-card rounded-xl border border-gray-800 p-6 shadow-lg relative overflow-hidden group hover:border-green-500/50 transition-colors">
+            <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg relative overflow-hidden group hover:border-green-500/50 transition-colors">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <i class="ph ph-money text-7xl text-green-500"></i>
                 </div>
@@ -50,7 +50,7 @@
             </div>
 
             {{-- Kunjungan Hari Ini --}}
-            <div class="bg-card rounded-xl border border-gray-800 p-6 shadow-lg relative overflow-hidden group hover:border-blue-500/50 transition-colors">
+            <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg relative overflow-hidden group hover:border-blue-500/50 transition-colors">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <i class="ph ph-person-simple-run text-7xl text-blue-500"></i>
                 </div>
@@ -64,7 +64,7 @@
             </div>
 
             {{-- Karyawan Hadir --}}
-            <div class="bg-card rounded-xl border border-gray-800 p-6 shadow-lg relative overflow-hidden group hover:border-purple-500/50 transition-colors">
+            <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg relative overflow-hidden group hover:border-purple-500/50 transition-colors">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <i class="ph ph-identification-badge text-7xl text-purple-500"></i>
                 </div>
@@ -80,30 +80,30 @@
         </div>
 
         {{-- Charts Section --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             
             {{-- Grafik Kehadiran Member --}}
-            <div class="bg-card rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col">
+            <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg flex flex-col">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-800">
                     <h3 class="text-white font-medium flex items-center">
                         <i class="ph ph-chart-line-up text-neon text-xl mr-2"></i> Grafik Kehadiran Member (Bulanan)
                     </h3>
                     <span class="text-xs font-mono text-neon bg-neon/10 border border-neon/30 px-2.5 py-1 rounded-full">{{ date('Y') }}</span>
                 </div>
-                <div class="relative flex-1 min-h-[260px]">
+                <div class="relative flex-1 min-h-[300px]">
                     <canvas id="attendanceChart"></canvas>
                 </div>
             </div>
 
             {{-- Grafik Member Baru vs Perpanjang --}}
-            <div class="bg-card rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col">
+            <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg flex flex-col">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-800">
                     <h3 class="text-white font-medium flex items-center">
                         <i class="ph ph-users-three text-cyan-400 text-xl mr-2"></i> Grafik Member Baru vs Perpanjang
                     </h3>
                     <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-1 rounded-full">{{ date('Y') }}</span>
                 </div>
-                <div class="relative flex-1 min-h-[260px]">
+                <div class="relative flex-1 min-h-[300px]">
                     <canvas id="memberTypeChart"></canvas>
                 </div>
             </div>
@@ -111,7 +111,7 @@
         </div>
 
         {{-- Tables Section --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             
             {{-- 5 Transaksi Terbaru --}}
             <div class="bg-card rounded-xl border border-gray-800 shadow-lg overflow-hidden flex flex-col">
