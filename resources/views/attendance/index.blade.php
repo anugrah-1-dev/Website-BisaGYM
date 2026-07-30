@@ -104,7 +104,7 @@
                                         <p class="text-xs text-gray-500 font-mono">{{ $att->member->member_id }}</p>
                                     </td>
                                     <td class="px-6 py-4 text-gray-400 text-xs">
-                                        <i class="ph ph-user-circle mr-1"></i> {{ $att->user->name }}
+                                        <i class="ph ph-user-circle mr-1"></i> {{ $att->user->name ?? 'Sistem' }}
                                     </td>
                                 </tr>
                             @empty

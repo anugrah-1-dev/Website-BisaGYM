@@ -34,4 +34,28 @@ class TransactionController extends Controller
             'memberTotal', 'snackTotal'
         ));
     }
+    public function export(Request $request)
+    {
+        $type = $request->get('type', 'member');
+        $dateFrom = $request->get('date_from', Carbon::today()->format('Y-m-d'));
+        $dateTo = $request->get('date_to', Carbon::today()->format('Y-m-d'));
+
+        if ($type === 'member') {
+            $transactions = MemberTransaction::with(['member', 'package', 'user'])
+                ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
+                ->latest('transaction_date')
+                ->get();
+        } else {
+            $transactions = SnackTransaction::with(['user', 'details.snack'])
+                ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
+                ->latest('transaction_date')
+                ->get();
+        }
+
+        $fileName = 'laporan_transaksi_' . $type . '_' . $dateFrom . '_' . $dateTo . '.xls';
+
+        return response()->view('exports.transactions', compact('type', 'dateFrom', 'dateTo', 'transactions'))
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+    }
 }

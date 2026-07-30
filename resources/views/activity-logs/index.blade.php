@@ -69,7 +69,7 @@
                                             @else
                                                 <div class="text-white font-medium">User Terhapus</div>
                                             @endif
-                                            <div class="text-xs text-gray-500">{{ $log->user->roles->first()?->name ?? '-' }}</div>
+                                            <div class="text-xs text-gray-500">{{ $log->user?->roles->first()?->name ?? '-' }}</div>
                                         </div>
                                     </div>
                                 </td>

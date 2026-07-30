@@ -122,8 +122,9 @@ class CashierController extends Controller
 
         // 3. Otomatis Absen Masuk
         \App\Models\MemberAttendance::create([
-            'member_id'     => $member->id,
-            'check_in_time' => $now,
+            'member_id'       => $member->id,
+            'user_id'         => \Illuminate\Support\Facades\Auth::id(),
+            'attendance_time' => $now,
         ]);
 
         \App\Models\ActivityLog::log('CREATE', 'Kasir', "Memproses pembayaran Non-Member: {$request->name} (Rp " . number_format($package->price, 0, ',', '.') . ")");
