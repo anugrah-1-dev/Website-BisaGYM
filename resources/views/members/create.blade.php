@@ -74,10 +74,10 @@
             
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="p-4 border border-gray-700 bg-dark/50 rounded-xl">
-                    <label class="block text-sm font-medium text-neon mb-2">
+                    <label for="discount_category" class="block text-sm font-medium text-neon mb-2">
                         <i class="ph ph-percent mr-2"></i> Diskon Profesi
                     </label>
-                    <select name="discount_category" class="w-full border-gray-600 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                    <select id="discount_category" name="discount_category" autocomplete="off" class="w-full border-gray-600 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                         <option value="0">Tidak Ada Diskon (0%)</option>
                         <option value="10">Pelajar, PNS, TNI, dan POLRI (10%)</option>
                         <option value="15">Pelaku Budaya, Dukun, dan Ulama (15%)</option>
@@ -87,10 +87,10 @@
                 </div>
                 
                 <div class="p-4 border border-gray-700 bg-dark/50 rounded-xl">
-                    <label class="block text-sm font-medium text-neon mb-2">
+                    <label for="activation_date" class="block text-sm font-medium text-neon mb-2">
                         <i class="ph ph-calendar-check mr-2"></i> Tanggal Aktif Member
                     </label>
-                    <input type="date" name="activation_date" class="w-full border-gray-600 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm" value="{{ date('Y-m-d') }}" min="{{ date('Y-m-d') }}">
+                    <input type="date" id="activation_date" name="activation_date" autocomplete="off" class="w-full border-gray-600 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm" value="{{ date('Y-m-d') }}" min="{{ date('Y-m-d') }}">
                     <p class="text-xs text-gray-500 mt-2">Tentukan kapan member mulai aktif latihan (bisa pilih hari ini atau tanggal kedepannya).</p>
                 </div>
             </div>
@@ -109,6 +109,7 @@
                         <span id="member1-label" class="text-xs text-gray-500">(Member Pertama)</span>
                     </h3>
 
+                    <label for="camera-select" class="sr-only">Pilih Kamera</label>
                     <select id="camera-select" class="w-full mb-4 bg-dark border-gray-700 text-white rounded-lg text-sm hidden"></select>
 
                     <div class="relative w-full aspect-[3/4] bg-dark rounded-lg overflow-hidden border border-gray-700 flex items-center justify-center mb-4">
@@ -154,52 +155,52 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Nama Lengkap</label>
-                            <input type="text" name="name" value="{{ old('name') }}" required
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Nama Lengkap</label>
+                            <input type="text" id="name" name="name" autocomplete="name" value="{{ old('name') }}" required
                                 class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm" placeholder="Sesuai KTP">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-300 mb-1">NIK (16 Digit)</label>
-                            <input type="text" name="nik" value="{{ old('nik') }}" required minlength="16" maxlength="16" pattern="\d{16}"
+                            <label for="nik" class="block text-sm font-medium text-gray-300 mb-1">NIK (16 Digit)</label>
+                            <input type="text" id="nik" name="nik" autocomplete="off" value="{{ old('nik') }}" required minlength="16" maxlength="16" pattern="\d{16}"
                                 class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm font-mono" placeholder="1234567890123456">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Tempat Lahir</label>
-                            <input type="text" name="place_of_birth" value="{{ old('place_of_birth') }}" required
+                            <label for="place_of_birth" class="block text-sm font-medium text-gray-300 mb-1">Tempat Lahir</label>
+                            <input type="text" id="place_of_birth" name="place_of_birth" autocomplete="address-level2" value="{{ old('place_of_birth') }}" required
                                 class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Tanggal Lahir</label>
-                            <input type="date" name="date_of_birth" id="dob" value="{{ old('date_of_birth') }}" required
+                            <label for="dob" class="block text-sm font-medium text-gray-300 mb-1">Tanggal Lahir</label>
+                            <input type="date" id="dob" name="date_of_birth" autocomplete="bday" value="{{ old('date_of_birth') }}" required
                                 class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                             <p class="text-xs text-gray-500 mt-1" id="age-helper">Minimal 5 tahun</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Jenis Kelamin</label>
-                            <select name="gender" required class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                            <label for="gender" class="block text-sm font-medium text-gray-300 mb-1">Jenis Kelamin</label>
+                            <select id="gender" name="gender" autocomplete="sex" required class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                                 <option value="">Pilih...</option>
                                 <option value="L" {{ old('gender') == 'L' ? 'selected' : '' }}>Laki-laki</option>
                                 <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>Perempuan</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Pekerjaan</label>
-                            <input type="text" name="job" value="{{ old('job') }}"
+                            <label for="job" class="block text-sm font-medium text-gray-300 mb-1">Pekerjaan</label>
+                            <input type="text" id="job" name="job" autocomplete="organization-title" value="{{ old('job') }}"
                                 class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">No. WhatsApp</label>
-                            <input type="text" name="phone" value="{{ old('phone') }}" required
+                            <label for="phone" class="block text-sm font-medium text-gray-300 mb-1">No. WhatsApp</label>
+                            <input type="text" id="phone" name="phone" autocomplete="tel" value="{{ old('phone') }}" required
                                 class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm font-mono">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                            <input type="email" name="email" value="{{ old('email') }}" required
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                            <input type="email" id="email" name="email" autocomplete="email" value="{{ old('email') }}" required
                                 class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Alamat Domisili</label>
-                            <textarea name="address" rows="3" required
+                            <label for="address" class="block text-sm font-medium text-gray-300 mb-1">Alamat Domisili</label>
+                            <textarea id="address" name="address" autocomplete="street-address" rows="3" required
                                 class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">{{ old('address') }}</textarea>
                         </div>
                     </div>
@@ -231,7 +232,8 @@
                                 <i class="ph ph-camera text-pink-400"></i> Foto Member Ke-2
                             </h3>
 
-                            <select id="camera-select2" class="w-full mb-4 bg-dark border-gray-700 text-white rounded-lg text-sm hidden"></select>
+                    <label for="camera-select2" class="sr-only">Pilih Kamera Member 2</label>
+                    <select id="camera-select2" class="w-full mb-4 bg-dark border-gray-700 text-white rounded-lg text-sm hidden"></select>
 
                             <div class="relative w-full aspect-[3/4] bg-dark rounded-lg overflow-hidden border border-gray-700 flex items-center justify-center mb-4">
                                 <video id="webcam2" autoplay playsinline class="absolute inset-0 w-full h-full object-cover hidden"></video>
@@ -274,52 +276,52 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Nama Lengkap</label>
-                                    <input type="text" name="member2_name" value="{{ old('member2_name') }}"
+                                    <label for="member2_name" class="block text-sm font-medium text-gray-300 mb-1">Nama Lengkap</label>
+                                    <input type="text" id="member2_name" name="member2_name" autocomplete="name" value="{{ old('member2_name') }}"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm" placeholder="Sesuai KTP">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">NIK (16 Digit)</label>
-                                    <input type="text" name="member2_nik" value="{{ old('member2_nik') }}" minlength="16" maxlength="16" pattern="\d{16}"
+                                    <label for="member2_nik" class="block text-sm font-medium text-gray-300 mb-1">NIK (16 Digit)</label>
+                                    <input type="text" id="member2_nik" name="member2_nik" autocomplete="off" value="{{ old('member2_nik') }}" minlength="16" maxlength="16" pattern="\d{16}"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm font-mono" placeholder="1234567890123456">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Tempat Lahir</label>
-                                    <input type="text" name="member2_place_of_birth" value="{{ old('member2_place_of_birth') }}"
+                                    <label for="member2_place_of_birth" class="block text-sm font-medium text-gray-300 mb-1">Tempat Lahir</label>
+                                    <input type="text" id="member2_place_of_birth" name="member2_place_of_birth" autocomplete="address-level2" value="{{ old('member2_place_of_birth') }}"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Tanggal Lahir</label>
-                                    <input type="date" name="member2_date_of_birth" id="dob2" value="{{ old('member2_date_of_birth') }}"
+                                    <label for="member2_date_of_birth" class="block text-sm font-medium text-gray-300 mb-1">Tanggal Lahir</label>
+                                    <input type="date" id="dob2" name="member2_date_of_birth" autocomplete="bday" value="{{ old('member2_date_of_birth') }}"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm">
                                     <p class="text-xs text-gray-500 mt-1" id="age-helper2">Minimal 5 tahun</p>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Jenis Kelamin</label>
-                                    <select name="member2_gender" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm">
+                                    <label for="member2_gender" class="block text-sm font-medium text-gray-300 mb-1">Jenis Kelamin</label>
+                                    <select id="member2_gender" name="member2_gender" autocomplete="sex" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm">
                                         <option value="">Pilih...</option>
                                         <option value="L" {{ old('member2_gender') == 'L' ? 'selected' : '' }}>Laki-laki</option>
                                         <option value="P" {{ old('member2_gender') == 'P' ? 'selected' : '' }}>Perempuan</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Pekerjaan</label>
-                                    <input type="text" name="member2_job" value="{{ old('member2_job') }}"
+                                    <label for="member2_job" class="block text-sm font-medium text-gray-300 mb-1">Pekerjaan</label>
+                                    <input type="text" id="member2_job" name="member2_job" autocomplete="organization-title" value="{{ old('member2_job') }}"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">No. WhatsApp</label>
-                                    <input type="text" name="member2_phone" value="{{ old('member2_phone') }}"
+                                    <label for="member2_phone" class="block text-sm font-medium text-gray-300 mb-1">No. WhatsApp</label>
+                                    <input type="text" id="member2_phone" name="member2_phone" autocomplete="tel" value="{{ old('member2_phone') }}"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm font-mono">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                                    <input type="email" name="member2_email" value="{{ old('member2_email') }}"
+                                    <label for="member2_email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                                    <input type="email" id="member2_email" name="member2_email" autocomplete="email" value="{{ old('member2_email') }}"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Alamat Domisili</label>
-                                    <textarea name="member2_address" rows="3"
+                                    <label for="member2_address" class="block text-sm font-medium text-gray-300 mb-1">Alamat Domisili</label>
+                                    <textarea id="member2_address" name="member2_address" autocomplete="street-address" rows="3"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm">{{ old('member2_address') }}</textarea>
                                 </div>
                             </div>
@@ -438,19 +440,43 @@
 
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        const dataUrl = event.target.result;
-                        preview.src = dataUrl;
-                        photoInput.value = dataUrl;
-                        
-                        video.classList.add('hidden');
-                        placeholder.classList.add('hidden');
-                        preview.classList.remove('hidden');
-                        
-                        if (stream) stream.getTracks().forEach(t => t.stop());
-                        startBtn.classList.add('hidden');
-                        takeBtn.classList.add('hidden');
-                        if (cameraSelect) cameraSelect.classList.add('hidden');
-                        retakeBtn.classList.remove('hidden');
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            const maxW = 600;
+                            const maxH = 800;
+
+                            if (width > maxW) {
+                                height = Math.round(height * (maxW / width));
+                                width = maxW;
+                            }
+                            if (height > maxH) {
+                                width = Math.round(width * (maxH / height));
+                                height = maxH;
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                            preview.src = compressedDataUrl;
+                            photoInput.value = compressedDataUrl;
+                            
+                            video.classList.add('hidden');
+                            placeholder.classList.add('hidden');
+                            preview.classList.remove('hidden');
+                            
+                            if (stream) stream.getTracks().forEach(t => t.stop());
+                            startBtn.classList.add('hidden');
+                            takeBtn.classList.add('hidden');
+                            if (cameraSelect) cameraSelect.classList.add('hidden');
+                            retakeBtn.classList.remove('hidden');
+                        };
+                        img.src = event.target.result;
                     };
                     reader.readAsDataURL(file);
                 });
@@ -561,10 +587,24 @@
 
             takeBtn.addEventListener('click', function () {
                 const canvas = document.createElement('canvas');
-                canvas.width  = video.videoWidth || 480;
-                canvas.height = video.videoHeight || 640;
-                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-                const dataUrl = canvas.toDataURL('image/jpeg');
+                let width = video.videoWidth || 480;
+                let height = video.videoHeight || 640;
+                const maxW = 600;
+                const maxH = 800;
+
+                if (width > maxW) {
+                    height = Math.round(height * (maxW / width));
+                    width = maxW;
+                }
+                if (height > maxH) {
+                    width = Math.round(width * (maxH / height));
+                    height = maxH;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
                 preview.src = dataUrl;
                 photoInput.value = dataUrl;
                 video.classList.add('hidden');

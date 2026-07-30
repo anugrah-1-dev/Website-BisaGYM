@@ -144,10 +144,15 @@ class PublicRegistrationController extends Controller
         if (!empty($data['photo_data'])) {
             $imageParts = explode(";base64,", $data['photo_data']);
             if (count($imageParts) == 2) {
-                $imageType   = explode("image/", $imageParts[0])[1];
+                $imageType   = strtolower(explode("image/", $imageParts[0])[1] ?? 'jpeg');
+                $imageType   = explode(';', $imageType)[0];
+                if ($imageType === 'jpeg') $imageType = 'jpg';
+                
                 $imageBase64 = base64_decode($imageParts[1]);
                 $fileName    = 'member_' . time() . '_' . rand(100, 999) . '.' . $imageType;
                 $photoPath   = 'members/' . $fileName;
+                
+                Storage::disk('public')->makeDirectory('members');
                 Storage::disk('public')->put($photoPath, $imageBase64);
             }
         }
