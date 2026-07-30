@@ -55,13 +55,61 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Data Grafik: Kehadiran Member per Bulan (Tahun Ini)
+        $attendanceMonthly = MemberAttendance::select(
+                DB::raw('MONTH(attendance_time) as month'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->whereYear('attendance_time', $thisYear)
+            ->groupBy(DB::raw('MONTH(attendance_time)'))
+            ->pluck('total', 'month')
+            ->toArray();
+
+        // Data Grafik: Member Baru vs Perpanjang per Bulan (Tahun Ini)
+        $newMembersMonthly = MemberTransaction::select(
+                DB::raw('MONTH(transaction_date) as month'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->whereYear('transaction_date', $thisYear)
+            ->where('transaction_type', 'new')
+            ->where('payment_status', 'paid')
+            ->groupBy(DB::raw('MONTH(transaction_date)'))
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $renewalMembersMonthly = MemberTransaction::select(
+                DB::raw('MONTH(transaction_date) as month'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->whereYear('transaction_date', $thisYear)
+            ->where('transaction_type', 'renewal')
+            ->where('payment_status', 'paid')
+            ->groupBy(DB::raw('MONTH(transaction_date)'))
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $chartMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $attendanceChartData = [];
+        $newMembersChartData = [];
+        $renewalMembersChartData = [];
+
+        for ($m = 1; $m <= 12; $m++) {
+            $attendanceChartData[] = $attendanceMonthly[$m] ?? 0;
+            $newMembersChartData[] = $newMembersMonthly[$m] ?? 0;
+            $renewalMembersChartData[] = $renewalMembersMonthly[$m] ?? 0;
+        }
+
         return view('dashboard', compact(
             'activeMembersCount',
             'totalIncomeThisMonth',
             'memberVisitsToday',
             'employeePresentToday',
             'recentTransactions',
-            'recentVisits'
+            'recentVisits',
+            'chartMonths',
+            'attendanceChartData',
+            'newMembersChartData',
+            'renewalMembersChartData'
         ));
     }
 }

@@ -79,6 +79,37 @@
 
         </div>
 
+        {{-- Charts Section --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {{-- Grafik Kehadiran Member --}}
+            <div class="bg-card rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-800">
+                    <h3 class="text-white font-medium flex items-center">
+                        <i class="ph ph-chart-line-up text-neon text-xl mr-2"></i> Grafik Kehadiran Member (Bulanan)
+                    </h3>
+                    <span class="text-xs font-mono text-neon bg-neon/10 border border-neon/30 px-2.5 py-1 rounded-full">{{ date('Y') }}</span>
+                </div>
+                <div class="relative flex-1 min-h-[260px]">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Grafik Member Baru vs Perpanjang --}}
+            <div class="bg-card rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-800">
+                    <h3 class="text-white font-medium flex items-center">
+                        <i class="ph ph-users-three text-cyan-400 text-xl mr-2"></i> Grafik Member Baru vs Perpanjang
+                    </h3>
+                    <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-1 rounded-full">{{ date('Y') }}</span>
+                </div>
+                <div class="relative flex-1 min-h-[260px]">
+                    <canvas id="memberTypeChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
         {{-- Tables Section --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
@@ -157,4 +188,97 @@
         </div>
 
     </div>
+
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const labels = @json($chartMonths);
+
+            // Attendance Chart
+            const ctxAttendance = document.getElementById('attendanceChart').getContext('2d');
+            new Chart(ctxAttendance, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Kunjungan Member',
+                        data: @json($attendanceChartData),
+                        borderColor: '#E0FF00',
+                        backgroundColor: 'rgba(224, 255, 0, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#E0FF00',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#9CA3AF', font: { family: 'Inter', size: 12 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#9CA3AF', font: { family: 'Inter' } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#9CA3AF', stepSize: 1, font: { family: 'Inter' } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        }
+                    }
+                }
+            });
+
+            // Member Type Chart
+            const ctxMemberType = document.getElementById('memberTypeChart').getContext('2d');
+            new Chart(ctxMemberType, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Member Baru',
+                            data: @json($newMembersChartData),
+                            backgroundColor: '#00F0FF',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Perpanjang',
+                            data: @json($renewalMembersChartData),
+                            backgroundColor: '#A855F7',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#9CA3AF', font: { family: 'Inter', size: 12 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#9CA3AF', font: { family: 'Inter' } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#9CA3AF', stepSize: 1, font: { family: 'Inter' } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-app-layout>
