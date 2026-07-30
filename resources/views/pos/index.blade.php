@@ -115,7 +115,7 @@
                 </div>
 
                 <!-- Cart Items List -->
-                <div class="p-4 flex-1 space-y-2.5 overflow-y-auto max-h-[260px] min-h-[140px]">
+                <div class="p-4 flex-1 space-y-2.5 overflow-y-auto max-h-[240px] min-h-[140px]">
                     <template x-if="cart.length === 0">
                         <div class="h-full flex flex-col items-center justify-center text-center text-gray-500 py-10">
                             <div class="w-14 h-14 rounded-full bg-dark flex items-center justify-center mb-3 border border-gray-800 text-gray-600">
@@ -169,7 +169,7 @@
                         <!-- Payment Method Toggle -->
                         <div class="mb-4">
                             <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Metode Pembayaran</label>
-                            <div class="grid grid-cols-2 gap-2">
+                            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
                                 <label class="cursor-pointer border rounded-xl p-2.5 text-center transition-all flex items-center justify-center space-x-2 text-xs"
                                     :class="paymentMethod === 'cash' ? 'border-neon bg-neon/10 text-neon font-bold shadow-[0_0_10px_rgba(224,255,0,0.1)]' : 'border-gray-800 bg-dark text-gray-400 hover:border-gray-700'">
                                     <input type="radio" name="payment_method" value="cash" x-model="paymentMethod" class="hidden">
@@ -199,39 +199,39 @@
 
                             <!-- Input Cash -->
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold font-mono">Rp</span>
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 text-xs font-bold font-mono">Rp</span>
                                 <input type="number" min="0" step="1000" x-model.number="cashGiven" placeholder="0"
-                                    class="w-full pl-9 pr-3 py-2 bg-gray-900 border border-gray-700 rounded-xl text-white font-mono text-sm font-bold focus:ring-1 focus:ring-neon focus:border-neon">
+                                    class="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-700 rounded-xl text-white font-mono text-sm font-bold focus:ring-1 focus:ring-neon focus:border-neon">
                             </div>
 
-                            <!-- Quick Preset Chips -->
-                            <div class="grid grid-cols-3 gap-1.5">
-                                <button type="button" @click="setCash(total)" class="bg-gray-900 hover:bg-neon hover:text-darker text-neon font-bold text-xs py-1.5 rounded-lg border border-neon/30 transition-all">
+                            <!-- Quick Preset Chips (Fixed 3 columns inline style) -->
+                            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">
+                                <button type="button" @click="setCash(total)" class="bg-gray-900 hover:bg-neon hover:text-darker text-neon font-bold text-xs py-2 rounded-lg border border-neon/30 transition-all text-center">
                                     Pas
                                 </button>
-                                <button type="button" @click="setCash(10000)" class="bg-gray-900 hover:bg-gray-800 text-gray-200 text-xs py-1.5 rounded-lg border border-gray-800 transition-colors">
+                                <button type="button" @click="setCash(10000)" class="bg-gray-900 hover:bg-gray-800 text-gray-200 text-xs py-2 rounded-lg border border-gray-800 transition-colors text-center">
                                     10rb
                                 </button>
-                                <button type="button" @click="setCash(20000)" class="bg-gray-900 hover:bg-gray-800 text-gray-200 text-xs py-1.5 rounded-lg border border-gray-800 transition-colors">
+                                <button type="button" @click="setCash(20000)" class="bg-gray-900 hover:bg-gray-800 text-gray-200 text-xs py-2 rounded-lg border border-gray-800 transition-colors text-center">
                                     20rb
                                 </button>
-                                <button type="button" @click="setCash(50000)" class="bg-gray-900 hover:bg-gray-800 text-gray-200 text-xs py-1.5 rounded-lg border border-gray-800 transition-colors">
+                                <button type="button" @click="setCash(50000)" class="bg-gray-900 hover:bg-gray-800 text-gray-200 text-xs py-2 rounded-lg border border-gray-800 transition-colors text-center">
                                     50rb
                                 </button>
-                                <button type="button" @click="setCash(100000)" class="bg-gray-900 hover:bg-gray-800 text-gray-200 text-xs py-1.5 rounded-lg border border-gray-800 transition-colors">
+                                <button type="button" @click="setCash(100000)" class="bg-gray-900 hover:bg-gray-800 text-gray-200 text-xs py-2 rounded-lg border border-gray-800 transition-colors text-center">
                                     100rb
                                 </button>
-                                <button type="button" @click="setCash(0)" class="bg-gray-900 hover:bg-red-500/20 text-red-400 text-xs py-1.5 rounded-lg border border-red-500/20 transition-colors">
+                                <button type="button" @click="setCash(0)" class="bg-gray-900 hover:bg-red-500/20 text-red-400 text-xs py-2 rounded-lg border border-red-500/20 transition-colors text-center">
                                     Reset
                                 </button>
                             </div>
 
-                            <!-- Collapsible Keypad Dialer -->
+                            <!-- Collapsible Keypad Dialer (Fixed 3 columns inline style) -->
                             <div x-show="showKeypad" x-transition class="pt-2 border-t border-gray-800">
-                                <div class="grid grid-cols-3 gap-1.5 font-mono text-xs">
+                                <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;" class="font-mono text-xs">
                                     <template x-for="btn in ['7','8','9','4','5','6','1','2','3','0','00','C']" :key="btn">
                                         <button type="button" @click="pressKeypad(btn)"
-                                            class="bg-gray-900 hover:bg-gray-800 active:scale-95 text-white font-bold py-2 rounded-lg border border-gray-800 transition-all flex items-center justify-center"
+                                            class="bg-gray-900 hover:bg-gray-800 active:scale-95 text-white font-bold py-2.5 rounded-lg border border-gray-800 transition-all flex items-center justify-center"
                                             :class="btn === 'C' ? 'text-red-400 bg-red-500/10 hover:bg-red-500/20 border-red-500/20' : ''">
                                             <span x-text="btn"></span>
                                         </button>
