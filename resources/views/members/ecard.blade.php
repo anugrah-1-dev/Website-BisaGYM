@@ -319,6 +319,11 @@
             color: white;
         }
         .btn-download-qr:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-download-photo {
+            background: #8b5cf6;
+            color: white;
+        }
+        .btn-download-photo:hover { background: #7c3aed; transform: translateY(-1px); }
         .btn-download-id {
             background: #10b981;
             color: white;
@@ -464,6 +469,12 @@
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
             ↓ QR
         </a>
+        @if($member->photo_path)
+            <a href="{{ Storage::url($member->photo_path) }}" download="Foto_{{ $member->member_id }}.jpg" class="btn btn-download-photo" title="Download Foto Profil Member">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> 
+                ↓ Foto Profil
+            </a>
+        @endif
         <button class="btn btn-download-id" id="btn-download-id">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             ↓ ID Card

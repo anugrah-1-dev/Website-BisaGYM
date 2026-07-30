@@ -14,6 +14,25 @@
 
     <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        input[type="date"], select, textarea {
+            color-scheme: dark;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.85) sepia(1) saturate(5) hue-rotate(35deg);
+            cursor: pointer;
+            opacity: 0.9;
+            padding: 2px;
+            border-radius: 4px;
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            filter: invert(1) brightness(1.3);
+            opacity: 1;
+            transform: scale(1.15);
+            background-color: rgba(212, 255, 0, 0.2);
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-darker text-gray-100 min-h-screen selection:bg-neon selection:text-darker">
     
