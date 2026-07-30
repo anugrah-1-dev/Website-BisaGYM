@@ -8,13 +8,13 @@
     <div class="space-y-8 md:space-y-10">
         
         {{-- Welcome Banner --}}
-        <div class="bg-gradient-to-r from-dark to-gray-900 rounded-xl border border-gray-800 p-8 shadow-lg relative overflow-hidden mb-8 md:mb-10" style="margin-bottom: 2.5rem;">
-            <div class="absolute -right-10 -top-10 text-gray-800 opacity-20">
-                <i class="ph ph-barbell text-[200px]"></i>
+        <div class="bg-gradient-to-r from-dark to-gray-900 rounded-xl border border-gray-800 p-5 md:p-8 shadow-lg relative overflow-hidden mb-8 md:mb-10" style="margin-bottom: 2.5rem;">
+            <div class="absolute -right-10 -top-10 text-gray-800 opacity-20 hidden sm:block">
+                <i class="ph ph-barbell text-[160px] md:text-[200px]"></i>
             </div>
             <div class="relative z-10">
-                <h3 class="text-3xl font-bold text-white mb-2">Selamat Datang kembali, <span class="text-neon">{{ Auth::user()->name }}</span>! 👋</h3>
-                <p class="text-gray-400">Berikut adalah ringkasan performa dan aktivitas gym Anda hari ini.</p>
+                <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">Selamat Datang kembali, <span class="text-neon">{{ Auth::user()->name }}</span>! 👋</h3>
+                <p class="text-xs sm:text-sm md:text-base text-gray-400">Berikut adalah ringkasan performa dan aktivitas gym Anda hari ini.</p>
             </div>
         </div>
 
