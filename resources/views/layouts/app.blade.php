@@ -15,6 +15,13 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            @media (min-width: 768px) {
+                .mobile-toggle-btn, .mobile-drawer-nav {
+                    display: none !important;
+                }
+            }
+        </style>
     </head>
     <body class="font-sans antialiased bg-darker text-gray-200">
         <div class="flex h-screen overflow-hidden" x-data="{ mobileMenuOpen: false }">
@@ -27,7 +34,7 @@
                  x-transition:leave="transition ease-in duration-200"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 z-50 md:hidden flex"
+                 class="mobile-drawer-nav fixed inset-0 z-50 md:hidden flex"
                  style="display: none;">
                 
                 <!-- Backdrop -->
@@ -69,7 +76,7 @@
                 <header class="h-16 bg-dark border-b border-gray-800 flex items-center justify-between px-4 md:px-6">
                     <div class="flex items-center min-w-0">
                         <!-- Mobile menu button -->
-                        <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden text-gray-300 hover:text-neon p-1.5 mr-3 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none flex-shrink-0">
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="mobile-toggle-btn md:hidden text-gray-300 hover:text-neon p-1.5 mr-3 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none flex-shrink-0">
                             <i class="ph ph-list text-2xl"></i>
                         </button>
                         
