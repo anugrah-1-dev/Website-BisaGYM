@@ -8,7 +8,7 @@
     <div class="space-y-8 md:space-y-10">
         
         {{-- Welcome Banner --}}
-        <div class="bg-gradient-to-r from-dark to-gray-900 rounded-xl border border-gray-800 p-8 shadow-lg relative overflow-hidden">
+        <div class="bg-gradient-to-r from-dark to-gray-900 rounded-xl border border-gray-800 p-8 shadow-lg relative overflow-hidden mb-8 md:mb-10" style="margin-bottom: 2.5rem;">
             <div class="absolute -right-10 -top-10 text-gray-800 opacity-20">
                 <i class="ph ph-barbell text-[200px]"></i>
             </div>
@@ -19,7 +19,7 @@
         </div>
 
         {{-- 4 Summary Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-10" style="margin-bottom: 2.5rem;">
             
             {{-- Total Member Aktif --}}
             <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg relative overflow-hidden group hover:border-neon/50 transition-colors">
@@ -80,7 +80,7 @@
         </div>
 
         {{-- Charts Section --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-10" style="margin-bottom: 2.5rem;">
             
             {{-- Grafik Kehadiran Member --}}
             <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg flex flex-col">
@@ -111,7 +111,7 @@
         </div>
 
         {{-- Tables Section --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8" style="margin-top: 2.5rem;">
             
             {{-- 5 Transaksi Terbaru --}}
             <div class="bg-card rounded-xl border border-gray-800 shadow-lg overflow-hidden flex flex-col">
