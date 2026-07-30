@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('expenses', \App\Http\Controllers\ExpenseController::class)->only(['index', 'store', 'destroy'])->middleware('role:admin|developer|kasir|penjaga');
     Route::get('/financial-report', [\App\Http\Controllers\FinancialReportController::class, 'index'])->name('financial-report.index')->middleware('role:admin|developer|kasir|penjaga');
 
+    // Halaman Informasi Pekerjaan untuk karyawan yang login
+    Route::get('/my-employee-info', [\App\Http\Controllers\EmployeeInfoController::class, 'index'])->name('employee.my-info');
+
     Route::middleware('role:developer')->group(function () {
         Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show']);
         Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
