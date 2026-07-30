@@ -25,6 +25,7 @@ class PosController extends Controller
             'items.*.snack_id' => 'required|exists:snacks,id',
             'items.*.qty' => 'required|integer|min:1',
             'payment_method' => 'required|in:cash,transfer',
+            'cash_given' => 'nullable|numeric|min:0',
         ]);
 
         DB::beginTransaction();
@@ -64,10 +65,22 @@ class PosController extends Controller
                 $snack->decrement('stock', $qty);
             }
 
+            if ($request->payment_method === 'cash' && $request->filled('cash_given')) {
+                $cashGiven = (float) $request->cash_given;
+                if ($cashGiven < $totalAmount) {
+                    DB::rollBack();
+                    return back()->withErrors(['error' => "Uang tunai (Rp " . number_format($cashGiven, 0, ',', '.') . ") kurang dari total belanja (Rp " . number_format($totalAmount, 0, ',', '.') . ")"]);
+                }
+                $change = $cashGiven - $totalAmount;
+                $successMsg = "Transaksi berhasil! Kode: {$transactionCode} | Total: Rp " . number_format($totalAmount, 0, ',', '.') . " | Tunai: Rp " . number_format($cashGiven, 0, ',', '.') . " | Kembalian: Rp " . number_format($change, 0, ',', '.');
+            } else {
+                $successMsg = "Transaksi berhasil! Kode: {$transactionCode} | Total: Rp " . number_format($totalAmount, 0, ',', '.');
+            }
+
             $snackTrx->update(['total_amount' => $totalAmount]);
             DB::commit();
 
-            return redirect()->route('pos.index')->with('success', "Transaksi berhasil! Kode: {$transactionCode} | Total: Rp " . number_format($totalAmount, 0, ',', '.'));
+            return redirect()->route('pos.index')->with('success', $successMsg);
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);

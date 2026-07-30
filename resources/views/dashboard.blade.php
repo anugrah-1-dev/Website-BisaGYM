@@ -80,7 +80,7 @@
         </div>
 
         {{-- Charts Section --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-10" style="margin-bottom: 2.5rem;">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-10" style="margin-bottom: 2.5rem;">
             
             {{-- Grafik Kehadiran Member --}}
             <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg flex flex-col">
@@ -105,6 +105,19 @@
                 </div>
                 <div class="relative flex-1 min-h-[300px]">
                     <canvas id="memberTypeChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Grafik Penjualan Snack Terlaris --}}
+            <div class="bg-card rounded-xl border border-gray-800 p-6 md:p-7 shadow-lg flex flex-col">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-800">
+                    <h3 class="text-white font-medium flex items-center">
+                        <i class="ph ph-cookie text-orange-400 text-xl mr-2"></i> Snack Terlaris
+                    </h3>
+                    <span class="text-xs font-mono text-orange-400 bg-orange-500/10 border border-orange-500/30 px-2.5 py-1 rounded-full">Top Penjualan</span>
+                </div>
+                <div class="relative flex-1 min-h-[300px] flex items-center justify-center">
+                    <canvas id="topSnacksChart"></canvas>
                 </div>
             </div>
 
@@ -278,6 +291,74 @@
                     }
                 }
             });
+
+            // Top Snacks Chart
+            const ctxSnacks = document.getElementById('topSnacksChart');
+            if (ctxSnacks) {
+                const snackLabels = @json($topSnackLabels);
+                const snackData = @json($topSnackData);
+                const snackSales = @json($topSnackSales);
+
+                if (snackLabels.length === 0) {
+                    ctxSnacks.parentElement.innerHTML = `
+                        <div class="text-center text-gray-500 py-12">
+                            <i class="ph ph-cookie text-4xl block mb-2 text-gray-600"></i>
+                            <p class="text-xs font-medium">Belum ada data penjualan snack.</p>
+                        </div>
+                    `;
+                } else {
+                    new Chart(ctxSnacks.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: snackLabels,
+                            datasets: [{
+                                label: 'Terjual (pcs)',
+                                data: snackData,
+                                backgroundColor: [
+                                    '#E0FF00',
+                                    '#00F0FF',
+                                    '#A855F7',
+                                    '#FF6B00',
+                                    '#FF007A',
+                                    '#3B82F6'
+                                ],
+                                borderRadius: 6,
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        afterLabel: function(context) {
+                                            const index = context.dataIndex;
+                                            if (snackSales[index]) {
+                                                return 'Total Sales: Rp ' + Number(snackSales[index]).toLocaleString('id-ID');
+                                            }
+                                            return '';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    ticks: { color: '#9CA3AF', stepSize: 1, font: { family: 'Inter' } },
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                },
+                                y: {
+                                    ticks: { color: '#E5E7EB', font: { family: 'Inter', weight: '500' } },
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
         });
     </script>
     @endpush

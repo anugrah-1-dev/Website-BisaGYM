@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Models\MemberTransaction;
 use App\Models\SnackTransaction;
+use App\Models\SnackTransactionDetail;
 use App\Models\MemberAttendance;
 use App\Models\EmployeeAttendance;
 use Carbon\Carbon;
@@ -99,6 +100,22 @@ class DashboardController extends Controller
             $renewalMembersChartData[] = $renewalMembersMonthly[$m] ?? 0;
         }
 
+        // Data Grafik: Penjualan Snack Terlaris
+        $topSnacks = SnackTransactionDetail::join('snacks', 'snack_transaction_details.snack_id', '=', 'snacks.id')
+            ->select(
+                'snacks.name',
+                DB::raw('SUM(snack_transaction_details.quantity) as total_qty'),
+                DB::raw('SUM(snack_transaction_details.subtotal) as total_sales')
+            )
+            ->groupBy('snacks.id', 'snacks.name')
+            ->orderByDesc('total_qty')
+            ->limit(6)
+            ->get();
+
+        $topSnackLabels = $topSnacks->pluck('name')->toArray();
+        $topSnackData = $topSnacks->pluck('total_qty')->map(fn($val) => (int)$val)->toArray();
+        $topSnackSales = $topSnacks->pluck('total_sales')->map(fn($val) => (float)$val)->toArray();
+
         return view('dashboard', compact(
             'activeMembersCount',
             'totalIncomeThisMonth',
@@ -109,7 +126,10 @@ class DashboardController extends Controller
             'chartMonths',
             'attendanceChartData',
             'newMembersChartData',
-            'renewalMembersChartData'
+            'renewalMembersChartData',
+            'topSnackLabels',
+            'topSnackData',
+            'topSnackSales'
         ));
     }
 }
