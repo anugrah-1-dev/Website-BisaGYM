@@ -40,9 +40,7 @@
     <header class="bg-card/80 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-neon flex items-center justify-center text-darker font-black text-xl shadow-lg shadow-neon/20">
-                    <i class="ph ph-barbell"></i>
-                </div>
+                <img src="{{ asset('asset/logo_gym.jpg') }}" alt="BisaGym Logo" class="h-10 w-10 rounded-xl object-cover border border-neon/30 shadow-lg shadow-neon/10">
                 <div>
                     <h1 class="text-lg font-black text-white leading-none tracking-tight">BISA<span class="text-neon">GYM</span></h1>
                     <p class="text-[10px] text-gray-400 font-medium">Self-Service Member Registration</p>
