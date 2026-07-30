@@ -16,8 +16,29 @@
                 <p class="text-xs mt-1 text-blue-400/80">Semua perubahan pada entitas penting seperti Akun User, Harga Paket Gym, atau Karyawan akan dicatat di sini secara otomatis. Halaman ini hanya dapat diakses oleh Developer.</p>
             </div>
         </div>
-
         <div class="bg-card rounded-xl border border-gray-800 shadow-xl overflow-hidden relative z-10">
+            <div class="p-4 border-b border-gray-800 bg-darker/50 flex items-center justify-between">
+                <h3 class="text-white font-medium">Log Aktivitas</h3>
+                
+                <form method="GET" action="{{ route('activity-logs.index') }}" class="flex items-center space-x-2">
+                    <select name="user_id" class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-neon focus:border-neon block w-full p-2.5">
+                        <option value="">Semua Akun</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                {{ $user->name }} ({{ $user->roles->first()?->name ?? 'User' }})
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="px-4 py-2.5 bg-neon hover:bg-neon/90 text-black font-semibold rounded-lg text-sm transition-colors flex items-center">
+                        <i class="ph ph-funnel mr-2"></i> Filter
+                    </button>
+                    @if(request()->filled('user_id'))
+                        <a href="{{ route('activity-logs.index') }}" class="px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg text-sm transition-colors flex items-center">
+                            Reset
+                        </a>
+                    @endif
+                </form>
+            </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs text-gray-400 uppercase bg-darker/50 border-b border-gray-800">
@@ -41,7 +62,13 @@
                                             {{ strtoupper(substr($log->user->name ?? '?', 0, 1)) }}
                                         </div>
                                         <div>
-                                            <div class="text-white font-medium">{{ $log->user->name ?? 'User Terhapus' }}</div>
+                                            @if($log->user_id)
+                                                <a href="{{ route('activity-logs.index', ['user_id' => $log->user_id]) }}" class="text-white font-medium hover:text-neon transition-colors" title="Filter berdasarkan aktivitas akun ini">
+                                                    {{ $log->user->name ?? 'User Terhapus' }}
+                                                </a>
+                                            @else
+                                                <div class="text-white font-medium">User Terhapus</div>
+                                            @endif
                                             <div class="text-xs text-gray-500">{{ $log->user->roles->first()?->name ?? '-' }}</div>
                                         </div>
                                     </div>
