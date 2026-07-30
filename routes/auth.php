@@ -33,6 +33,15 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
+
+    Route::get('verify-otp', [\App\Http\Controllers\Auth\TwoFactorController::class, 'index'])
+        ->name('2fa.index');
+
+    Route::post('verify-otp', [\App\Http\Controllers\Auth\TwoFactorController::class, 'store'])
+        ->name('2fa.store');
+
+    Route::post('resend-otp', [\App\Http\Controllers\Auth\TwoFactorController::class, 'resend'])
+        ->name('2fa.resend');
 });
 
 Route::middleware('auth')->group(function () {

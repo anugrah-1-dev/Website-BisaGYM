@@ -26,6 +26,30 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $user = $request->user();
+
+        if (is_null($user->two_factor_verified_at) || now()->diffInHours($user->two_factor_verified_at) >= 24) {
+            Auth::logout();
+
+            $user->two_factor_code = (string) rand(100000, 999999);
+            $user->two_factor_expires_at = now()->addMinutes(15);
+            $user->save();
+
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code, $user));
+
+            \App\Models\ActivityLog::create([
+                'user_id' => $user->id,
+                'action' => 'REQUEST_OTP',
+                'module' => 'Auth',
+                'description' => 'Meminta kode OTP via email.'
+            ]);
+
+            $request->session()->put('2fa_user_id', $user->id);
+            $request->session()->put('2fa_remember', $request->boolean('remember'));
+
+            return redirect()->route('2fa.index');
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));
