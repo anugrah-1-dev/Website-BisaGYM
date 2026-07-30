@@ -87,7 +87,15 @@
                         @endisset
                     </div>
                     
-                    <div class="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
+                    <div class="flex items-center space-x-3 md:space-x-4 flex-shrink-0">
+                        <!-- Live Date & Time Widget -->
+                        <div class="hidden sm:flex items-center space-x-2 bg-darker/90 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-gray-300 font-mono shadow-sm">
+                            <i class="ph ph-clock text-neon text-base"></i>
+                            <span id="header-live-date" class="text-gray-400 font-sans hidden md:inline"></span>
+                            <span class="text-gray-700 hidden md:inline">|</span>
+                            <span id="header-live-time" class="text-neon font-bold"></span>
+                        </div>
+
                         <span class="text-xs md:text-sm text-gray-400 max-w-[130px] sm:max-w-none truncate">{{ Auth::user()->name }} <span class="hidden sm:inline">({{ ucfirst(Auth::user()->roles->first()?->name ?? 'User') }})</span></span>
                         
                         <form method="POST" action="{{ route('logout') }}">
@@ -106,6 +114,31 @@
             </div>
         </div>
         
+        <script>
+            function updateLiveClock() {
+                const now = new Date();
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+                
+                const dayName = days[now.getDay()];
+                const dateNum = String(now.getDate()).padStart(2, '0');
+                const monthName = months[now.getMonth()];
+                const year = now.getFullYear();
+                
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                
+                const dateEl = document.getElementById('header-live-date');
+                const timeEl = document.getElementById('header-live-time');
+                
+                if (dateEl) dateEl.textContent = `${dayName}, ${dateNum} ${monthName} ${year}`;
+                if (timeEl) timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+            setInterval(updateLiveClock, 1000);
+            updateLiveClock();
+        </script>
+
         @stack('scripts')
     </body>
 </html>
