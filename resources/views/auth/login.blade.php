@@ -85,14 +85,6 @@
             </button>
         </div>
         
-        <!-- Dummy Info for Testing -->
-        <div class="mt-6 pt-4 border-t border-gray-800 text-center">
-            <p class="text-xs text-gray-500 mb-2">Test Accounts:</p>
-            <div class="flex justify-center space-x-4 text-xs">
-                <span class="px-2 py-1 bg-dark rounded border border-gray-700 text-gray-400">admin@bisagym.com</span>
-                <span class="px-2 py-1 bg-dark rounded border border-gray-700 text-gray-400">kasir@bisagym.com</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-2">Pass: password</p>
-        </div>
+
     </form>
 </x-guest-layout>
