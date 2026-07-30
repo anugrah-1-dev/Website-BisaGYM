@@ -24,6 +24,7 @@ class PosController extends Controller
             'items' => 'required|array|min:1',
             'items.*.snack_id' => 'required|exists:snacks,id',
             'items.*.qty' => 'required|integer|min:1',
+            'payment_method' => 'required|in:cash,transfer',
         ]);
 
         DB::beginTransaction();
@@ -35,6 +36,7 @@ class PosController extends Controller
                 'transaction_code' => $transactionCode,
                 'user_id' => Auth::id(),
                 'total_amount' => 0,
+                'payment_method' => $request->payment_method ?? 'cash',
                 'transaction_date' => Carbon::now(),
             ]);
 

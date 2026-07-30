@@ -51,6 +51,7 @@
             <th style="font-weight: bold; background-color: #2F3640; color: #ffffff; text-align: center; border: 1px solid #000000; width: 20px;">No</th>
             <th style="font-weight: bold; background-color: #2F3640; color: #ffffff; text-align: center; border: 1px solid #000000; width: 150px;">Tanggal</th>
             <th style="font-weight: bold; background-color: #2F3640; color: #ffffff; text-align: center; border: 1px solid #000000; width: 300px;">Item Terjual</th>
+            <th style="font-weight: bold; background-color: #2F3640; color: #ffffff; text-align: center; border: 1px solid #000000; width: 120px;">Metode</th>
             <th style="font-weight: bold; background-color: #2F3640; color: #ffffff; text-align: center; border: 1px solid #000000; width: 150px;">Kasir</th>
             <th style="font-weight: bold; background-color: #2F3640; color: #ffffff; text-align: center; border: 1px solid #000000; width: 150px;">Total (Rp)</th>
         </tr>
@@ -63,12 +64,13 @@
                     {{ $d->snack->name ?? '?' }} (x{{ $d->quantity }})
                 @endforeach
             </td>
+            <td style="text-align: center; border: 1px solid #000000;">{{ ($trx->payment_method ?? 'cash') === 'transfer' ? 'Non-Tunai' : 'Tunai' }}</td>
             <td style="border: 1px solid #000000;">{{ $trx->user->name ?? '-' }}</td>
             <td style="text-align: right; border: 1px solid #000000;">{{ $trx->total_amount }}</td>
         </tr>
         @endforeach
         <tr>
-            <td colspan="4" style="font-weight: bold; text-align: right; border: 1px solid #000000;">TOTAL PENDAPATAN</td>
+            <td colspan="5" style="font-weight: bold; text-align: right; border: 1px solid #000000;">TOTAL PENDAPATAN</td>
             <td style="font-weight: bold; text-align: right; border: 1px solid #000000; background-color: #E0FF00;">{{ $transactions->sum('total_amount') }}</td>
         </tr>
         @endif

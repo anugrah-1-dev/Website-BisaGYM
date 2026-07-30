@@ -111,6 +111,7 @@
                     <tr class="bg-dark border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400">
                         <th class="px-6 py-4 font-medium">Kode Transaksi</th>
                         <th class="px-6 py-4 font-medium">Detail Barang</th>
+                        <th class="px-6 py-4 font-medium">Metode</th>
                         <th class="px-6 py-4 font-medium">Petugas</th>
                         <th class="px-6 py-4 font-medium text-right">Total</th>
                         <th class="px-6 py-4 font-medium">Waktu</th>
@@ -125,12 +126,19 @@
                                     <p class="text-gray-300 text-xs">{{ $detail->snack->name ?? '?' }} x{{ $detail->quantity }} = <span class="text-neon">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</span></p>
                                 @endforeach
                             </td>
+                            <td class="px-6 py-4">
+                                @if(($trx->payment_method ?? 'cash') === 'transfer')
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30"><i class="ph ph-bank mr-1"></i>Non-Tunai</span>
+                                @else
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"><i class="ph ph-money mr-1"></i>Tunai</span>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 text-gray-400 text-xs">{{ $trx->user->name ?? '-' }}</td>
                             <td class="px-6 py-4 text-right text-neon font-bold">Rp {{ number_format($trx->total_amount, 0, ',', '.') }}</td>
                             <td class="px-6 py-4 text-gray-400 text-xs">{{ \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y H:i') }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Tidak ada data transaksi snack pada periode ini.</td></tr>
+                        <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Tidak ada data transaksi snack pada periode ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>

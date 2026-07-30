@@ -88,6 +88,26 @@
 
                     <form method="POST" action="{{ route('pos.checkout') }}" @submit.prevent="submitForm($event)">
                         @csrf
+                        
+                        <!-- Metode Pembayaran -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-medium text-gray-400 mb-2">Metode Pembayaran</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="cursor-pointer border rounded-lg p-2.5 text-center transition-all flex items-center justify-center space-x-2 text-xs"
+                                    :class="paymentMethod === 'cash' ? 'border-neon bg-neon/10 text-neon font-bold shadow-[0_0_10px_rgba(224,255,0,0.1)]' : 'border-gray-800 text-gray-400 hover:border-gray-700'">
+                                    <input type="radio" name="payment_method" value="cash" x-model="paymentMethod" class="hidden">
+                                    <i class="ph ph-money text-base"></i>
+                                    <span>Tunai</span>
+                                </label>
+                                <label class="cursor-pointer border rounded-lg p-2.5 text-center transition-all flex items-center justify-center space-x-2 text-xs"
+                                    :class="paymentMethod === 'transfer' ? 'border-neon bg-neon/10 text-neon font-bold shadow-[0_0_10px_rgba(224,255,0,0.1)]' : 'border-gray-800 text-gray-400 hover:border-gray-700'">
+                                    <input type="radio" name="payment_method" value="transfer" x-model="paymentMethod" class="hidden">
+                                    <i class="ph ph-bank text-base"></i>
+                                    <span>Non-Tunai</span>
+                                </label>
+                            </div>
+                        </div>
+
                         <div id="cart-inputs"></div>
                         <button type="submit" :disabled="cart.length === 0"
                             class="w-full bg-neon hover:bg-[#c4e600] disabled:opacity-40 disabled:cursor-not-allowed text-darker font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2">
@@ -110,6 +130,7 @@
             return {
                 cart: [],
                 search: '',
+                paymentMethod: 'cash',
                 get total() {
                     return this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
                 },
