@@ -43,9 +43,9 @@ class EmployeeController extends Controller
                 'email' => $request->email,
                 'username' => explode('@', $request->email)[0],
                 'password' => Hash::make($request->password),
-                'role' => 'kasir', // Penjaga / Kasir
+                'role' => 'penjaga', // Database enum hanya mendukung 'admin' dan 'penjaga'
             ]);
-            $user->assignRole('kasir');
+            $user->assignRole('kasir'); // Role sebenarnya diatur oleh Spatie Permission
             $userId = $user->id;
         }
 
