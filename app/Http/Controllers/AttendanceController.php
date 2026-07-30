@@ -68,8 +68,25 @@ class AttendanceController extends Controller
             ->whereDate('attendance_time', Carbon::today())
             ->exists();
 
+        $today = Carbon::today();
+        $expiry = Carbon::parse($member->expiry_date)->startOfDay();
+        $daysLeft = (int) $today->diffInDays($expiry, false);
+
+        $scannedData = [
+            'name' => $member->name,
+            'member_id' => $member->member_id,
+            'member_type' => $member->member_type,
+            'photo_path' => $member->photo_path ? asset('storage/' . $member->photo_path) : null,
+            'expiry_date' => Carbon::parse($member->expiry_date)->format('d M Y'),
+            'days_left' => $daysLeft,
+            'scan_time' => Carbon::now()->format('H:i:s'),
+        ];
+
         if ($alreadyScanned) {
-            return back()->with('warning', 'Member ' . $member->name . ' sudah melakukan absensi hari ini.');
+            $scannedData['already_scanned'] = true;
+            return back()
+                ->with('warning', 'Member ' . $member->name . ' sudah melakukan absensi hari ini.')
+                ->with('scanned_member', $scannedData);
         }
 
         // Record attendance
@@ -79,6 +96,10 @@ class AttendanceController extends Controller
             'attendance_time' => Carbon::now()
         ]);
 
-        return back()->with('success', 'Absensi berhasil untuk: ' . $member->name);
+        $statusMsg = 'Absensi berhasil untuk: ' . $member->name . ' (Masa aktif tersisa ' . max(0, $daysLeft) . ' hari)';
+
+        return back()
+            ->with('success', $statusMsg)
+            ->with('scanned_member', $scannedData);
     }
 }

@@ -34,6 +34,51 @@
                     </div>
                 @endif
 
+                @if(session('scanned_member'))
+                    @php $sm = session('scanned_member'); @endphp
+                    <div class="mb-5 p-4 rounded-xl bg-gradient-to-r from-darker to-gray-900 border {{ $sm['days_left'] > 7 ? 'border-neon/50 shadow-[0_0_15px_rgba(224,255,0,0.15)]' : ($sm['days_left'] >= 0 ? 'border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.15)]' : 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.15)]') }} relative z-10">
+                        <div class="flex items-center space-x-4">
+                            <div class="shrink-0">
+                                @if($sm['photo_path'])
+                                    <img src="{{ $sm['photo_path'] }}" alt="{{ $sm['name'] }}" class="w-16 h-16 rounded-full object-cover border-2 {{ $sm['days_left'] > 7 ? 'border-neon' : ($sm['days_left'] >= 0 ? 'border-amber-400' : 'border-red-400') }}">
+                                @else
+                                    <div class="w-16 h-16 rounded-full bg-dark flex items-center justify-center text-2xl text-gray-400 border-2 {{ $sm['days_left'] > 7 ? 'border-neon' : ($sm['days_left'] >= 0 ? 'border-amber-400' : 'border-red-400') }}">
+                                        <i class="ph ph-user"></i>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center space-x-2">
+                                    <h4 class="text-lg font-bold text-white truncate">{{ $sm['name'] }}</h4>
+                                    <span class="px-2 py-0.5 text-[10px] uppercase font-semibold rounded bg-gray-800 text-gray-300 border border-gray-700">{{ $sm['member_type'] ?? 'Member' }}</span>
+                                </div>
+                                <p class="text-xs text-gray-400 font-mono">{{ $sm['member_id'] }}</p>
+
+                                {{-- Remaining Days Highlight --}}
+                                <div class="mt-2 flex flex-wrap items-center gap-2">
+                                    @if($sm['days_left'] > 7)
+                                        <span class="px-2.5 py-1 text-xs font-mono font-bold rounded-lg bg-green-500/20 text-green-400 border border-green-500/40 flex items-center">
+                                            <i class="ph ph-hourglass-high mr-1.5 text-sm"></i> Sisa {{ $sm['days_left'] }} Hari
+                                        </span>
+                                    @elseif($sm['days_left'] >= 0)
+                                        <span class="px-2.5 py-1 text-xs font-mono font-bold rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center animate-pulse">
+                                            <i class="ph ph-warning-circle mr-1.5 text-sm"></i> {{ $sm['days_left'] == 0 ? 'Hari Ini Terakhir!' : 'Segera Habis! Sisa ' . $sm['days_left'] . ' Hari' }}
+                                        </span>
+                                    @else
+                                        <span class="px-2.5 py-1 text-xs font-mono font-bold rounded-lg bg-red-500/20 text-red-400 border border-red-500/40 flex items-center">
+                                            <i class="ph ph-x-circle mr-1.5 text-sm"></i> Expired ({{ abs($sm['days_left']) }} hari lalu)
+                                        </span>
+                                    @endif
+
+                                    <span class="text-xs text-gray-400">
+                                        <i class="ph ph-calendar text-gray-500"></i> Berakhir: <strong class="text-gray-200">{{ $sm['expiry_date'] }}</strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('attendance.store') }}" class="relative z-10 space-y-4">
                     @csrf
                     <div>
@@ -90,11 +135,17 @@
                             <tr class="bg-dark/50 border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400">
                                 <th class="px-6 py-4 font-medium">Waktu</th>
                                 <th class="px-6 py-4 font-medium">Member</th>
+                                <th class="px-6 py-4 font-medium">Sisa Masa Aktif</th>
                                 <th class="px-6 py-4 font-medium">Petugas Jaga</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-800 text-sm">
                             @forelse ($attendances as $att)
+                                @php
+                                    $today = \Carbon\Carbon::today();
+                                    $expiry = \Carbon\Carbon::parse($att->member->expiry_date)->startOfDay();
+                                    $daysLeft = (int) $today->diffInDays($expiry, false);
+                                @endphp
                                 <tr class="hover:bg-dark/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <span class="font-mono text-neon">{{ \Carbon\Carbon::parse($att->attendance_time)->format('H:i') }}</span>
@@ -103,13 +154,28 @@
                                         <p class="font-medium text-white">{{ $att->member->name }}</p>
                                         <p class="text-xs text-gray-500 font-mono">{{ $att->member->member_id }}</p>
                                     </td>
+                                    <td class="px-6 py-4">
+                                        @if($daysLeft > 7)
+                                            <span class="px-2.5 py-1 text-xs rounded-md bg-green-500/10 text-green-400 border border-green-500/30 font-mono font-medium inline-flex items-center">
+                                                <i class="ph ph-hourglass-high mr-1 text-sm"></i> {{ $daysLeft }} Hari Lagi
+                                            </span>
+                                        @elseif($daysLeft >= 0)
+                                            <span class="px-2.5 py-1 text-xs rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30 font-mono font-medium inline-flex items-center">
+                                                <i class="ph ph-warning-circle mr-1 text-sm"></i> {{ $daysLeft == 0 ? 'Hari Ini Terakhir' : $daysLeft . ' Hari Lagi' }}
+                                            </span>
+                                        @else
+                                            <span class="px-2.5 py-1 text-xs rounded-md bg-red-500/10 text-red-400 border border-red-500/30 font-mono font-medium inline-flex items-center">
+                                                <i class="ph ph-x-circle mr-1 text-sm"></i> Expired
+                                            </span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 text-gray-400 text-xs">
                                         <i class="ph ph-user-circle mr-1"></i> {{ $att->user->name ?? 'Sistem' }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-12 text-center text-gray-500">
+                                    <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                                         <i class="ph ph-clock text-4xl mb-2 block text-gray-600"></i>
                                         Belum ada member yang absen hari ini.
                                     </td>
