@@ -66,10 +66,11 @@
                                                 <a href="{{ route('activity-logs.index', ['user_id' => $log->user_id]) }}" class="text-white font-medium hover:text-neon transition-colors" title="Filter berdasarkan aktivitas akun ini">
                                                     {{ $log->user->name ?? 'User Terhapus' }}
                                                 </a>
+                                                <div class="text-xs text-gray-500">{{ $log->user?->roles->first()?->name ?? '-' }}</div>
                                             @else
-                                                <div class="text-white font-medium">User Terhapus</div>
+                                                <div class="text-white font-medium">{{ $log->module === 'Pendaftaran Mandiri' ? 'Member (Public)' : 'User Terhapus' }}</div>
+                                                <div class="text-xs text-neon font-semibold">{{ $log->module === 'Pendaftaran Mandiri' ? 'Self-Registration' : '-' }}</div>
                                             @endif
-                                            <div class="text-xs text-gray-500">{{ $log->user?->roles->first()?->name ?? '-' }}</div>
                                         </div>
                                     </div>
                                 </td>

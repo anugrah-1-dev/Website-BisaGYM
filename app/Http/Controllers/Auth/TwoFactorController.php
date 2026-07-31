@@ -79,6 +79,7 @@ class TwoFactorController extends Controller
 
 
         $request->session()->regenerate();
+        $user->update(['last_session_id' => $request->session()->getId()]);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

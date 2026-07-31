@@ -129,6 +129,13 @@ class PublicRegistrationController extends Controller
             );
         }
 
+        \App\Models\ActivityLog::create([
+            'user_id'     => null,
+            'action'      => 'CREATE',
+            'module'      => 'Pendaftaran Mandiri',
+            'description' => "Pendaftaran mandiri member baru: {$member1->name} ({$member1->member_id}) - Paket {$package->name}" . ($isCouple ? " (Couple dengan {$request->member2_name})" : ""),
+        ]);
+
         return redirect()->route('public.registration.index')->with('success', "Pendaftaran Berhasil! Terima kasih {$member1->name}, data pendaftaran Anda telah tersimpan. Silakan konfirmasi ke kasir/admin di depan.");
     }
 
