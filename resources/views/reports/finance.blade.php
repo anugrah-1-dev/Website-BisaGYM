@@ -1,8 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white leading-tight flex items-center">
-            <i class="ph ph-chart-line-up mr-2 text-neon"></i> {{ __('Laporan Keuangan') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-white leading-tight flex items-center">
+                <i class="ph ph-chart-line-up mr-2 text-neon"></i> {{ __('Laporan Keuangan') }}
+            </h2>
+            <a href="{{ route('shift-reports.index') }}" class="px-3 py-1.5 bg-dark border border-gray-700 hover:border-neon rounded-lg text-xs font-medium text-white transition-colors flex items-center gap-1.5">
+                <i class="ph ph-clock-afternoon text-sm text-neon"></i> Laporan Shift Kasir
+            </a>
+        </div>
     </x-slot>
 
     <div class="space-y-6">

@@ -64,6 +64,11 @@
     <i class="ph ph-wallet text-xl mr-3"></i>
     {{ __('Laporan Keuangan') }}
 </x-nav-link>
+
+<x-nav-link :href="route('shift-reports.index')" :active="request()->routeIs('shift-reports.*')">
+    <i class="ph ph-clock-afternoon text-xl mr-3"></i>
+    {{ __('Laporan Shift Kasir') }}
+</x-nav-link>
 @endhasanyrole
 
 @role('developer')

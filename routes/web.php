@@ -44,6 +44,8 @@ Route::middleware('auth')->group(function () {
     // Laporan Keuangan & Pengeluaran (Accessible by kasir as requested)
     Route::resource('expenses', \App\Http\Controllers\ExpenseController::class)->only(['index', 'store', 'destroy'])->middleware('role:admin|developer|kasir|penjaga');
     Route::get('/financial-report', [\App\Http\Controllers\FinancialReportController::class, 'index'])->name('financial-report.index')->middleware('role:admin|developer|kasir|penjaga');
+    Route::get('/shift-reports', [\App\Http\Controllers\ShiftReportController::class, 'index'])->name('shift-reports.index')->middleware('role:admin|developer|kasir|penjaga');
+    Route::post('/shift-reports', [\App\Http\Controllers\ShiftReportController::class, 'store'])->name('shift-reports.store')->middleware('role:admin|developer|kasir|penjaga');
 
     // Halaman Informasi Pekerjaan untuk karyawan yang login
     Route::get('/my-employee-info', [\App\Http\Controllers\EmployeeInfoController::class, 'index'])->name('employee.my-info');
