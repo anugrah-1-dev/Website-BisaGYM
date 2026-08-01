@@ -18,7 +18,9 @@ return new class extends Migration
             $table->decimal('system_cash', 12, 2)->default(0);
             $table->decimal('system_transfer', 12, 2)->default(0);
             $table->decimal('real_cash', 12, 2)->nullable();
-            $table->decimal('difference', 12, 2)->nullable();
+            $table->decimal('real_transfer', 12, 2)->nullable();
+            $table->decimal('difference_cash', 12, 2)->nullable();
+            $table->decimal('difference_transfer', 12, 2)->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

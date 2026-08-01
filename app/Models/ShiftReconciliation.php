@@ -15,7 +15,9 @@ class ShiftReconciliation extends Model
         'system_cash',
         'system_transfer',
         'real_cash',
-        'difference',
+        'real_transfer',
+        'difference_cash',
+        'difference_transfer',
         'notes',
         'user_id',
     ];
@@ -27,7 +29,9 @@ class ShiftReconciliation extends Model
             'system_cash' => 'decimal:2',
             'system_transfer' => 'decimal:2',
             'real_cash' => 'decimal:2',
-            'difference' => 'decimal:2',
+            'real_transfer' => 'decimal:2',
+            'difference_cash' => 'decimal:2',
+            'difference_transfer' => 'decimal:2',
         ];
     }
 

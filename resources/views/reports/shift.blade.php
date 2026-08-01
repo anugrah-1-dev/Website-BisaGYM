@@ -69,17 +69,20 @@
                         <h3 class="text-lg font-bold text-white">Shift Pagi (07:00 - 15:00)</h3>
                     </div>
                     @if($reconciliationPagi && !is_null($reconciliationPagi->real_cash))
-                        @if($reconciliationPagi->difference == 0)
+                        @php
+                            $totalDiffPagi = ($reconciliationPagi->difference_cash ?? 0) + ($reconciliationPagi->difference_transfer ?? 0);
+                        @endphp
+                        @if($totalDiffPagi == 0)
                             <span class="px-3 py-1.5 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full text-xs font-bold flex items-center gap-1">
                                 <i class="ph ph-check-circle"></i> Kas Pas
                             </span>
-                        @elseif($reconciliationPagi->difference < 0)
+                        @elseif($totalDiffPagi < 0)
                             <span class="px-3 py-1.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-xs font-bold flex items-center gap-1">
-                                <i class="ph ph-warning-circle"></i> Kurang Rp {{ number_format(abs($reconciliationPagi->difference), 0, ',', '.') }}
+                                <i class="ph ph-warning-circle"></i> Selisih -Rp {{ number_format(abs($totalDiffPagi), 0, ',', '.') }}
                             </span>
                         @else
                             <span class="px-3 py-1.5 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-full text-xs font-bold flex items-center gap-1">
-                                <i class="ph ph-plus-circle"></i> Lebih Rp {{ number_format($reconciliationPagi->difference, 0, ',', '.') }}
+                                <i class="ph ph-plus-circle"></i> Selisih +Rp {{ number_format($totalDiffPagi, 0, ',', '.') }}
                             </span>
                         @endif
                     @else
@@ -95,11 +98,11 @@
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div class="bg-dark p-3.5 rounded-lg border border-gray-800">
-                            <span class="text-xs text-gray-400 block mb-1">Penerimaan Cash (Tunai)</span>
+                            <span class="text-xs text-gray-400 block mb-1">Sistem Cash (Tunai)</span>
                             <span class="text-lg font-bold text-emerald-400">Rp {{ number_format($pagiSystemCash, 0, ',', '.') }}</span>
                         </div>
                         <div class="bg-dark p-3.5 rounded-lg border border-gray-800">
-                            <span class="text-xs text-gray-400 block mb-1">Penerimaan Transfer / QRIS</span>
+                            <span class="text-xs text-gray-400 block mb-1">Sistem Transfer / QRIS</span>
                             <span class="text-lg font-bold text-indigo-400">Rp {{ number_format($pagiSystemTransfer, 0, ',', '.') }}</span>
                         </div>
                     </div>
@@ -112,25 +115,27 @@
                     <!-- Ringkasan Rekonsiliasi Real -->
                     @if($reconciliationPagi && !is_null($reconciliationPagi->real_cash))
                         <div class="pt-2">
-                            <h4 class="text-xs uppercase tracking-wider text-gray-400 font-bold border-b border-gray-800 pb-2 mb-3">Hasil Rekonsiliasi Fisik</h4>
-                            <div class="space-y-2 text-sm bg-dark/40 p-4 rounded-xl border border-gray-800">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Uang Fisik (Real di Laci):</span>
-                                    <span class="text-white font-bold">Rp {{ number_format($reconciliationPagi->real_cash, 0, ',', '.') }}</span>
+                            <h4 class="text-xs uppercase tracking-wider text-gray-400 font-bold border-b border-gray-800 pb-2 mb-3">Hasil Rekonsiliasi Real vs Sistem</h4>
+                            <div class="space-y-2.5 text-sm bg-dark/40 p-4 rounded-xl border border-gray-800">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Cash Real (Laci):</span>
+                                    <span class="text-white font-bold">Rp {{ number_format($reconciliationPagi->real_cash, 0, ',', '.') }}
+                                        <span class="text-xs font-normal {{ ($reconciliationPagi->difference_cash ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                                            ({{ ($reconciliationPagi->difference_cash ?? 0) >= 0 ? '+' : '' }}{{ number_format($reconciliationPagi->difference_cash ?? 0, 0, ',', '.') }})
+                                        </span>
+                                    </span>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Uang Tunai Sistem:</span>
-                                    <span class="text-gray-300">Rp {{ number_format($pagiSystemCash, 0, ',', '.') }}</span>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Transfer Real (Rekening):</span>
+                                    <span class="text-white font-bold">Rp {{ number_format($reconciliationPagi->real_transfer ?? 0, 0, ',', '.') }}
+                                        <span class="text-xs font-normal {{ ($reconciliationPagi->difference_transfer ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                                            ({{ ($reconciliationPagi->difference_transfer ?? 0) >= 0 ? '+' : '' }}{{ number_format($reconciliationPagi->difference_transfer ?? 0, 0, ',', '.') }})
+                                        </span>
+                                    </span>
                                 </div>
-                                <div class="flex justify-between pt-2 border-t border-gray-800">
-                                    <span class="text-gray-400 font-medium">Selisih (Fisik - Sistem):</span>
-                                    @if($reconciliationPagi->difference == 0)
-                                        <span class="text-green-400 font-bold">Rp 0 (PAS)</span>
-                                    @elseif($reconciliationPagi->difference < 0)
-                                        <span class="text-red-400 font-bold">- Rp {{ number_format(abs($reconciliationPagi->difference), 0, ',', '.') }} (KURANG)</span>
-                                    @else
-                                        <span class="text-yellow-400 font-bold">+ Rp {{ number_format($reconciliationPagi->difference, 0, ',', '.') }} (LEBIH)</span>
-                                    @endif
+                                <div class="flex justify-between items-center pt-2 border-t border-gray-800">
+                                    <span class="text-gray-300 font-bold">Total Real Fisik/Rekening:</span>
+                                    <span class="text-neon font-bold">Rp {{ number_format(($reconciliationPagi->real_cash ?? 0) + ($reconciliationPagi->real_transfer ?? 0), 0, ',', '.') }}</span>
                                 </div>
                                 @if($reconciliationPagi->notes)
                                     <div class="pt-2 border-t border-gray-800 text-xs text-gray-400 italic">
@@ -149,17 +154,24 @@
             <!-- Form Input Uang Real Shift Pagi -->
             <div class="p-6 bg-dark/50 border-t border-gray-800">
                 <h4 class="text-xs uppercase tracking-wider text-gray-300 font-bold mb-3 flex items-center gap-1.5">
-                    <i class="ph ph-[#000] ph-pencil-simple text-neon"></i> {{ $reconciliationPagi ? 'Update' : 'Input' }} Uang Fisik / Real Shift Pagi
+                    <i class="ph ph-pencil-simple text-neon"></i> {{ $reconciliationPagi ? 'Update' : 'Input' }} Uang Real (Cash & Transfer) Shift Pagi
                 </h4>
                 <form method="POST" action="{{ route('shift-reports.store') }}" class="space-y-4">
                     @csrf
                     <input type="hidden" name="date" value="{{ $date }}">
                     <input type="hidden" name="shift_type" value="pagi">
 
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">Jumlah Uang Cash Real di Laci (Rp)</label>
-                        <input type="number" step="0.01" name="real_cash" value="{{ old('real_cash', $reconciliationPagi->real_cash ?? '') }}" class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-2.5 text-white font-bold focus:ring-neon focus:border-neon font-mono" placeholder="Masukkan jumlah uang cash fisik" required>
-                        <p class="text-[11px] text-gray-500 mt-1">Sistem Tunai Pagi: <span class="text-emerald-400 font-mono">Rp {{ number_format($pagiSystemCash, 0, ',', '.') }}</span></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Uang Cash Real (Fisik Laci)</label>
+                            <input type="number" step="0.01" name="real_cash" value="{{ old('real_cash', $reconciliationPagi->real_cash ?? '') }}" class="w-full bg-dark border border-gray-700 rounded-lg px-3 py-2 text-white font-bold focus:ring-neon focus:border-neon font-mono text-sm" placeholder="Rp 0" required>
+                            <p class="text-[10px] text-gray-500 mt-1">Sistem Cash: <span class="text-emerald-400 font-mono">Rp {{ number_format($pagiSystemCash, 0, ',', '.') }}</span></p>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Uang Transfer Real (Rekening)</label>
+                            <input type="number" step="0.01" name="real_transfer" value="{{ old('real_transfer', $reconciliationPagi->real_transfer ?? '') }}" class="w-full bg-dark border border-gray-700 rounded-lg px-3 py-2 text-white font-bold focus:ring-neon focus:border-neon font-mono text-sm" placeholder="Rp 0" required>
+                            <p class="text-[10px] text-gray-500 mt-1">Sistem Transfer: <span class="text-indigo-400 font-mono">Rp {{ number_format($pagiSystemTransfer, 0, ',', '.') }}</span></p>
+                        </div>
                     </div>
 
                     <div>
@@ -187,17 +199,20 @@
                         <h3 class="text-lg font-bold text-white">Shift Malam (15:00 - 23:00)</h3>
                     </div>
                     @if($reconciliationMalam && !is_null($reconciliationMalam->real_cash))
-                        @if($reconciliationMalam->difference == 0)
+                        @php
+                            $totalDiffMalam = ($reconciliationMalam->difference_cash ?? 0) + ($reconciliationMalam->difference_transfer ?? 0);
+                        @endphp
+                        @if($totalDiffMalam == 0)
                             <span class="px-3 py-1.5 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full text-xs font-bold flex items-center gap-1">
                                 <i class="ph ph-check-circle"></i> Kas Pas
                             </span>
-                        @elseif($reconciliationMalam->difference < 0)
+                        @elseif($totalDiffMalam < 0)
                             <span class="px-3 py-1.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-xs font-bold flex items-center gap-1">
-                                <i class="ph ph-warning-circle"></i> Kurang Rp {{ number_format(abs($reconciliationMalam->difference), 0, ',', '.') }}
+                                <i class="ph ph-warning-circle"></i> Selisih -Rp {{ number_format(abs($totalDiffMalam), 0, ',', '.') }}
                             </span>
                         @else
                             <span class="px-3 py-1.5 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-full text-xs font-bold flex items-center gap-1">
-                                <i class="ph ph-plus-circle"></i> Lebih Rp {{ number_format($reconciliationMalam->difference, 0, ',', '.') }}
+                                <i class="ph ph-plus-circle"></i> Selisih +Rp {{ number_format($totalDiffMalam, 0, ',', '.') }}
                             </span>
                         @endif
                     @else
@@ -213,11 +228,11 @@
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div class="bg-dark p-3.5 rounded-lg border border-gray-800">
-                            <span class="text-xs text-gray-400 block mb-1">Penerimaan Cash (Tunai)</span>
+                            <span class="text-xs text-gray-400 block mb-1">Sistem Cash (Tunai)</span>
                             <span class="text-lg font-bold text-emerald-400">Rp {{ number_format($malamSystemCash, 0, ',', '.') }}</span>
                         </div>
                         <div class="bg-dark p-3.5 rounded-lg border border-gray-800">
-                            <span class="text-xs text-gray-400 block mb-1">Penerimaan Transfer / QRIS</span>
+                            <span class="text-xs text-gray-400 block mb-1">Sistem Transfer / QRIS</span>
                             <span class="text-lg font-bold text-indigo-400">Rp {{ number_format($malamSystemTransfer, 0, ',', '.') }}</span>
                         </div>
                     </div>
@@ -230,25 +245,27 @@
                     <!-- Ringkasan Rekonsiliasi Real -->
                     @if($reconciliationMalam && !is_null($reconciliationMalam->real_cash))
                         <div class="pt-2">
-                            <h4 class="text-xs uppercase tracking-wider text-gray-400 font-bold border-b border-gray-800 pb-2 mb-3">Hasil Rekonsiliasi Fisik</h4>
-                            <div class="space-y-2 text-sm bg-dark/40 p-4 rounded-xl border border-gray-800">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Uang Fisik (Real di Laci):</span>
-                                    <span class="text-white font-bold">Rp {{ number_format($reconciliationMalam->real_cash, 0, ',', '.') }}</span>
+                            <h4 class="text-xs uppercase tracking-wider text-gray-400 font-bold border-b border-gray-800 pb-2 mb-3">Hasil Rekonsiliasi Real vs Sistem</h4>
+                            <div class="space-y-2.5 text-sm bg-dark/40 p-4 rounded-xl border border-gray-800">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Cash Real (Laci):</span>
+                                    <span class="text-white font-bold">Rp {{ number_format($reconciliationMalam->real_cash, 0, ',', '.') }}
+                                        <span class="text-xs font-normal {{ ($reconciliationMalam->difference_cash ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                                            ({{ ($reconciliationMalam->difference_cash ?? 0) >= 0 ? '+' : '' }}{{ number_format($reconciliationMalam->difference_cash ?? 0, 0, ',', '.') }})
+                                        </span>
+                                    </span>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Uang Tunai Sistem:</span>
-                                    <span class="text-gray-300">Rp {{ number_format($malamSystemCash, 0, ',', '.') }}</span>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Transfer Real (Rekening):</span>
+                                    <span class="text-white font-bold">Rp {{ number_format($reconciliationMalam->real_transfer ?? 0, 0, ',', '.') }}
+                                        <span class="text-xs font-normal {{ ($reconciliationMalam->difference_transfer ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                                            ({{ ($reconciliationMalam->difference_transfer ?? 0) >= 0 ? '+' : '' }}{{ number_format($reconciliationMalam->difference_transfer ?? 0, 0, ',', '.') }})
+                                        </span>
+                                    </span>
                                 </div>
-                                <div class="flex justify-between pt-2 border-t border-gray-800">
-                                    <span class="text-gray-400 font-medium">Selisih (Fisik - Sistem):</span>
-                                    @if($reconciliationMalam->difference == 0)
-                                        <span class="text-green-400 font-bold">Rp 0 (PAS)</span>
-                                    @elseif($reconciliationMalam->difference < 0)
-                                        <span class="text-red-400 font-bold">- Rp {{ number_format(abs($reconciliationMalam->difference), 0, ',', '.') }} (KURANG)</span>
-                                    @else
-                                        <span class="text-yellow-400 font-bold">+ Rp {{ number_format($reconciliationMalam->difference, 0, ',', '.') }} (LEBIH)</span>
-                                    @endif
+                                <div class="flex justify-between items-center pt-2 border-t border-gray-800">
+                                    <span class="text-gray-300 font-bold">Total Real Fisik/Rekening:</span>
+                                    <span class="text-neon font-bold">Rp {{ number_format(($reconciliationMalam->real_cash ?? 0) + ($reconciliationMalam->real_transfer ?? 0), 0, ',', '.') }}</span>
                                 </div>
                                 @if($reconciliationMalam->notes)
                                     <div class="pt-2 border-t border-gray-800 text-xs text-gray-400 italic">
@@ -267,17 +284,24 @@
             <!-- Form Input Uang Real Shift Malam -->
             <div class="p-6 bg-dark/50 border-t border-gray-800">
                 <h4 class="text-xs uppercase tracking-wider text-gray-300 font-bold mb-3 flex items-center gap-1.5">
-                    <i class="ph ph-pencil-simple text-neon"></i> {{ $reconciliationMalam ? 'Update' : 'Input' }} Uang Fisik / Real Shift Malam
+                    <i class="ph ph-pencil-simple text-neon"></i> {{ $reconciliationMalam ? 'Update' : 'Input' }} Uang Real (Cash & Transfer) Shift Malam
                 </h4>
                 <form method="POST" action="{{ route('shift-reports.store') }}" class="space-y-4">
                     @csrf
                     <input type="hidden" name="date" value="{{ $date }}">
                     <input type="hidden" name="shift_type" value="malam">
 
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">Jumlah Uang Cash Real di Laci (Rp)</label>
-                        <input type="number" step="0.01" name="real_cash" value="{{ old('real_cash', $reconciliationMalam->real_cash ?? '') }}" class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-2.5 text-white font-bold focus:ring-neon focus:border-neon font-mono" placeholder="Masukkan jumlah uang cash fisik" required>
-                        <p class="text-[11px] text-gray-500 mt-1">Sistem Tunai Malam: <span class="text-emerald-400 font-mono">Rp {{ number_format($malamSystemCash, 0, ',', '.') }}</span></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Uang Cash Real (Fisik Laci)</label>
+                            <input type="number" step="0.01" name="real_cash" value="{{ old('real_cash', $reconciliationMalam->real_cash ?? '') }}" class="w-full bg-dark border border-gray-700 rounded-lg px-3 py-2 text-white font-bold focus:ring-neon focus:border-neon font-mono text-sm" placeholder="Rp 0" required>
+                            <p class="text-[10px] text-gray-500 mt-1">Sistem Cash: <span class="text-emerald-400 font-mono">Rp {{ number_format($malamSystemCash, 0, ',', '.') }}</span></p>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Uang Transfer Real (Rekening)</label>
+                            <input type="number" step="0.01" name="real_transfer" value="{{ old('real_transfer', $reconciliationMalam->real_transfer ?? '') }}" class="w-full bg-dark border border-gray-700 rounded-lg px-3 py-2 text-white font-bold focus:ring-neon focus:border-neon font-mono text-sm" placeholder="Rp 0" required>
+                            <p class="text-[10px] text-gray-500 mt-1">Sistem Transfer: <span class="text-indigo-400 font-mono">Rp {{ number_format($malamSystemTransfer, 0, ',', '.') }}</span></p>
+                        </div>
                     </div>
 
                     <div>

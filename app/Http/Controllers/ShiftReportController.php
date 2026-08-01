@@ -95,10 +95,11 @@ class ShiftReportController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'date'       => 'required|date',
-            'shift_type' => 'required|in:pagi,malam',
-            'real_cash'  => 'required|numeric|min:0',
-            'notes'      => 'nullable|string|max:500',
+            'date'          => 'required|date',
+            'shift_type'    => 'required|in:pagi,malam',
+            'real_cash'     => 'required|numeric|min:0',
+            'real_transfer' => 'required|numeric|min:0',
+            'notes'         => 'nullable|string|max:500',
         ]);
 
         $carbonDate = Carbon::parse($request->date);
@@ -134,20 +135,24 @@ class ShiftReportController extends Controller
 
         $systemCash = $memberCash + $snackCash;
         $systemTransfer = $memberTransfer + $snackTransfer;
-        $difference = $request->real_cash - $systemCash;
+        
+        $diffCash = $request->real_cash - $systemCash;
+        $diffTransfer = $request->real_transfer - $systemTransfer;
 
-        $reconciliation = ShiftReconciliation::updateOrCreate(
+        ShiftReconciliation::updateOrCreate(
             [
                 'date'       => $request->date,
                 'shift_type' => $request->shift_type,
             ],
             [
-                'system_cash'     => $systemCash,
-                'system_transfer' => $systemTransfer,
-                'real_cash'       => $request->real_cash,
-                'difference'      => $difference,
-                'notes'           => $request->notes,
-                'user_id'         => Auth::id(),
+                'system_cash'         => $systemCash,
+                'system_transfer'     => $systemTransfer,
+                'real_cash'           => $request->real_cash,
+                'real_transfer'       => $request->real_transfer,
+                'difference_cash'     => $diffCash,
+                'difference_transfer' => $diffTransfer,
+                'notes'               => $request->notes,
+                'user_id'             => Auth::id(),
             ]
         );
 
@@ -155,9 +160,9 @@ class ShiftReportController extends Controller
         ActivityLog::log(
             'UPDATE', 
             'Laporan Shift', 
-            "Menginput Uang Real Shift {$shiftLabel} tanggal " . $carbonDate->format('d M Y') . " (Real: Rp " . number_format($request->real_cash, 0, ',', '.') . " | Selisih: Rp " . number_format($difference, 0, ',', '.') . ")"
+            "Menginput Uang Real (Cash & Transfer) Shift {$shiftLabel} tanggal " . $carbonDate->format('d M Y') . " (Real Cash: Rp " . number_format($request->real_cash, 0, ',', '.') . ", Real Transfer: Rp " . number_format($request->real_transfer, 0, ',', '.') . ")"
         );
 
-        return redirect()->back()->with('success', "Laporan Uang Real Shift {$shiftLabel} berhasil disimpan.");
+        return redirect()->back()->with('success', "Laporan Uang Real (Cash & Transfer) Shift {$shiftLabel} berhasil disimpan.");
     }
 }
