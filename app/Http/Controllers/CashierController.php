@@ -30,7 +30,7 @@ class CashierController extends Controller
     public function pay(Request $request, \App\Models\MemberTransaction $transaction)
     {
         $request->validate([
-            'payment_method' => 'required|in:cash,transfer',
+            'payment_method' => 'required|in:cash,transfer,gratis',
         ]);
 
         if ($transaction->payment_status === 'paid') {
@@ -81,7 +81,7 @@ class CashierController extends Controller
         $request->validate([
             'name'           => 'required|string|max:255',
             'phone'          => 'required|string|max:20',
-            'payment_method' => 'required|in:cash,transfer',
+            'payment_method' => 'required|in:cash,transfer,gratis',
         ]);
 
         $package = \App\Models\GymPackage::where('category', 'non-member')->where('is_active', true)->first();
