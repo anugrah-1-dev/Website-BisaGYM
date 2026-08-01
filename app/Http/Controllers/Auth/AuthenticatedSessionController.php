@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
-        if (is_null($user->two_factor_verified_at) || now()->diffInHours($user->two_factor_verified_at) >= 24) {
+        if (is_null($user->two_factor_verified_at) || $user->two_factor_verified_at->addHours(24)->isPast()) {
             Auth::logout();
 
             $user->two_factor_code = (string) rand(100000, 999999);
