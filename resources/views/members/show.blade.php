@@ -69,8 +69,12 @@
                         <span class="text-gray-400 text-sm">Bulan Ini</span>
                         <span class="text-neon font-bold text-lg">{{ $attendanceStats['this_month'] }}x</span>
                     </div>
+                    <div class="flex justify-between items-center bg-dark/70 rounded-lg p-3 border border-neon/30 bg-neon/5">
+                        <span class="text-gray-300 text-sm font-medium">Durasi Aktif Ini</span>
+                        <span class="text-neon font-bold text-lg">{{ $attendanceStats['during_active_duration'] }}x</span>
+                    </div>
                     <div class="flex justify-between items-center bg-dark rounded-lg p-3 border border-gray-800">
-                        <span class="text-gray-400 text-sm">Total Kunjungan</span>
+                        <span class="text-gray-400 text-sm">Total Semua Kunjungan</span>
                         <span class="text-neon font-bold text-lg">{{ $attendanceStats['total'] }}x</span>
                     </div>
                 </div>
@@ -124,8 +128,16 @@
 
             <!-- Riwayat Kehadiran -->
             <div class="bg-card rounded-xl border border-gray-800 shadow-lg overflow-hidden">
-                <div class="p-6 border-b border-gray-800">
-                    <h3 class="text-white font-medium">Riwayat Kehadiran Terbaru</h3>
+                <div class="p-6 border-b border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h3 class="text-white font-medium">Riwayat Kehadiran Terbaru</h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Menampilkan 10 kehadiran terakhir member</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1.5 bg-neon/10 text-neon border border-neon/30 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                            <i class="ph ph-calendar-check text-sm"></i> Durasi Member Ini: {{ $attendanceStats['during_active_duration'] }} Kali Kedatangan
+                        </span>
+                    </div>
                 </div>
                 <table class="w-full text-sm">
                     <tbody class="divide-y divide-gray-800">

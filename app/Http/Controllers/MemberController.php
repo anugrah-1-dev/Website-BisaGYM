@@ -223,10 +223,14 @@ class MemberController extends Controller
 
     public function show(Member $member)
     {
+        $activeStart = $member->activation_date ? \Carbon\Carbon::parse($member->activation_date)->startOfDay() : now()->startOfDay();
+        $activeEnd   = $member->expiry_date ? \Carbon\Carbon::parse($member->expiry_date)->endOfDay() : now()->endOfDay();
+
         $attendanceStats = [
-            'total'      => $member->attendances()->count(),
-            'this_month' => $member->attendances()->whereMonth('attendance_time', now()->month)->count(),
-            'this_week'  => $member->attendances()->whereBetween('attendance_time', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'total'                  => $member->attendances()->count(),
+            'during_active_duration' => $member->attendances()->whereBetween('attendance_time', [$activeStart, $activeEnd])->count(),
+            'this_month'             => $member->attendances()->whereMonth('attendance_time', now()->month)->whereYear('attendance_time', now()->year)->count(),
+            'this_week'              => $member->attendances()->whereBetween('attendance_time', [now()->startOfWeek(), now()->endOfWeek()])->count(),
         ];
         $recentAttendances = $member->attendances()->latest('attendance_time')->take(10)->get();
         $packages = GymPackage::where('is_active', true)->get();
