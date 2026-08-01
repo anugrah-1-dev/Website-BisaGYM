@@ -25,7 +25,7 @@ class TransactionController extends Controller
             ->latest('transaction_date')
             ->get();
 
-        $memberTotal = $memberTransactions->where('payment_status', 'paid')->sum('amount');
+        $memberTotal = $memberTransactions->where('payment_status', 'paid')->where('payment_method', '!=', 'gratis')->sum('amount');
         $snackTotal = $snackTransactions->sum('total_amount');
 
         return view('transactions.index', compact(

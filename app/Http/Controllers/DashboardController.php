@@ -28,6 +28,10 @@ class DashboardController extends Controller
         $memberIncome = MemberTransaction::whereYear('created_at', $thisYear)
             ->whereMonth('created_at', $thisMonth)
             ->where('payment_status', 'paid')
+            ->where(function($q) {
+                $q->whereNull('payment_method')
+                  ->orWhere('payment_method', '!=', 'gratis');
+            })
             ->sum('amount');
             
         $snackIncome = SnackTransaction::whereYear('created_at', $thisYear)

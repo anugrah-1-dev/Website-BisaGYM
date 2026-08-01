@@ -37,12 +37,17 @@ class CashierController extends Controller
             return back()->with('error', 'Tagihan ini sudah lunas.');
         }
 
-        $transaction->update([
+        $updateData = [
             'payment_status' => 'paid',
             'payment_method' => $request->payment_method,
-            // Update transaction date ke waktu bayar agar laporan akurat
             'transaction_date' => now(), 
-        ]);
+        ];
+
+        if ($request->payment_method === 'gratis') {
+            $updateData['amount'] = 0;
+        }
+
+        $transaction->update($updateData);
 
         $member = $transaction->member;
 
@@ -105,13 +110,15 @@ class CashierController extends Controller
             'status'            => 'active',
         ]);
 
+        $amount = ($request->payment_method === 'gratis') ? 0 : $package->price;
+
         // 2. Buat Transaksi Lunas
         \App\Models\MemberTransaction::create([
             'transaction_code'    => 'TRX-' . time() . '-' . rand(100, 999),
             'member_id'           => $member->id,
             'gym_package_id'      => $package->id,
             'user_id'             => \Illuminate\Support\Facades\Auth::id(),
-            'amount'              => $package->price,
+            'amount'              => $amount,
             'discount_percentage' => 0,
             'admin_fee'           => 0,
             'transaction_date'    => $now,

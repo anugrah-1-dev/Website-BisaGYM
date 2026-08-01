@@ -44,7 +44,7 @@
         @endforeach
         <tr>
             <td colspan="4" style="font-weight: bold; text-align: right; border: 1px solid #000000;">TOTAL PENDAPATAN</td>
-            <td style="font-weight: bold; text-align: right; border: 1px solid #000000; background-color: #E0FF00;">{{ $transactions->where('payment_status', 'paid')->sum('amount') }}</td>
+            <td style="font-weight: bold; text-align: right; border: 1px solid #000000; background-color: #E0FF00;">{{ $transactions->where('payment_status', 'paid')->where('payment_method', '!=', 'gratis')->sum('amount') }}</td>
         </tr>
         @else
         <tr>

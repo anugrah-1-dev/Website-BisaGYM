@@ -20,6 +20,10 @@ class FinancialReportController extends Controller
         $memberIncome = MemberTransaction::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
             ->where('payment_status', 'paid')
+            ->where(function($q) {
+                $q->whereNull('payment_method')
+                  ->orWhere('payment_method', '!=', 'gratis');
+            })
             ->sum('amount');
 
         // Income from Snack POS
