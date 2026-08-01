@@ -401,12 +401,16 @@
                     <span>{{ $member->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
                 </div>
                 <div class="info-item">
-                    <label>Berlaku Hingga</label>
-                    <span class="highlight">{{ \Carbon\Carbon::parse($member->expiry_date)->format('d M Y') }}</span>
+                    <label>Tempat, Tgl Lahir</label>
+                    <span>{{ $member->place_of_birth ?? '-' }}, {{ $member->date_of_birth ? \Carbon\Carbon::parse($member->date_of_birth)->format('d M Y') : '-' }}</span>
                 </div>
                 <div class="info-item">
                     <label>No. WhatsApp</label>
                     <span>{{ $member->phone }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Berlaku Hingga</label>
+                    <span class="highlight">{{ \Carbon\Carbon::parse($member->expiry_date)->format('d M Y') }}</span>
                 </div>
                 <div class="info-item" style="grid-column: span 2;">
                     <label>Alamat</label>
