@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Card Member - {{ $member->name }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: #070c14;
+            background: #05070a;
             background-image:
-                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212,255,0,0.06) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(59,130,246,0.04) 0%, transparent 60%);
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(234,179,8,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(168,85,247,0.05) 0%, transparent 60%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -33,7 +33,7 @@
             gap: 12px;
             justify-content: center;
             align-items: center;
-            max-width: 960px;
+            max-width: 1000px;
             width: 100%;
             z-index: 100;
         }
@@ -50,16 +50,16 @@
             text-decoration: none;
             border: none;
             transition: all 0.2s ease-in-out;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.5);
             user-select: none;
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.6); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.7); }
 
         .btn-back { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
         .btn-back:hover { background: #334155; color: #fff; }
 
-        .btn-flip { background: #eab308; color: #0f172a; }
-        .btn-flip:hover { background: #ca8a04; }
+        .btn-flip { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; }
+        .btn-flip:hover { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
 
         .btn-toggle { background: #3b82f6; color: #fff; }
         .btn-toggle:hover { background: #2563eb; }
@@ -89,8 +89,8 @@
 
         .card-wrapper {
             perspective: 1200px;
-            width: 480px;
-            height: 300px;
+            width: 500px;
+            height: 315px;
             cursor: pointer;
             user-select: none;
             position: relative;
@@ -113,7 +113,7 @@
         /* ─── SIDE BY SIDE MODE ─── */
         .side-by-side-mode .card-wrapper {
             width: 100% !important;
-            max-width: 1000px;
+            max-width: 1050px;
             height: auto !important;
             perspective: none !important;
             cursor: default;
@@ -133,8 +133,8 @@
             position: relative !important;
             top: auto !important;
             left: auto !important;
-            width: 480px !important;
-            height: 300px !important;
+            width: 500px !important;
+            height: 315px !important;
             transform: none !important;
             -webkit-transform: none !important;
             backface-visibility: visible !important;
@@ -147,150 +147,148 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 480px;
-            height: 300px;
+            width: 500px;
+            height: 315px;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
-            border-radius: 20px;
+            border-radius: 22px;
             overflow: hidden;
             box-shadow:
-                0 0 0 1px rgba(255,255,255,0.08),
-                0 20px 45px rgba(0,0,0,0.6),
-                0 0 50px rgba(212,255,0,0.05);
+                0 0 0 1px rgba(234,179,8,0.3),
+                0 25px 50px rgba(0,0,0,0.8),
+                0 0 40px rgba(234,179,8,0.12);
         }
 
         /* ══════════════════════════════════════════════════════════
-           TAMPAK DEPAN (FRONT FACE - WHITE LUXURY GOLD)
+           TAMPAK DEPAN (FRONT FACE - LUXURY BLACK & GOLD SWOOSH)
         ══════════════════════════════════════════════════════════ */
         .card-front {
-            background: #ffffff;
-            color: #0f172a;
+            background: #090d14;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 20px 22px;
+            padding: 18px 22px;
             transform: rotateY(0deg);
             -webkit-transform: rotateY(0deg);
+            position: relative;
         }
 
-        /* Background Waves & Watermark Silhouette */
-        .card-front .bg-wave-top {
+        /* Metallic Gold Curved Waves (Top & Bottom Swoosh) */
+        .card-front .swoosh-top {
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 90px;
-            background: linear-gradient(135deg, #0d1117 0%, #1e293b 70%, #d4ff00 100%);
-            clip-path: polygon(0 0, 100% 0, 100% 55%, 0% 100%);
+            top: 0; right: 0; left: 0;
+            height: 95px;
+            background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(9,13,20,0.95) 60%),
+                        linear-gradient(90deg, #ca8a04 0%, #eab308 50%, #fef08a 100%);
+            background-blend-mode: overlay;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 0% 100%);
             z-index: 0;
         }
-        .card-front .bg-wave-top-gold {
+        .card-front .swoosh-top-gold {
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 96px;
-            background: linear-gradient(90deg, #eab308, #ca8a04, #d4ff00);
-            clip-path: polygon(0 0, 100% 0, 100% 62%, 0% 105%);
+            top: 0; right: 0; left: 0;
+            height: 102px;
+            background: linear-gradient(90deg, #ca8a04 0%, #eab308 40%, #fef08a 80%, #ca8a04 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 76%, 0% 105%);
             z-index: 0;
-            opacity: 0.85;
+            opacity: 0.9;
         }
-        .card-front .bg-wave-bottom {
+        .card-front .swoosh-bottom-gold {
             position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 45px;
-            background: linear-gradient(135deg, #0d1117 0%, #1e293b 100%);
-            clip-path: polygon(0 40%, 100% 0%, 100% 100%, 0% 100%);
+            bottom: 0; right: 0; left: 0;
+            height: 52px;
+            background: linear-gradient(90deg, #ca8a04 0%, #eab308 50%, #fef08a 100%);
+            clip-path: polygon(0 35%, 100% 0%, 100% 100%, 0% 100%);
             z-index: 0;
+            opacity: 0.9;
         }
-        .card-front .bg-wave-bottom-gold {
+        .card-front .swoosh-bottom {
             position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 50px;
-            background: linear-gradient(90deg, #eab308 0%, #ca8a04 50%, #d4ff00 100%);
-            clip-path: polygon(0 30%, 100% 0%, 100% 100%, 0% 100%);
+            bottom: 0; right: 0; left: 0;
+            height: 46px;
+            background: linear-gradient(135deg, #090d14 0%, #0f172a 100%);
+            clip-path: polygon(0 45%, 100% 0%, 100% 100%, 0% 100%);
             z-index: 0;
-            opacity: 0.85;
-        }
-        .card-front .watermark-silhouette {
-            position: absolute;
-            right: 15px;
-            bottom: 35px;
-            width: 130px;
-            height: 130px;
-            opacity: 0.04;
-            pointer-events: none;
-            z-index: 1;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M20.5 6c-2.61.7-5.67 1-8.5 1s-5.89-.3-8.5-1L3 8c1.86.5 4 .83 6 1v13h2v-6h2v6h2V9c2-.17 4.14-.5 6-1l-0.5-2z'/%3E%3Cpath d='M12 6c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z'/%3E%3C/svg%3E") center/contain no-repeat;
         }
 
-        /* Front Content Layout */
-        .front-header {
+        /* Header Right Alignment */
+        .front-header-row {
             position: relative;
             z-index: 2;
             display: flex;
+            justify-content: flex-end;
             align-items: center;
-            justify-content: space-between;
         }
-        .brand-box {
+        .gym-header-brand {
             display: flex;
             align-items: center;
             gap: 10px;
+            text-align: right;
         }
-        .brand-logo {
+        .gym-logo-circle {
             width: 44px;
             height: 44px;
-            border-radius: 10px;
+            border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #eab308;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 2px solid #fef08a;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             background: #000;
         }
-        .brand-text {
-            color: #ffffff;
+        .gym-title-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
         }
-        .brand-title {
+        .gym-main-name {
             font-family: 'Orbitron', sans-serif;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 900;
             letter-spacing: 0.5px;
-            color: #ffffff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(180deg, #ffffff 0%, #fef08a 50%, #eab308 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
             line-height: 1;
+            text-transform: uppercase;
         }
-        .brand-title span { color: #d4ff00; }
-        .brand-tagline {
+        .gym-sub-tagline {
             font-size: 8px;
-            font-weight: 700;
-            color: #e2e8f0;
+            font-weight: 800;
+            color: #ffffff;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             margin-top: 3px;
         }
 
-        .front-body {
+        /* Front Body: Photo Left, Details Right */
+        .front-main-body {
             position: relative;
             z-index: 2;
             display: flex;
-            gap: 16px;
+            gap: 18px;
             align-items: center;
-            margin-top: 10px;
+            margin-top: 6px;
         }
 
-        /* Photo & Tier Badge */
-        .photo-column {
+        /* Left Side: Photo Circle & Purple-Gold Ring Frame */
+        .photo-left-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             shrink: 0;
         }
-        .photo-frame {
-            width: 82px;
-            height: 82px;
+        .photo-circle-ring {
+            width: 86px;
+            height: 86px;
             border-radius: 50%;
             padding: 3px;
-            background: linear-gradient(135deg, #eab308 0%, #ca8a04 50%, #d4ff00 100%);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #a855f7 0%, #eab308 50%, #fef08a 100%);
+            box-shadow: 0 0 20px rgba(168,85,247,0.35), 0 6px 16px rgba(0,0,0,0.6);
             position: relative;
         }
-        .photo-img {
+        .photo-inner-img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
@@ -299,98 +297,146 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 38px;
             overflow: hidden;
         }
-        .photo-img img {
+        .photo-inner-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        /* Tier Badges styling */
-        .tier-badge {
-            padding: 3px 10px;
-            border-radius: 99px;
-            font-size: 9px;
+        /* Solid Black Category Label Pill Below Photo */
+        .category-solid-box {
+            background: #000000;
+            border: 1.5px solid #eab308;
+            padding: 3px 12px;
+            border-radius: 6px;
+            font-size: 10px;
             font-weight: 900;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            border: 1px solid rgba(255,255,255,0.4);
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .badge-silver {
-            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 50%, #94a3b8 100%);
-            color: #0f172a;
-        }
-        .badge-gold {
-            background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%);
-            color: #0f172a;
-        }
-        .badge-platinum {
-            background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 50%, #0284c7 100%);
-            color: #0f172a;
-        }
-        .badge-platinum-plus {
-            background: linear-gradient(135deg, #f472b6 0%, #c084fc 50%, #6366f1 100%);
             color: #ffffff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            text-align: center;
         }
 
-        /* Member Info Details */
-        .info-column {
+        /* Specific Badges styling */
+        .badge-silver-style { border-color: #cbd5e1; color: #f8fafc; }
+        .badge-gold-style { border-color: #eab308; color: #fef08a; }
+        .badge-platinum-style { border-color: #38bdf8; color: #e0f2fe; }
+        .badge-platinum-plus-style { border-color: #c084fc; color: #f472b6; }
+
+        /* Right Side Info Data */
+        .info-right-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
         }
-        .member-fullname {
+        .member-header-line {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .member-name-large {
             font-size: 17px;
             font-weight: 900;
-            color: #0f172a;
+            color: #ffffff;
             line-height: 1.1;
             text-transform: uppercase;
             letter-spacing: -0.2px;
         }
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 10.5px;
-            color: #334155;
-            font-weight: 500;
-        }
-        .info-row i { color: #ca8a04; font-size: 12px; }
-        .info-row span.label { color: #64748b; font-weight: 600; font-size: 9.5px; text-transform: uppercase; width: 55px; }
-
-        .join-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
-            color: #ffffff;
+        .gender-badge-tag {
             font-size: 9px;
             font-weight: 800;
-            padding: 2.5px 10px;
-            border-radius: 6px;
+            color: #fef08a;
+            background: rgba(234,179,8,0.15);
+            border: 1px solid rgba(234,179,8,0.4);
+            padding: 2px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            shrink: 0;
+        }
+        .sub-member-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: #eab308;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        /* Data Rows Table Layout */
+        .data-rows-table {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5px;
+            font-size: 10px;
+        }
+        .data-row {
+            display: flex;
+            align-items: center;
+        }
+        .data-row .col-label {
+            width: 58px;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 9px;
+        }
+        .data-row .col-colon {
+            width: 12px;
+            color: #eab308;
+            font-weight: 800;
+        }
+        .data-row .col-value {
+            color: #f1f5f9;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        /* Highlighted Join Date Bar */
+        .join-highlight-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(90deg, #eab308 0%, #ca8a04 100%);
+            color: #0f172a;
+            font-size: 9.5px;
+            font-weight: 900;
+            padding: 3px 10px;
+            border-radius: 5px;
             width: fit-content;
-            margin-top: 4px;
+            margin-top: 5px;
             font-family: 'JetBrains Mono', monospace;
-            box-shadow: 0 2px 6px rgba(217,119,6,0.3);
+            box-shadow: 0 2px 8px rgba(234,179,8,0.4);
             letter-spacing: 0.5px;
         }
 
-        .front-footer {
+        /* Front Footer Partner Logo */
+        .front-footer-row {
             position: relative;
             z-index: 2;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            padding-top: 4px;
+            padding-top: 2px;
         }
-        .group-logo-text {
-            font-size: 9px;
+        .official-card-label {
+            font-size: 7.5px;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .partner-group-logo {
+            text-align: right;
+        }
+        .partner-group-title {
+            font-size: 9.5px;
             font-weight: 900;
             color: #ffffff;
             letter-spacing: 1.5px;
@@ -398,30 +444,37 @@
             font-family: 'Orbitron', sans-serif;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
-        .group-logo-text span { color: #eab308; }
+        .partner-group-title span { color: #fef08a; }
+        .partner-group-sub {
+            font-size: 7px;
+            color: #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
 
         /* ══════════════════════════════════════════════════════════
            TAMPAK BELAKANG (BACK FACE - LUXURY BLACK GOLD)
         ══════════════════════════════════════════════════════════ */
         .card-back {
-            background: linear-gradient(145deg, #090d16 0%, #0f172a 60%, #05080f 100%);
+            background: #070a10;
             color: #f8fafc;
             padding: 18px 22px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border: 1px solid rgba(234,179,8,0.25);
+            border: 1px solid rgba(234,179,8,0.3);
             transform: rotateY(180deg);
             -webkit-transform: rotateY(180deg);
+            position: relative;
         }
 
         .card-back .gold-line-wave {
             position: absolute;
             top: 0; right: 0; bottom: 0; left: 0;
             background:
-                radial-gradient(circle at 90% 10%, rgba(234,179,8,0.08) 0%, transparent 40%),
-                radial-gradient(circle at 10% 90%, rgba(212,255,0,0.05) 0%, transparent 40%);
+                radial-gradient(circle at 90% 10%, rgba(234,179,8,0.1) 0%, transparent 40%),
+                radial-gradient(circle at 10% 90%, rgba(168,85,247,0.05) 0%, transparent 40%);
             pointer-events: none;
             z-index: 0;
         }
@@ -432,7 +485,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            border-b border-gray-800/80 pb-2;
+            border-b border-gray-800/90 pb-2;
         }
         .back-title {
             font-family: 'Orbitron', sans-serif;
@@ -445,15 +498,17 @@
         .back-vip {
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
-            font-weight: 700;
-            color: #d4ff00;
+            font-weight: 800;
+            color: #fef08a;
             letter-spacing: 0.5px;
             margin-top: 1px;
         }
         .back-logo-img {
-            height: 28px;
-            border-radius: 6px;
-            border: 1px solid rgba(234,179,8,0.4);
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid #eab308;
         }
 
         .back-main {
@@ -468,14 +523,14 @@
         /* Promo Voucher Box (Left Side of Back) */
         .promo-voucher-box {
             flex: 1;
-            background: linear-gradient(135deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.9) 100%);
-            border: 1px dashed rgba(234,179,8,0.4);
+            background: linear-gradient(135deg, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.95) 100%);
+            border: 1px dashed rgba(234,179,8,0.45);
             border-radius: 12px;
             padding: 10px 12px;
             display: flex;
             flex-direction: column;
             gap: 6px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
         .promo-header {
             display: flex;
@@ -494,7 +549,7 @@
             gap: 4px;
         }
         .promo-discount-tag {
-            background: linear-gradient(90deg, #eab308, #d4ff00);
+            background: linear-gradient(90deg, #eab308, #fef08a);
             color: #0f172a;
             font-size: 10px;
             font-weight: 900;
@@ -516,9 +571,9 @@
             gap: 5px;
         }
         .promo-item-disc {
-            color: #d4ff00;
+            color: #fef08a;
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
+            font-weight: 800;
         }
         .promo-footer-hint {
             font-size: 7.5px;
@@ -572,13 +627,13 @@
             background: #ffffff;
             padding: 6px;
             border-radius: 10px;
-            width: 86px;
-            height: 86px;
+            width: 88px;
+            height: 88px;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            border: 1px solid #eab308;
+            border: 1.5px solid #eab308;
         }
         .qr-white-box img {
             width: 74px;
@@ -598,7 +653,7 @@
             border-t border-gray-800/80 pt-2;
         }
         .back-footer-info { display: flex; gap: 10px; }
-        .back-footer-web { color: #eab308; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        .back-footer-web { color: #eab308; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
 
         @media print {
             body { background: white; padding: 0; }
@@ -620,24 +675,24 @@
         if (str_contains($packageNameLower, 'pro plan') || (str_contains($packageNameLower, 'pro') && !str_contains($packageNameLower, 'couple'))) {
             $tierBadge = 'GOLD';
             $tierDiscount = 5;
-            $tierBadgeClass = 'badge-gold';
+            $tierBadgeStyle = 'badge-gold-style';
         } elseif (str_contains($packageNameLower, 'elite plan') || str_contains($packageNameLower, 'elite')) {
             $tierBadge = 'PLATINUM';
             $tierDiscount = 10;
-            $tierBadgeClass = 'badge-platinum';
+            $tierBadgeStyle = 'badge-platinum-style';
         } elseif (str_contains($packageNameLower, 'vvip') || str_contains($packageNameLower, 'vvip member')) {
             $tierBadge = 'PLATINUM+';
             $tierDiscount = 15;
-            $tierBadgeClass = 'badge-platinum-plus';
+            $tierBadgeStyle = 'badge-platinum-plus-style';
         } else {
             // Basic Plan, Reguler, Power Couple, Non Member
             $tierBadge = 'SILVER';
             $tierDiscount = 0;
-            $tierBadgeClass = 'badge-silver';
+            $tierBadgeStyle = 'badge-silver-style';
         }
 
         $joinDate = $member->registration_date ? \Carbon\Carbon::parse($member->registration_date)->format('d-m-Y') : date('d-m-Y');
-        $logoUrl = asset('asset/logo_kta1.jpeg');
+        $logoGymUrl = asset('asset/logo_gym.jpg');
 
         // QR Code Path Check
         $qrStoragePath = storage_path('app/public/qrcodes/' . $member->member_id . '.svg');
@@ -691,31 +746,31 @@
             <div class="card-inner">
 
                 {{-- ══════════════════════════════════════════════════════════
-                     1. TAMPAK DEPAN (FRONT FACE - WHITE LUXURY GOLD)
+                     1. TAMPAK DEPAN (FRONT FACE - LUXURY BLACK & GOLD SWOOSH)
                 ══════════════════════════════════════════════════════════ --}}
                 <div class="card-face card-front" id="card-front-element">
-                    <div class="bg-wave-top-gold"></div>
-                    <div class="bg-wave-top"></div>
-                    <div class="bg-wave-bottom-gold"></div>
-                    <div class="bg-wave-bottom"></div>
-                    <div class="watermark-silhouette"></div>
+                    <div class="swoosh-top-gold"></div>
+                    <div class="swoosh-top"></div>
+                    <div class="swoosh-bottom-gold"></div>
+                    <div class="swoosh-bottom"></div>
 
-                    {{-- Front Header --}}
-                    <div class="front-header">
-                        <div class="brand-box">
-                            <img src="{{ $logoUrl }}" alt="Logo BisaGym" class="brand-logo">
-                            <div class="brand-text">
-                                <div class="brand-title">BISA <span>GYM</span></div>
-                                <div class="brand-tagline">24/25 HOURS &bull; SEHAT ITU MUDAH</div>
+                    {{-- Front Header (Kanan Atas) --}}
+                    <div class="front-header-row">
+                        <div class="gym-header-brand">
+                            <div class="gym-title-text">
+                                <div class="gym-main-name">BISA GYM</div>
+                                <div class="gym-sub-tagline">25 HOURS &bull; SEHAT ITU MUDAH</div>
                             </div>
+                            <img src="{{ $logoGymUrl }}" alt="Logo Gym" class="gym-logo-circle">
                         </div>
                     </div>
 
-                    {{-- Front Body --}}
-                    <div class="front-body">
-                        <div class="photo-column">
-                            <div class="photo-frame">
-                                <div class="photo-img">
+                    {{-- Front Body (Foto Kiri, Data Kanan) --}}
+                    <div class="front-main-body">
+                        {{-- Sisi Kiri: Foto Circle & Ring Frame + Solid Black Category Box --}}
+                        <div class="photo-left-container">
+                            <div class="photo-circle-ring">
+                                <div class="photo-inner-img">
                                     @if($member->photo_path)
                                         <img src="{{ Storage::url($member->photo_path) }}" alt="{{ $member->name }}">
                                     @else
@@ -723,42 +778,53 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="tier-badge {{ $tierBadgeClass }}">{{ $tierBadge }}</div>
+                            <div class="category-solid-box {{ $tierBadgeStyle }}">
+                                {{ $tierBadge }}
+                            </div>
                         </div>
 
-                        <div class="info-column">
-                            <div class="member-fullname">{{ Str::limit($member->name, 22) }}</div>
-                            
-                            <div class="info-row">
-                                <span class="label">Gender</span>: 
-                                <strong>{{ $member->gender === 'L' ? 'LAKI-LAKI' : 'PEREMPUAN' }}</strong>
+                        {{-- Sisi Kanan: Info Data Member --}}
+                        <div class="info-right-container">
+                            <div class="member-header-line">
+                                <div class="member-name-large">{{ Str::limit($member->name, 20) }}</div>
+                                <div class="gender-badge-tag">{{ $member->gender === 'L' ? 'LAKI-LAKI' : 'PEREMPUAN' }}</div>
                             </div>
 
-                            <div class="info-row">
-                                <span class="label">TTL</span>: 
-                                <span>{{ Str::limit($member->place_of_birth ?? '-', 10) }}, {{ $member->date_of_birth ? \Carbon\Carbon::parse($member->date_of_birth)->format('d/m/Y') : '-' }}</span>
+                            <div class="sub-member-label">Member BISA GYM</div>
+
+                            <div class="data-rows-table">
+                                <div class="data-row">
+                                    <span class="col-label">TTL</span>
+                                    <span class="col-colon">:</span>
+                                    <span class="col-value">{{ Str::limit($member->place_of_birth ?? '-', 10) }}, {{ $member->date_of_birth ? \Carbon\Carbon::parse($member->date_of_birth)->format('d/m/Y') : '-' }}</span>
+                                </div>
+
+                                <div class="data-row">
+                                    <span class="col-label">NO. HP</span>
+                                    <span class="col-colon">:</span>
+                                    <span class="col-value" style="font-family: 'JetBrains Mono', monospace;">{{ $member->phone }}</span>
+                                </div>
+
+                                <div class="data-row">
+                                    <span class="col-label">ALAMAT</span>
+                                    <span class="col-colon">:</span>
+                                    <span class="col-value">{{ Str::limit($member->address, 26) }}</span>
+                                </div>
                             </div>
 
-                            <div class="info-row">
-                                <span class="label">No. WA</span>: 
-                                <span style="font-family: 'JetBrains Mono', monospace; font-weight:700;">{{ $member->phone }}</span>
-                            </div>
-
-                            <div class="info-row">
-                                <span class="label">Alamat</span>: 
-                                <span>{{ Str::limit($member->address, 28) }}</span>
-                            </div>
-
-                            <div class="join-badge">
-                                ⚡ JOIN [ {{ $joinDate }} ]
+                            <div class="join-highlight-box">
+                                JOIN [ {{ $joinDate }} ]
                             </div>
                         </div>
                     </div>
 
                     {{-- Front Footer --}}
-                    <div class="front-footer">
-                        <div style="font-size:7.5px; color:#64748b; font-weight:600; text-transform:uppercase;">OFFICIAL MEMBER CARD</div>
-                        <div class="group-logo-text">BRILLIANT <span>INDONESIA GROUP</span></div>
+                    <div class="front-footer-row">
+                        <div class="official-card-label">OFFICIAL MEMBER CARD</div>
+                        <div class="partner-group-logo">
+                            <div class="partner-group-title">BRILLIANT <span>INDONESIA GROUP</span></div>
+                            <div class="partner-group-sub">Gym &bull; Course &bull; Coffee</div>
+                        </div>
                     </div>
                 </div>
 
@@ -774,7 +840,7 @@
                             <div class="back-title">MEMBER CARD</div>
                             <div class="back-vip">{{ $member->member_id }}</div>
                         </div>
-                        <img src="{{ $logoUrl }}" alt="Logo Emas" class="back-logo-img">
+                        <img src="{{ $logoGymUrl }}" alt="Logo Gym Emas" class="back-logo-img">
                     </div>
 
                     {{-- Back Main Body --}}
@@ -887,7 +953,7 @@
             const frontEl = document.getElementById('card-front-element');
             html2canvas(frontEl, {
                 scale: 3,
-                backgroundColor: '#ffffff',
+                backgroundColor: '#090d14',
                 logging: false,
                 useCORS: true
             }).then(canvas => {
@@ -904,7 +970,7 @@
             const backEl = document.getElementById('card-back-element');
             html2canvas(backEl, {
                 scale: 3,
-                backgroundColor: '#090d16',
+                backgroundColor: '#070a10',
                 logging: false,
                 useCORS: true
             }).then(canvas => {
