@@ -18,13 +18,64 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            gap: 24px;
+            gap: 28px;
             font-family: 'Inter', sans-serif;
-            padding: 24px;
+            padding: 32px 24px;
             color: #f8fafc;
         }
+
+        /* ─── ACTION BUTTONS BAR (TOP) ─── */
+        .actions-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            max-width: 960px;
+            width: 100%;
+            z-index: 100;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            user-select: none;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.6); }
+
+        .btn-back { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+        .btn-back:hover { background: #334155; color: #fff; }
+
+        .btn-flip { background: #eab308; color: #0f172a; }
+        .btn-flip:hover { background: #ca8a04; }
+
+        .btn-toggle { background: #3b82f6; color: #fff; }
+        .btn-toggle:hover { background: #2563eb; }
+
+        .btn-dl-front { background: #10b981; color: #fff; }
+        .btn-dl-front:hover { background: #059669; }
+
+        .btn-dl-back { background: #8b5cf6; color: #fff; }
+        .btn-dl-back:hover { background: #7c3aed; }
+
+        .btn-dl-qr { background: #06b6d4; color: #fff; }
+        .btn-dl-qr:hover { background: #0891b2; }
+
+        .btn-print { background: #d4ff00; color: #0f172a; }
+        .btn-print:hover { background: #bada00; }
+
 
         /* ─── 3D CONTAINER & FLIP ─── */
         .card-container-wrapper {
@@ -32,6 +83,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            width: 100%;
+            margin-top: 10px;
         }
 
         .card-wrapper {
@@ -40,6 +93,7 @@
             height: 300px;
             cursor: pointer;
             user-select: none;
+            position: relative;
         }
 
         .card-inner {
@@ -48,41 +102,53 @@
             height: 100%;
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d;
         }
 
         .card-wrapper.flipped .card-inner {
             transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
         }
 
         /* ─── SIDE BY SIDE MODE ─── */
         .side-by-side-mode .card-wrapper {
-            width: auto;
-            height: auto;
-            perspective: none;
+            width: 100% !important;
+            max-width: 1000px;
+            height: auto !important;
+            perspective: none !important;
             cursor: default;
         }
         .side-by-side-mode .card-inner {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 28px !important;
             transform: none !important;
-            transition: none;
-            perspective: none;
+            -webkit-transform: none !important;
+            transition: none !important;
+            perspective: none !important;
         }
         .side-by-side-mode .card-face {
             position: relative !important;
+            top: auto !important;
+            left: auto !important;
             width: 480px !important;
             height: 300px !important;
             transform: none !important;
+            -webkit-transform: none !important;
             backface-visibility: visible !important;
+            -webkit-backface-visibility: visible !important;
             opacity: 1 !important;
         }
 
         /* ─── CARD FACE COMMON ─── */
         .card-face {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            top: 0;
+            left: 0;
+            width: 480px;
+            height: 300px;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             border-radius: 20px;
@@ -103,7 +169,8 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 20px 22px;
-            position: relative;
+            transform: rotateY(0deg);
+            -webkit-transform: rotateY(0deg);
         }
 
         /* Background Waves & Watermark Silhouette */
@@ -143,14 +210,13 @@
         }
         .card-front .watermark-silhouette {
             position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 170px;
-            height: 170px;
-            opacity: 0.05;
+            right: 15px;
+            bottom: 35px;
+            width: 130px;
+            height: 130px;
+            opacity: 0.04;
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M20.5 6c-2.61.7-5.67 1-8.5 1s-5.89-.3-8.5-1L3 8c1.86.5 4 .83 6 1v13h2v-6h2v6h2V9c2-.17 4.14-.5 6-1l-0.5-2z'/%3E%3Cpath d='M12 6c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z'/%3E%3C/svg%3E") center/contain no-repeat;
         }
 
@@ -345,8 +411,9 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            position: relative;
             border: 1px solid rgba(234,179,8,0.25);
+            transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
         }
 
         .card-back .gold-line-wave {
@@ -533,52 +600,6 @@
         .back-footer-info { display: flex; gap: 10px; }
         .back-footer-web { color: #eab308; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
 
-        /* ─── ACTION BUTTONS BAR ─── */
-        .actions-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            max-width: 900px;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: 12px;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            border: none;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .btn:hover { transform: translateY(-2px); }
-
-        .btn-back { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
-        .btn-back:hover { background: #334155; color: #fff; }
-
-        .btn-flip { background: #eab308; color: #0f172a; }
-        .btn-flip:hover { background: #ca8a04; }
-
-        .btn-toggle { background: #3b82f6; color: #fff; }
-        .btn-toggle:hover { background: #2563eb; }
-
-        .btn-dl-front { background: #10b981; color: #fff; }
-        .btn-dl-front:hover { background: #059669; }
-
-        .btn-dl-back { background: #8b5cf6; color: #fff; }
-        .btn-dl-back:hover { background: #7c3aed; }
-
-        .btn-dl-qr { background: #06b6d4; color: #fff; }
-        .btn-dl-qr:hover { background: #0891b2; }
-
-        .btn-print { background: #d4ff00; color: #0f172a; }
-        .btn-print:hover { background: #bada00; }
-
         @media print {
             body { background: white; padding: 0; }
             .actions-bar { display: none !important; }
@@ -632,6 +653,37 @@
         }
         $qrExists = file_exists($qrStoragePath);
     @endphp
+
+    {{-- Action Buttons Bar (Top) --}}
+    <div class="actions-bar">
+        <a href="{{ route('members.index') }}" class="btn btn-back">
+            ← Kembali
+        </a>
+
+        <button type="button" class="btn btn-flip" id="btn-flip">
+            🔄 Balik Kartu (Flip 3D)
+        </button>
+
+        <button type="button" class="btn btn-toggle" id="btn-toggle-side">
+            👁️ Tampilan Berdampingan
+        </button>
+
+        <button type="button" class="btn btn-dl-front" id="btn-dl-front">
+            ↓ Depan (PNG)
+        </button>
+
+        <button type="button" class="btn btn-dl-back" id="btn-dl-back">
+            ↓ Belakang (PNG)
+        </button>
+
+        <button type="button" class="btn btn-dl-qr" id="btn-dl-qr">
+            ↓ QR Code (PNG)
+        </button>
+
+        <button type="button" class="btn btn-print" onclick="window.print()">
+            🖨️ Cetak E-Card
+        </button>
+    </div>
 
     {{-- Main Container Card --}}
     <div class="card-container-wrapper" id="main-card-container">
@@ -793,37 +845,6 @@
 
             </div>
         </div>
-    </div>
-
-    {{-- Action Buttons Bar --}}
-    <div class="actions-bar">
-        <a href="{{ route('members.index') }}" class="btn btn-back">
-            ← Kembali
-        </a>
-
-        <button type="button" class="btn btn-flip" id="btn-flip">
-            🔄 Balik Kartu (Flip 3D)
-        </button>
-
-        <button type="button" class="btn btn-toggle" id="btn-toggle-side">
-            👁️ Tampilan Berdampingan
-        </button>
-
-        <button type="button" class="btn btn-dl-front" id="btn-dl-front">
-            ↓ Depan (PNG)
-        </button>
-
-        <button type="button" class="btn btn-dl-back" id="btn-dl-back">
-            ↓ Belakang (PNG)
-        </button>
-
-        <button type="button" class="btn btn-dl-qr" id="btn-dl-qr">
-            ↓ QR Code (PNG)
-        </button>
-
-        <button type="button" class="btn btn-print" onclick="window.print()">
-            🖨️ Cetak E-Card
-        </button>
     </div>
 
     <script>
