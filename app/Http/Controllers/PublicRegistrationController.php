@@ -87,7 +87,8 @@ class PublicRegistrationController extends Controller
             expiryDate: $expiryDate
         );
 
-        $discountPercentage = (int) $request->input('discount_category', 0);
+        $isBasicPlan = strtolower(trim($package->name)) === 'basic plan';
+        $discountPercentage = $isBasicPlan ? (int) $request->input('discount_category', 0) : 0;
         $discountAmount = ($package->price * $discountPercentage) / 100;
         $adminFee = $package->admin_fee;
         $finalAmount = ($package->price - $discountAmount) + $adminFee;

@@ -108,6 +108,7 @@
                                 id="pkg_{{ $pkg->id }}"
                                 name="package_id"
                                 value="{{ $pkg->id }}"
+                                data-name="{{ $pkg->name }}"
                                 data-max-members="{{ $pkg->max_members }}"
                                 data-category="{{ $pkg->category }}"
                                 class="peer sr-only"
@@ -147,9 +148,9 @@
                 </div>
                 
                 <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="p-4 border border-gray-800 bg-dark/60 rounded-xl">
+                    <div class="p-4 border border-gray-800 bg-dark/60 rounded-xl transition-all" id="discount-container">
                         <label for="discount_category" class="block text-xs font-semibold text-neon mb-2">
-                            <i class="ph ph-percent mr-1"></i> Diskon Profesi (Opsional)
+                            <i class="ph ph-percent mr-1"></i> Diskon Profesi (Opsional) <span class="text-gray-400 font-normal">(Khusus Basic Plan)</span>
                         </label>
                         <select id="discount_category" name="discount_category" autocomplete="off" class="w-full border-gray-700 rounded-xl bg-dark text-white focus:ring-neon focus:border-neon text-xs">
                             <option value="0">Tidak Ada Diskon (0%)</option>
@@ -157,6 +158,7 @@
                             <option value="15">Pelaku Budaya, Dukun, dan Ulama (15%)</option>
                             <option value="20">Guru / Tenaga Pendidik (20%)</option>
                         </select>
+                        <p class="text-[10px] text-gray-500 mt-2" id="discount-helper">Diskon promo hanya berlaku untuk paket Basic Plan.</p>
                     </div>
                     
                     <div class="p-4 border border-gray-800 bg-dark/60 rounded-xl">
@@ -408,6 +410,25 @@
         const coupleSection  = document.getElementById('couple-section');
         const submitLabel    = document.getElementById('submit-label');
         const radioInputs    = document.querySelectorAll('input[name="package_id"]');
+        const discountContainer = document.getElementById('discount-container');
+        const discountSelect    = document.getElementById('discount_category');
+        const discountHelper    = document.getElementById('discount-helper');
+
+        function togglePromo(packageName) {
+            const isBasicPlan = packageName && packageName.trim().toLowerCase() === 'basic plan';
+            if (discountSelect && discountContainer) {
+                if (isBasicPlan) {
+                    discountSelect.disabled = false;
+                    discountContainer.classList.remove('opacity-40', 'pointer-events-none');
+                    if (discountHelper) discountHelper.textContent = 'Diskon promo hanya berlaku untuk paket Basic Plan.';
+                } else {
+                    discountSelect.value = "0";
+                    discountSelect.disabled = true;
+                    discountContainer.classList.add('opacity-40', 'pointer-events-none');
+                    if (discountHelper) discountHelper.textContent = 'Promo diskon tidak tersedia untuk paket ini (khusus Basic Plan).';
+                }
+            }
+        }
 
         function toggleCoupleSection(maxMembers) {
             const isCouple = parseInt(maxMembers) >= 2;
@@ -435,12 +456,16 @@
         radioInputs.forEach(radio => {
             radio.addEventListener('change', function () {
                 toggleCoupleSection(this.dataset.maxMembers || 1);
+                togglePromo(this.dataset.name || '');
             });
         });
 
         const checkedRadio = document.querySelector('input[name="package_id"]:checked');
         if (checkedRadio) {
             toggleCoupleSection(checkedRadio.dataset.maxMembers || 1);
+            togglePromo(checkedRadio.dataset.name || '');
+        } else {
+            togglePromo('');
         }
 
         // Setup Webcam

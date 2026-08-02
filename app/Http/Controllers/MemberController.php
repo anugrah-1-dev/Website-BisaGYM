@@ -112,7 +112,8 @@ class MemberController extends Controller
         );
 
         // ── Perhitungan Diskon & Admin Fee (Khusus Registrasi Baru) ──
-        $discountPercentage = (int) $request->input('discount_category', 0);
+        $isBasicPlan = strtolower(trim($package->name)) === 'basic plan';
+        $discountPercentage = $isBasicPlan ? (int) $request->input('discount_category', 0) : 0;
         $discountAmount = ($package->price * $discountPercentage) / 100;
         $adminFee = $package->admin_fee;
         $finalAmount = ($package->price - $discountAmount) + $adminFee;
@@ -224,7 +225,8 @@ class MemberController extends Controller
         $paymentStatus = $request->payment_status;
         $memberStatus = ($paymentStatus === 'paid') ? 'active' : 'pending';
 
-        $discountPercentage = (int) $request->input('discount_category', 0);
+        $isBasicPlan = strtolower(trim($package->name)) === 'basic plan';
+        $discountPercentage = $isBasicPlan ? (int) $request->input('discount_category', 0) : 0;
         $discountAmount = ($package->price * $discountPercentage) / 100;
         $adminFee = $package->admin_fee;
         $finalAmount = ($package->price - $discountAmount) + $adminFee;
