@@ -33,16 +33,28 @@
         {{-- ══════════════════════════════════════════════════════════
              SECTION 1: ID MEMBER & STATUS PEMBAYARAN
         ══════════════════════════════════════════════════════════ --}}
-        <div class="bg-card rounded-xl border border-neon/30 p-6 shadow-xl relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-neon/5 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="bg-card rounded-2xl border border-neon/30 p-6 md:p-8 shadow-xl relative overflow-hidden space-y-6">
+            <div class="absolute top-0 right-0 w-48 h-48 bg-neon/5 rounded-full blur-3xl pointer-events-none"></div>
 
-            <h3 class="text-white font-semibold mb-4 border-b border-gray-800 pb-2 flex items-center gap-2 text-lg">
-                <i class="ph ph-identification-card text-neon text-2xl"></i> Identitas ID Member & Status Pembayaran
-            </h3>
+            <div class="flex items-center justify-between border-b border-gray-800/80 pb-4">
+                <h3 class="text-white font-semibold text-lg md:text-xl flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-neon/10 border border-neon/30 text-neon flex items-center justify-center shrink-0">
+                        <i class="ph ph-identification-card text-xl"></i>
+                    </div>
+                    <span>Identitas ID Member & Status Pembayaran</span>
+                </h3>
+                <span class="text-xs font-semibold text-neon/80 bg-neon/10 border border-neon/20 px-3 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">
+                    Input Manual ID
+                </span>
+            </div>
 
             @if ($errors->any())
-                <div class="mb-4 p-4 rounded-lg bg-red-500/10 border border-red-500/50 text-red-400 text-sm">
-                    <ul class="list-disc list-inside">
+                <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/50 text-red-400 text-sm space-y-1">
+                    <div class="font-bold flex items-center gap-2 mb-1">
+                        <i class="ph ph-warning-circle text-lg"></i>
+                        <span>Mohon periksa kembali inputan Anda:</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 pl-2">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -50,40 +62,79 @@
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="member_id" class="block text-sm font-semibold text-neon mb-1">
-                        <i class="ph ph-barcode mr-1"></i> ID Member Lama / Barcode ID <span class="text-red-400">*</span>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {{-- Field 1: ID Member Lama (Col 5) --}}
+                <div class="lg:col-span-5 space-y-2">
+                    <label for="member_id" class="block text-sm font-semibold text-neon flex items-center gap-2">
+                        <i class="ph ph-barcode text-lg"></i>
+                        <span>ID Member Lama / Barcode ID</span>
+                        <span class="text-red-400 font-bold">*</span>
                     </label>
+
                     <div class="relative">
                         <input type="text" id="member_id" name="member_id" autocomplete="off" value="{{ old('member_id') }}" required
-                            class="w-full border-2 border-neon/50 rounded-lg bg-dark text-white font-mono text-base focus:ring-neon focus:border-neon tracking-wider pl-10"
+                            class="w-full border-2 border-neon/40 rounded-xl bg-dark text-white font-mono text-base md:text-lg focus:ring-neon focus:border-neon tracking-wider pl-11 pr-4 py-3 shadow-inner"
                             placeholder="Contoh: MBR-00123 / 89201923">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="ph ph-qr-code text-neon text-lg"></i>
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neon">
+                            <i class="ph ph-qr-code text-xl"></i>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1">Ketik atau scan barcode ID lama milik member. Harus unik.</p>
+                    <p class="text-xs text-gray-400 flex items-center gap-1.5 pt-1">
+                        <i class="ph ph-info text-neon/70 text-sm"></i>
+                        <span>Ketik atau scan barcode ID lama milik member. Harus unik.</span>
+                    </p>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-semibold text-neon mb-2">
-                        <i class="ph ph-wallet mr-1"></i> Status Pembayaran & Aktivasi
+                {{-- Field 2: Status Pembayaran & Aktivasi (Col 7) --}}
+                <div class="lg:col-span-7 space-y-2">
+                    <label class="block text-sm font-semibold text-neon flex items-center gap-2">
+                        <i class="ph ph-wallet text-lg"></i>
+                        <span>Status Pembayaran & Aktivasi</span>
+                        <span class="text-red-400 font-bold">*</span>
                     </label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="relative flex items-center p-3 rounded-lg border border-gray-700 bg-dark cursor-pointer hover:border-green-500/50 transition-all">
-                            <input type="radio" name="payment_status" value="paid" class="text-green-500 focus:ring-green-500 bg-dark border-gray-700" {{ old('payment_status', 'paid') == 'paid' ? 'checked' : '' }}>
-                            <div class="ml-3 text-xs">
-                                <span class="block font-bold text-green-400">Sudah Lunas (Aktif)</span>
-                                <span class="text-gray-400">Migrasi data aktif</span>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                        {{-- Option 1: Sudah Lunas --}}
+                        <label class="relative block cursor-pointer group" for="pay_paid">
+                            <input type="radio" id="pay_paid" name="payment_status" value="paid" class="peer sr-only" {{ old('payment_status', 'paid') == 'paid' ? 'checked' : '' }}>
+                            
+                            <div class="rounded-xl border-2 border-gray-700 bg-dark p-4 shadow-sm transition-all duration-200
+                                        peer-checked:border-green-500 peer-checked:bg-green-500/10 peer-checked:shadow-green-500/20 peer-checked:shadow-md
+                                        group-hover:border-green-500/50 flex items-start gap-3.5 h-full">
+                                <div class="w-9 h-9 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="ph ph-check-circle text-xl"></i>
+                                </div>
+                                <div class="flex-1 space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-sm text-green-400">Sudah Lunas (Aktif)</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 leading-relaxed">
+                                        Member langsung aktif untuk migrasi data lama.
+                                    </p>
+                                </div>
+                                <i class="ph-fill ph-check-circle text-green-400 text-xl opacity-0 peer-checked:opacity-100 transition-opacity shrink-0"></i>
                             </div>
                         </label>
 
-                        <label class="relative flex items-center p-3 rounded-lg border border-gray-700 bg-dark cursor-pointer hover:border-yellow-500/50 transition-all">
-                            <input type="radio" name="payment_status" value="unpaid" class="text-yellow-500 focus:ring-yellow-500 bg-dark border-gray-700" {{ old('payment_status') == 'unpaid' ? 'checked' : '' }}>
-                            <div class="ml-3 text-xs">
-                                <span class="block font-bold text-yellow-400">Belum Lunas (Kasir)</span>
-                                <span class="text-gray-400">Masuk tagihan Kasir</span>
+                        {{-- Option 2: Belum Lunas --}}
+                        <label class="relative block cursor-pointer group" for="pay_unpaid">
+                            <input type="radio" id="pay_unpaid" name="payment_status" value="unpaid" class="peer sr-only" {{ old('payment_status') == 'unpaid' ? 'checked' : '' }}>
+                            
+                            <div class="rounded-xl border-2 border-gray-700 bg-dark p-4 shadow-sm transition-all duration-200
+                                        peer-checked:border-yellow-500 peer-checked:bg-yellow-500/10 peer-checked:shadow-yellow-500/20 peer-checked:shadow-md
+                                        group-hover:border-yellow-500/50 flex items-start gap-3.5 h-full">
+                                <div class="w-9 h-9 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="ph ph-clock text-xl"></i>
+                                </div>
+                                <div class="flex-1 space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-sm text-yellow-400">Belum Lunas (Kasir)</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 leading-relaxed">
+                                        Status pending, tagihan diproses di Kasir.
+                                    </p>
+                                </div>
+                                <i class="ph-fill ph-check-circle text-yellow-400 text-xl opacity-0 peer-checked:opacity-100 transition-opacity shrink-0"></i>
                             </div>
                         </label>
                     </div>
