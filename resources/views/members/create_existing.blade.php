@@ -96,46 +96,48 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                         {{-- Option 1: Sudah Lunas --}}
                         <label class="relative block cursor-pointer group" for="pay_paid">
-                            <input type="radio" id="pay_paid" name="payment_status" value="paid" class="peer sr-only" {{ old('payment_status', 'paid') == 'paid' ? 'checked' : '' }}>
+                            <input type="radio" id="pay_paid" name="payment_status" value="paid" class="peer appearance-none opacity-0 absolute w-0 h-0 pointer-events-none" {{ old('payment_status', 'paid') == 'paid' ? 'checked' : '' }}>
                             
                             <div class="rounded-xl border-2 border-gray-700 bg-dark p-4 shadow-sm transition-all duration-200
                                         peer-checked:border-green-500 peer-checked:bg-green-500/10 peer-checked:shadow-green-500/20 peer-checked:shadow-md
-                                        group-hover:border-green-500/50 flex items-start gap-3.5 h-full">
-                                <div class="w-9 h-9 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 mt-0.5">
-                                    <i class="ph ph-check-circle text-xl"></i>
-                                </div>
-                                <div class="flex-1 space-y-1">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-bold text-sm text-green-400">Sudah Lunas (Aktif)</span>
+                                        group-hover:border-green-500/50 flex flex-col justify-between h-full space-y-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center shrink-0">
+                                        <i class="ph ph-check-circle text-lg"></i>
                                     </div>
-                                    <p class="text-xs text-gray-400 leading-relaxed">
-                                        Member langsung aktif untuk migrasi data lama.
-                                    </p>
+                                    <span class="font-bold text-sm text-green-400">Sudah Lunas (Aktif)</span>
                                 </div>
-                                <i class="ph-fill ph-check-circle text-green-400 text-xl opacity-0 peer-checked:opacity-100 transition-opacity shrink-0"></i>
+                                <p class="text-xs text-gray-400 leading-relaxed pl-11">
+                                    Member langsung aktif untuk migrasi data lama.
+                                </p>
                             </div>
+
+                            <i class="ph-fill ph-check-circle text-green-400 text-xl
+                                      opacity-0 peer-checked:opacity-100 transition-all duration-200
+                                      absolute top-3.5 right-3.5 drop-shadow-[0_0_6px_rgba(34,197,94,0.8)]"></i>
                         </label>
 
                         {{-- Option 2: Belum Lunas --}}
                         <label class="relative block cursor-pointer group" for="pay_unpaid">
-                            <input type="radio" id="pay_unpaid" name="payment_status" value="unpaid" class="peer sr-only" {{ old('payment_status') == 'unpaid' ? 'checked' : '' }}>
+                            <input type="radio" id="pay_unpaid" name="payment_status" value="unpaid" class="peer appearance-none opacity-0 absolute w-0 h-0 pointer-events-none" {{ old('payment_status') == 'unpaid' ? 'checked' : '' }}>
                             
                             <div class="rounded-xl border-2 border-gray-700 bg-dark p-4 shadow-sm transition-all duration-200
                                         peer-checked:border-yellow-500 peer-checked:bg-yellow-500/10 peer-checked:shadow-yellow-500/20 peer-checked:shadow-md
-                                        group-hover:border-yellow-500/50 flex items-start gap-3.5 h-full">
-                                <div class="w-9 h-9 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center shrink-0 mt-0.5">
-                                    <i class="ph ph-clock text-xl"></i>
-                                </div>
-                                <div class="flex-1 space-y-1">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-bold text-sm text-yellow-400">Belum Lunas (Kasir)</span>
+                                        group-hover:border-yellow-500/50 flex flex-col justify-between h-full space-y-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center shrink-0">
+                                        <i class="ph ph-clock text-lg"></i>
                                     </div>
-                                    <p class="text-xs text-gray-400 leading-relaxed">
-                                        Status pending, tagihan diproses di Kasir.
-                                    </p>
+                                    <span class="font-bold text-sm text-yellow-400">Belum Lunas (Kasir)</span>
                                 </div>
-                                <i class="ph-fill ph-check-circle text-yellow-400 text-xl opacity-0 peer-checked:opacity-100 transition-opacity shrink-0"></i>
+                                <p class="text-xs text-gray-400 leading-relaxed pl-11">
+                                    Status pending, tagihan diproses di Kasir.
+                                </p>
                             </div>
+
+                            <i class="ph-fill ph-check-circle text-yellow-400 text-xl
+                                      opacity-0 peer-checked:opacity-100 transition-all duration-200
+                                      absolute top-3.5 right-3.5 drop-shadow-[0_0_6px_rgba(234,179,8,0.8)]"></i>
                         </label>
                     </div>
                 </div>
