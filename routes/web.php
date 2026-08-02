@@ -20,6 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/members/register-existing', [\App\Http\Controllers\MemberController::class, 'createExisting'])->name('members.create-existing');
+    Route::post('/members/store-existing', [\App\Http\Controllers\MemberController::class, 'storeExisting'])->name('members.store-existing');
     Route::resource('members', \App\Http\Controllers\MemberController::class);
     Route::get('/members/{member}/ecard', [\App\Http\Controllers\MemberController::class, 'ecard'])->name('members.ecard');
     Route::post('/members/{member}/renewal', [\App\Http\Controllers\MemberController::class, 'renewal'])->name('members.renewal');

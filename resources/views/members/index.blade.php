@@ -11,10 +11,16 @@
             <input type="text" name="search" value="{{ request('search') }}" class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-dark text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon transition-colors" placeholder="Cari nama, NIK, atau ID VIP...">
         </form>
         
-        <a href="{{ route('members.create') }}" class="flex items-center space-x-2 bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-neon/20 w-full md:w-auto justify-center">
-            <i class="ph ph-user-plus text-xl"></i>
-            <span>Registrasi Member Baru</span>
-        </a>
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <a href="{{ route('members.create-existing') }}" class="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 text-neon border border-neon/30 font-bold py-2 px-4 rounded-lg transition-colors shadow-md w-full sm:w-auto justify-center">
+                <i class="ph ph-identification-card text-xl"></i>
+                <span>Registrasi Member Lama</span>
+            </a>
+            <a href="{{ route('members.create') }}" class="flex items-center space-x-2 bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-neon/20 w-full sm:w-auto justify-center">
+                <i class="ph ph-user-plus text-xl"></i>
+                <span>Registrasi Member Baru</span>
+            </a>
+        </div>
     </div>
 
     @if(session('success'))

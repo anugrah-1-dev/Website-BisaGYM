@@ -164,6 +164,141 @@ class MemberController extends Controller
         return redirect()->route('members.index')->with('success', $successMsg);
     }
 
+    public function createExisting()
+    {
+        $packages = GymPackage::where('is_active', true)->get();
+        return view('members.create_existing', compact('packages'));
+    }
+
+    public function storeExisting(Request $request)
+    {
+        $package = GymPackage::findOrFail($request->package_id);
+        $isCouple = $package->max_members >= 2;
+
+        $rules = [
+            'member_id'       => 'required|string|max:50|unique:members,member_id',
+            'name'            => 'required|string|min:3',
+            'place_of_birth'  => 'required|string',
+            'date_of_birth'   => 'required|date|before_or_equal:' . Carbon::now()->subYears(5)->format('Y-m-d'),
+            'gender'          => 'required|in:L,P',
+            'nik'             => 'required|string|size:16|unique:members,nik',
+            'job'             => 'nullable|string',
+            'address'         => 'required|string',
+            'phone'           => 'required|string',
+            'email'           => 'required|email|unique:members,email',
+            'photo_data'      => 'nullable|string',
+            'package_id'      => 'required|exists:gym_packages,id',
+            'activation_date' => 'required|date',
+            'expiry_date'     => 'required|date|after_or_equal:activation_date',
+            'payment_status'  => 'required|in:paid,unpaid',
+        ];
+
+        if ($isCouple) {
+            $rules['member2_member_id']     = 'required|string|max:50|unique:members,member_id|different:member_id';
+            $rules['member2_name']          = 'required|string|min:3';
+            $rules['member2_place_of_birth']= 'required|string';
+            $rules['member2_date_of_birth'] = 'required|date|before_or_equal:' . Carbon::now()->subYears(5)->format('Y-m-d');
+            $rules['member2_gender']        = 'required|in:L,P';
+            $rules['member2_nik']           = 'required|string|size:16|unique:members,nik';
+            $rules['member2_job']           = 'nullable|string';
+            $rules['member2_address']       = 'required|string';
+            $rules['member2_phone']         = 'required|string';
+            $rules['member2_email']         = 'required|email|unique:members,email';
+            $rules['member2_photo_data']    = 'nullable|string';
+        }
+
+        $request->validate($rules, [
+            'member_id.unique'                       => 'ID Member ini sudah terdaftar di sistem.',
+            'member2_member_id.unique'               => 'ID Member ke-2 ini sudah terdaftar di sistem.',
+            'member2_member_id.different'            => 'ID Member ke-2 tidak boleh sama dengan ID Member pertama.',
+            'date_of_birth.before_or_equal'          => 'Umur member minimal 5 tahun.',
+            'member2_date_of_birth.before_or_equal'  => 'Umur member ke-2 minimal 5 tahun.',
+            'nik.size'                               => 'NIK harus tepat 16 digit angka.',
+            'member2_nik.size'                       => 'NIK member ke-2 harus tepat 16 digit angka.',
+            'expiry_date.after_or_equal'             => 'Tanggal Expired harus sama atau setelah Tanggal Aktif.',
+        ]);
+
+        $now = now();
+        $activationDate = Carbon::parse($request->activation_date);
+        $expiryDate = Carbon::parse($request->expiry_date);
+        $paymentStatus = $request->payment_status;
+        $memberStatus = ($paymentStatus === 'paid') ? 'active' : 'pending';
+
+        $discountPercentage = (int) $request->input('discount_category', 0);
+        $discountAmount = ($package->price * $discountPercentage) / 100;
+        $adminFee = $package->admin_fee;
+        $finalAmount = ($package->price - $discountAmount) + $adminFee;
+
+        // ── Buat Member Pertama dengan Manual ID ──
+        $member1 = $this->createMember(
+            vipId: trim($request->member_id),
+            data: [
+                'name'           => $request->name,
+                'place_of_birth' => $request->place_of_birth,
+                'date_of_birth'  => $request->date_of_birth,
+                'gender'         => $request->gender,
+                'nik'            => $request->nik,
+                'job'            => $request->job,
+                'address'        => $request->address,
+                'phone'          => $request->phone,
+                'email'          => $request->email,
+                'photo_data'     => $request->photo_data,
+            ],
+            package: $package,
+            now: $now,
+            activationDate: $activationDate,
+            expiryDate: $expiryDate,
+            status: $memberStatus,
+        );
+
+        $transactionCode = ($isCouple ? 'CPL-MIG-' : 'TRX-MIG-') . time() . '-' . rand(100, 999);
+        MemberTransaction::create([
+            'transaction_code'    => $transactionCode,
+            'member_id'           => $member1->id,
+            'gym_package_id'      => $package->id,
+            'user_id'             => Auth::id(),
+            'amount'              => $finalAmount,
+            'discount_percentage' => $discountPercentage,
+            'admin_fee'           => $adminFee,
+            'transaction_date'    => $now,
+            'transaction_type'    => 'new',
+            'payment_status'      => $paymentStatus,
+            'payment_method'      => $paymentStatus === 'paid' ? 'cash' : null,
+        ]);
+
+        \App\Models\ActivityLog::log('CREATE', 'Manajemen Member', "Registrasi member lama/migrasi ID manual: {$member1->name} ({$member1->member_id}) - Status: " . strtoupper($memberStatus));
+
+        $successMsg = 'Member Lama berhasil didaftarkan! ID: ' . $member1->member_id;
+
+        if ($isCouple) {
+            $member2 = $this->createMember(
+                vipId: trim($request->member2_member_id),
+                data: [
+                    'name'           => $request->member2_name,
+                    'place_of_birth' => $request->member2_place_of_birth,
+                    'date_of_birth'  => $request->member2_date_of_birth,
+                    'gender'         => $request->member2_gender,
+                    'nik'            => $request->member2_nik,
+                    'job'            => $request->member2_job,
+                    'address'        => $request->member2_address,
+                    'phone'          => $request->member2_phone,
+                    'email'          => $request->member2_email,
+                    'photo_data'     => $request->member2_photo_data,
+                ],
+                package: $package,
+                now: $now,
+                activationDate: $activationDate,
+                expiryDate: $expiryDate,
+                status: $memberStatus,
+            );
+
+            \App\Models\ActivityLog::log('CREATE', 'Manajemen Member', "Registrasi member lama (Couple 2) ID manual: {$member2->name} ({$member2->member_id})");
+            $successMsg .= ' & ' . $member2->member_id . ' (Couple)';
+        }
+
+        return redirect()->route('members.index')->with('success', $successMsg);
+    }
+
     /**
      * Helper: buat satu member + generate QR code.
      */
@@ -173,7 +308,8 @@ class MemberController extends Controller
         GymPackage $package,
         Carbon $now,
         Carbon $activationDate,
-        Carbon $expiryDate
+        Carbon $expiryDate,
+        string $status = 'pending'
     ): Member {
         // Process photo
         $photoPath = null;
@@ -209,7 +345,7 @@ class MemberController extends Controller
             'registration_date'=> $now,
             'activation_date'  => $activationDate,
             'expiry_date'      => $expiryDate,
-            'status'          => 'pending',
+            'status'          => $status,
             'extension_count' => 0,
         ]);
 
