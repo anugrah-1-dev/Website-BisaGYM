@@ -1,27 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-neon/10 border border-neon/20 flex items-center justify-center text-neon shadow-[0_0_15px_rgba(224,255,0,0.15)]">
-                    <i class="ph ph-package text-2xl"></i>
-                </div>
-                <div>
-                    <h2 class="text-xl font-bold text-white">{{ __('Inventaris & Stok Snack') }}</h2>
-                    <p class="text-xs text-gray-400">Manajemen Stok Gudang, Stok Kulkas POS, dan Laporan Riwayat Restok</p>
-                </div>
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-neon/10 border border-neon/20 flex items-center justify-center text-neon shadow-[0_0_10px_rgba(224,255,0,0.15)]">
+                <i class="ph ph-package text-xl"></i>
             </div>
-
-            <!-- Header Quick Action Buttons -->
-            <div class="flex flex-wrap items-center gap-2">
-                <button type="button" onclick="openIncomingModal()" class="bg-dark hover:bg-gray-800 text-neon border border-neon/30 hover:border-neon font-semibold py-2 px-3.5 rounded-xl transition-all text-xs flex items-center shadow-md active:scale-95">
-                    <i class="ph ph-plus-circle text-base mr-1.5"></i> + Barang Masuk (Supplier)
-                </button>
-                <button type="button" onclick="openRefillModal()" class="bg-dark hover:bg-gray-800 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 font-semibold py-2 px-3.5 rounded-xl transition-all text-xs flex items-center shadow-md active:scale-95">
-                    <i class="ph ph-arrows-down-up text-base mr-1.5"></i> ❄️ Refill Ke Kulkas
-                </button>
-                <a href="{{ route('snacks.create') }}" class="bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-4 rounded-xl transition-all hover:shadow-[0_0_15px_rgba(224,255,0,0.2)] text-xs flex items-center active:scale-95">
-                    <i class="ph ph-sparkle text-base mr-1.5"></i> Tambah Produk Baru
-                </a>
+            <div>
+                <h2 class="text-lg font-bold text-white leading-tight">{{ __('Inventaris & Stok Snack') }}</h2>
+                <p class="text-[11px] text-gray-400">Manajemen Stok Gudang, Stok Kulkas POS, dan Laporan Restok</p>
             </div>
         </div>
     </x-slot>
@@ -45,6 +30,29 @@
     @endif
 
     <div x-data="{ activeTab: 'stok' }" class="space-y-6">
+
+        <!-- Action Control Banner (Non-overlapping header action toolbar) -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-card rounded-2xl border border-gray-800 p-4 md:p-5 shadow-lg">
+            <div>
+                <h3 class="text-white font-bold text-base flex items-center gap-2">
+                    <i class="ph ph-sliders text-neon"></i> Kontrol Stok & Mutasi Snack
+                </h3>
+                <p class="text-xs text-gray-400 mt-0.5">Tambah produk baru, catat barang masuk dari supplier, atau refill kulkas POS</p>
+            </div>
+
+            <!-- Action Buttons Toolbar -->
+            <div class="flex flex-wrap items-center gap-2.5">
+                <button type="button" onclick="openIncomingModal()" class="bg-dark hover:bg-gray-800 text-neon border border-neon/30 hover:border-neon font-semibold py-2 px-3.5 rounded-xl transition-all text-xs flex items-center shadow-md active:scale-95">
+                    <i class="ph ph-plus-circle text-base mr-1.5"></i> + Barang Masuk (Supplier)
+                </button>
+                <button type="button" onclick="openRefillModal()" class="bg-dark hover:bg-gray-800 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 font-semibold py-2 px-3.5 rounded-xl transition-all text-xs flex items-center shadow-md active:scale-95">
+                    <i class="ph ph-arrows-down-up text-base mr-1.5"></i> ❄️ Refill Ke Kulkas
+                </button>
+                <a href="{{ route('snacks.create') }}" class="bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-4 rounded-xl transition-all hover:shadow-[0_0_15px_rgba(224,255,0,0.2)] text-xs flex items-center active:scale-95">
+                    <i class="ph ph-sparkle text-base mr-1.5"></i> Tambah Produk Baru
+                </a>
+            </div>
+        </div>
 
         <!-- Top Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -129,7 +137,7 @@
                                     <p class="font-semibold text-white group-hover:text-neon transition-colors">{{ $snack->name }}</p>
                                     <p class="text-xs font-mono text-gray-500">{{ $snack->snack_code }}</p>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2.5 py-1 text-xs bg-gray-900 border border-gray-800 rounded-lg text-gray-300 font-medium">
                                         @if($snack->category === 'Minuman') 🥤 Minuman
                                         @elseif($snack->category === 'Makanan') 🍫 Makanan
@@ -169,10 +177,10 @@
                                     {{ $snack->stock_gudang + $snack->stock_kulkas }}
                                 </td>
 
-                                <td class="px-6 py-4 text-gray-400 font-mono text-xs">Rp {{ number_format($snack->capital_price, 0, ',', '.') }}</td>
-                                <td class="px-6 py-4 text-neon font-bold font-mono text-xs">Rp {{ number_format($snack->selling_price, 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 text-gray-400 font-mono text-xs whitespace-nowrap">Rp {{ number_format($snack->capital_price, 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 text-neon font-bold font-mono text-xs whitespace-nowrap">Rp {{ number_format($snack->selling_price, 0, ',', '.') }}</td>
 
-                                <td class="px-6 py-4 text-right">
+                                <td class="px-6 py-4 text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end space-x-1.5">
                                         <!-- Button Refill Ke Kulkas -->
                                         <button type="button" onclick="openRefillModal({{ $snack->id }}, '{{ addslashes($snack->name) }}', {{ $snack->stock_gudang }})"
@@ -244,7 +252,7 @@
                                 <td class="px-6 py-4 font-mono text-xs text-gray-300 whitespace-nowrap">
                                     {{ \Carbon\Carbon::parse($r->restock_date)->format('d M Y, H:i') }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     @if($r->type === 'incoming_supplier')
                                         <span class="px-2.5 py-1 text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/30 rounded-lg inline-flex items-center gap-1">
                                             <i class="ph ph-arrow-down-left"></i> Barang Masuk (Supplier)
@@ -255,11 +263,11 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     <p class="font-semibold text-white">{{ $r->snack->name ?? '-' }}</p>
                                     <p class="text-xs font-mono text-gray-500">{{ $r->snack->snack_code ?? '' }}</p>
                                 </td>
-                                <td class="px-6 py-4 text-center font-mono font-bold">
+                                <td class="px-6 py-4 text-center font-mono font-bold whitespace-nowrap">
                                     @if($r->type === 'incoming_supplier')
                                         @if($r->qty_gudang > 0)
                                             <span class="text-amber-400">+{{ $r->qty_gudang }} Gudang</span>
@@ -270,14 +278,14 @@
                                         <span class="text-cyan-400 font-semibold">{{ $r->qty_kulkas }} Pcs <span class="text-[10px] text-gray-400 font-normal">(Gudang ➔ Kulkas)</span></span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 font-mono text-xs text-gray-400">
+                                <td class="px-6 py-4 font-mono text-xs text-gray-400 whitespace-nowrap">
                                     @if($r->type === 'incoming_supplier')
                                         Rp {{ number_format($r->capital_price, 0, ',', '.') }}
                                     @else
                                         <span class="text-gray-600">-</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 font-mono text-xs">
+                                <td class="px-6 py-4 font-mono text-xs whitespace-nowrap">
                                     @if($r->type === 'incoming_supplier')
                                         <span class="text-neon font-bold">Rp {{ number_format($r->total_cost, 0, ',', '.') }}</span>
                                     @else
