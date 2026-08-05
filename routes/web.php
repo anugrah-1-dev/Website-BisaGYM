@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', [\App\Http\Controllers\PosController::class, 'index'])->name('pos.index');
     Route::post('/pos/checkout', [\App\Http\Controllers\PosController::class, 'checkout'])->name('pos.checkout');
 
+    Route::post('/snacks/incoming', [\App\Http\Controllers\SnackController::class, 'storeIncoming'])->name('snacks.incoming')->middleware('role:admin|developer|kasir|penjaga');
+    Route::post('/snacks/refill-kulkas', [\App\Http\Controllers\SnackController::class, 'refillKulkas'])->name('snacks.refill-kulkas')->middleware('role:admin|developer|kasir|penjaga');
     Route::resource('snacks', \App\Http\Controllers\SnackController::class)->middleware('role:admin|developer|kasir|penjaga');
 
     Route::get('/transactions', [\App\Http\Controllers\TransactionController::class, 'index'])->name('transactions.index');

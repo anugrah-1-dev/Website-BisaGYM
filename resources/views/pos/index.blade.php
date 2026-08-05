@@ -71,7 +71,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
                     @foreach($snacks as $snack)
                         <button type="button" 
-                            @click="addItem({{ $snack->id }}, '{{ addslashes($snack->name) }}', {{ $snack->selling_price }}, {{ $snack->stock }})"
+                            @click="addItem({{ $snack->id }}, '{{ addslashes($snack->name) }}', {{ $snack->selling_price }}, {{ $snack->stock_kulkas }})"
                             x-show="(selectedCategory === 'all' || '{{ strtolower($snack->category) }}' === selectedCategory) && (search === '' || '{{ strtolower($snack->name) }}'.includes(search.toLowerCase()))"
                             class="bg-dark hover:bg-gray-800/80 border border-gray-800/80 hover:border-neon/60 rounded-2xl p-4 text-center transition-all duration-200 group flex flex-col items-center justify-between min-h-[170px] shadow-md relative overflow-hidden active:scale-95">
                             
@@ -86,7 +86,7 @@
                             <div class="w-full flex flex-col justify-end">
                                 <p class="text-xs font-semibold text-white leading-snug mb-2 group-hover:text-neon transition-colors line-clamp-2">{{ $snack->name }}</p>
                                 <div class="flex items-center justify-between w-full pt-2 border-t border-gray-800/60 text-xs">
-                                    <span class="text-[10px] text-gray-400 font-mono bg-gray-900 px-2 py-0.5 rounded border border-gray-800">Stok: {{ $snack->stock }}</span>
+                                    <span class="text-[10px] text-gray-400 font-mono bg-gray-900 px-2 py-0.5 rounded border border-gray-800">Stok Kulkas: {{ $snack->stock_kulkas }}</span>
                                     <span class="text-neon font-bold font-mono">Rp{{ number_format($snack->selling_price, 0, ',', '.') }}</span>
                                 </div>
                             </div>

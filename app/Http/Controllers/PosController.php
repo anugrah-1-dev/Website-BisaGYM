@@ -14,7 +14,7 @@ class PosController extends Controller
 {
     public function index()
     {
-        $snacks = Snack::where('stock', '>', 0)->orderBy('category')->get();
+        $snacks = Snack::where('stock_kulkas', '>', 0)->orderBy('category')->get();
         return view('pos.index', compact('snacks'));
     }
 
@@ -45,9 +45,9 @@ class PosController extends Controller
                 $snack = Snack::findOrFail($item['snack_id']);
                 $qty = (int) $item['qty'];
 
-                if ($snack->stock < $qty) {
+                if ($snack->stock_kulkas < $qty) {
                     DB::rollBack();
-                    return back()->withErrors(['error' => "Stok {$snack->name} tidak mencukupi. Tersisa: {$snack->stock}"]);
+                    return back()->withErrors(['error' => "Stok di kulkas untuk {$snack->name} tidak mencukupi. Tersisa di kulkas: {$snack->stock_kulkas} Pcs"]);
                 }
 
                 $subtotal = $snack->selling_price * $qty;
@@ -61,8 +61,11 @@ class PosController extends Controller
                     'subtotal' => $subtotal,
                 ]);
 
-                // Kurangi stok
-                $snack->decrement('stock', $qty);
+                // Kurangi stok kulkas
+                $snack->decrement('stock_kulkas', $qty);
+                $snack->refresh();
+                $snack->stock = ($snack->stock_gudang ?? 0) + ($snack->stock_kulkas ?? 0);
+                $snack->save();
             }
 
             if ($request->payment_method === 'cash' && $request->filled('cash_given')) {

@@ -12,4 +12,15 @@ class Snack extends Model
     {
         return $this->hasMany(SnackTransactionDetail::class);
     }
+
+    public function restocks()
+    {
+        return $this->hasMany(SnackRestock::class);
+    }
+
+    public function getTotalStockAttribute()
+    {
+        return ($this->stock_gudang ?? 0) + ($this->stock_kulkas ?? 0);
+    }
 }
+

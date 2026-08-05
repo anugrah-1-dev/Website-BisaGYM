@@ -37,16 +37,20 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Harga Modal (Rp)</label>
-                        <input type="number" name="capital_price" value="{{ old('capital_price', $snack->capital_price ?? '') }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Harga Modal Unit (Rp)</label>
+                        <input type="number" name="capital_price" value="{{ old('capital_price', $snack->capital_price ?? '') }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm font-mono">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Harga Jual (Rp)</label>
-                        <input type="number" name="selling_price" value="{{ old('selling_price', $snack->selling_price ?? '') }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Harga Jual Unit (Rp)</label>
+                        <input type="number" name="selling_price" value="{{ old('selling_price', $snack->selling_price ?? '') }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm font-mono">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Jumlah Stok</label>
-                        <input type="number" name="stock" value="{{ old('stock', $snack->stock ?? 0) }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                        <label class="block text-sm font-medium text-amber-400 mb-1">Stok Cadangan Gudang</label>
+                        <input type="number" name="stock_gudang" value="{{ old('stock_gudang', $snack->stock_gudang ?? 0) }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-amber-400 focus:border-amber-400 text-sm font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-cyan-400 mb-1">Stok Display Kulkas (POS)</label>
+                        <input type="number" name="stock_kulkas" value="{{ old('stock_kulkas', $snack->stock_kulkas ?? 0) }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-cyan-400 focus:border-cyan-400 text-sm font-mono">
                     </div>
                 </div>
                 
