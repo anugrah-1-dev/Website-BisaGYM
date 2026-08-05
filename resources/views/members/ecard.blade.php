@@ -33,7 +33,7 @@
             gap: 12px;
             justify-content: center;
             align-items: center;
-            max-width: 650px;
+            max-width: 750px;
             width: 100%;
             z-index: 100;
         }
@@ -60,6 +60,9 @@
 
         .btn-dl-card { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
         .btn-dl-card:hover { background: linear-gradient(135deg, #059669, #047857); }
+
+        .btn-dl-photo { background: linear-gradient(135deg, #a855f7, #9333ea); color: #fff; }
+        .btn-dl-photo:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
 
         .btn-dl-qr { background: #06b6d4; color: #fff; }
         .btn-dl-qr:hover { background: #0891b2; }
@@ -447,6 +450,10 @@
             ↓ Download E-Card (PNG)
         </button>
 
+        <button type="button" class="btn btn-dl-photo" id="btn-dl-photo">
+            📷 Download Foto Profile
+        </button>
+
         <button type="button" class="btn btn-dl-qr" id="btn-dl-qr">
             ↓ Download QR Code (PNG)
         </button>
@@ -586,6 +593,29 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
+        });
+
+        // ── Download Profile Photo PNG ──
+        document.getElementById('btn-dl-photo').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const photoEl = document.querySelector('.photo-avatar-img');
+            const imgTag = photoEl ? photoEl.querySelector('img') : null;
+            
+            if (imgTag && imgTag.src) {
+                html2canvas(photoEl, {
+                    scale: 4,
+                    backgroundColor: null,
+                    logging: false,
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `Foto_Profile_${memberVipId()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            } else {
+                alert('Member ini belum memiliki foto profil.');
+            }
         });
 
         // ── Download QR Code PNG ──
