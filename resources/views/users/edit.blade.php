@@ -47,58 +47,59 @@
 
                     @hasanyrole('admin|developer')
                     <!-- Developer Only Geofencing Settings -->
-                    <div class="pt-4 mt-4 border-t border-purple-900/50 bg-purple-950/20 p-4 rounded-lg border">
+                    <div class="pt-4 mt-4 border-t border-purple-900/50 bg-purple-950/20 p-4 rounded-lg border border-purple-800/40">
                         <input type="hidden" name="is_location_restricted_present" value="1">
-                        <div class="flex items-center justify-between mb-3">
-                            <div>
-                                <h4 class="text-purple-300 font-semibold text-sm flex items-center">
-                                    <i class="ph ph-map-pin-line text-lg mr-2"></i> Pembatasan Lokasi GPS (Geofencing Opsional Admin)
-                                </h4>
-                                <p class="text-xs text-gray-400">Diatur oleh Developer System. Jika diaktifkan, akun Admin wajib login di lokasi gym.</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <div>
+                                    <h4 class="text-purple-300 font-semibold text-sm flex items-center">
+                                        <i class="ph ph-map-pin-line text-lg mr-2 text-purple-400"></i> Pembatasan Lokasi GPS (Geofencing Opsional Admin)
+                                    </h4>
+                                    <p class="text-xs text-gray-400 mt-0.5">Diatur oleh Developer System. Jika diaktifkan, akun Admin wajib login di lokasi gym.</p>
+                                </div>
+                                <select name="is_location_restricted" id="toggle-geo-select" class="bg-darker border border-purple-500/50 text-purple-200 rounded-lg text-xs font-semibold px-3 py-2 focus:ring-purple-500 focus:border-purple-500 min-w-[200px]">
+                                    <option value="0" {{ old('is_location_restricted', $user->is_location_restricted ? '1' : '0') == '0' ? 'selected' : '' }}>🔴 NON-AKTIF (Bebas Login)</option>
+                                    <option value="1" {{ old('is_location_restricted', $user->is_location_restricted ? '1' : '0') == '1' ? 'selected' : '' }}>🟢 AKTIF (Wajib di Lokasi Gym)</option>
+                                </select>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="is_location_restricted" value="1" 
-                                    {{ old('is_location_restricted', $user->is_location_restricted) ? 'checked' : '' }} 
-                                    class="sr-only peer" id="toggle-geo">
-                                <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                            </label>
-                        </div>
 
-                        <div id="geo-details" class="space-y-4 mt-3 pt-3 border-t border-purple-900/40 {{ old('is_location_restricted', $user->is_location_restricted) ? '' : 'hidden' }}">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <x-input-label for="allowed_latitude" :value="__('Latitude Lokasi Target')" class="text-gray-300 text-xs" />
-                                    <x-text-input id="allowed_latitude" name="allowed_latitude" type="text" 
-                                        :value="old('allowed_latitude', $user->allowed_latitude ?? '-7.33405')" 
-                                        placeholder="-7.33405" 
-                                        class="block mt-1 w-full bg-darker border-gray-700 text-white text-xs" />
+                            <div id="geo-details" class="space-y-4 mt-3 pt-3 border-t border-purple-900/40 {{ old('is_location_restricted', $user->is_location_restricted ? '1' : '0') == '1' ? '' : 'hidden' }}">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <x-input-label for="allowed_latitude" :value="__('Latitude Lokasi Target')" class="text-gray-300 text-xs" />
+                                        <x-text-input id="allowed_latitude" name="allowed_latitude" type="text" 
+                                            :value="old('allowed_latitude', $user->allowed_latitude ?? '-7.33405')" 
+                                            placeholder="-7.33405" 
+                                            class="block mt-1 w-full bg-darker border-gray-700 text-white text-xs" />
+                                    </div>
+                                    <div>
+                                        <x-input-label for="allowed_longitude" :value="__('Longitude Lokasi Target')" class="text-gray-300 text-xs" />
+                                        <x-text-input id="allowed_longitude" name="allowed_longitude" type="text" 
+                                            :value="old('allowed_longitude', $user->allowed_longitude ?? '112.78255')" 
+                                            placeholder="112.78255" 
+                                            class="block mt-1 w-full bg-darker border-gray-700 text-white text-xs" />
+                                    </div>
                                 </div>
                                 <div>
-                                    <x-input-label for="allowed_longitude" :value="__('Longitude Lokasi Target')" class="text-gray-300 text-xs" />
-                                    <x-text-input id="allowed_longitude" name="allowed_longitude" type="text" 
-                                        :value="old('allowed_longitude', $user->allowed_longitude ?? '112.78255')" 
-                                        placeholder="112.78255" 
+                                    <x-input-label for="allowed_radius_meters" :value="__('Radius Maksimal (Meter)')" class="text-gray-300 text-xs" />
+                                    <x-text-input id="allowed_radius_meters" name="allowed_radius_meters" type="number" 
+                                        :value="old('allowed_radius_meters', $user->allowed_radius_meters ?? 500)" 
+                                        placeholder="500" 
                                         class="block mt-1 w-full bg-darker border-gray-700 text-white text-xs" />
+                                    <p class="text-[11px] text-purple-400 mt-1">Default: 500 meter dari BisaGym Surabaya (Jl. Dr. Ir. H. Soekarno No.678).</p>
                                 </div>
-                            </div>
-                            <div>
-                                <x-input-label for="allowed_radius_meters" :value="__('Radius Maksimal (Meter)')" class="text-gray-300 text-xs" />
-                                <x-text-input id="allowed_radius_meters" name="allowed_radius_meters" type="number" 
-                                    :value="old('allowed_radius_meters', $user->allowed_radius_meters ?? 500)" 
-                                    placeholder="500" 
-                                    class="block mt-1 w-full bg-darker border-gray-700 text-white text-xs" />
-                                <p class="text-[11px] text-purple-400 mt-1">Default: 500 meter dari BisaGym Surabaya (Jl. Dr. Ir. H. Soekarno No.678).</p>
                             </div>
                         </div>
                     </div>
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
-                            const toggle = document.getElementById('toggle-geo');
+                            const geoSelect = document.getElementById('toggle-geo-select');
                             const details = document.getElementById('geo-details');
-                            if (toggle && details) {
-                                toggle.addEventListener('change', function() {
-                                    if (this.checked) {
+                            if (geoSelect && details) {
+                                geoSelect.addEventListener('change', function() {
+                                    if (this.value === '1') {
                                         details.classList.remove('hidden');
                                     } else {
                                         details.classList.add('hidden');
