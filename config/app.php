@@ -122,4 +122,13 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Geofence Location (BisaGym Surabaya)
+    |--------------------------------------------------------------------------
+    */
+    'gym_latitude' => env('GYM_LATITUDE', -7.33405),
+    'gym_longitude' => env('GYM_LONGITUDE', 112.78255),
+    'gym_allowed_radius' => env('GYM_ALLOWED_RADIUS_METERS', 500),
+
 ];

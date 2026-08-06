@@ -38,12 +38,21 @@ class EmployeeController extends Controller
 
         $userId = null;
         if ($request->has('create_login') && $request->create_login) {
+            $isRestricted = auth()->user()->hasRole('developer') ? $request->boolean('is_location_restricted') : false;
+            $lat = (auth()->user()->hasRole('developer') && $request->filled('allowed_latitude')) ? $request->allowed_latitude : null;
+            $lng = (auth()->user()->hasRole('developer') && $request->filled('allowed_longitude')) ? $request->allowed_longitude : null;
+            $radius = (auth()->user()->hasRole('developer') && $request->filled('allowed_radius_meters')) ? (int)$request->allowed_radius_meters : 500;
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'username' => explode('@', $request->email)[0],
                 'password' => Hash::make($request->password),
                 'role' => 'penjaga', // Database enum hanya mendukung 'admin' dan 'penjaga'
+                'is_location_restricted' => $isRestricted,
+                'allowed_latitude' => $lat,
+                'allowed_longitude' => $lng,
+                'allowed_radius_meters' => $radius,
             ]);
             $user->assignRole('kasir'); // Role sebenarnya diatur oleh Spatie Permission
             $userId = $user->id;
@@ -95,10 +104,16 @@ class EmployeeController extends Controller
         ]));
 
         if ($employee->user) {
-            $employee->user->update([
-                'name' => $request->name,
-                // Assuming is_active might be in user table or just handle role
-            ]);
+            $userUpdateData = ['name' => $request->name];
+            
+            if (auth()->user()->hasRole('developer') && $request->has('is_location_restricted_present')) {
+                $userUpdateData['is_location_restricted'] = $request->boolean('is_location_restricted');
+                $userUpdateData['allowed_latitude'] = $request->filled('allowed_latitude') ? $request->allowed_latitude : null;
+                $userUpdateData['allowed_longitude'] = $request->filled('allowed_longitude') ? $request->allowed_longitude : null;
+                $userUpdateData['allowed_radius_meters'] = $request->filled('allowed_radius_meters') ? (int)$request->allowed_radius_meters : 500;
+            }
+
+            $employee->user->update($userUpdateData);
         }
 
         $desc = "Memperbarui data karyawan {$employee->name}";

@@ -37,12 +37,28 @@ class UserController extends Controller
 
         $dbRole = ($request->role === 'developer') ? 'admin' : 'admin';
 
+        $isLocationRestricted = false;
+        $lat = null;
+        $lng = null;
+        $radius = 500;
+
+        if (auth()->user()->hasRole('developer')) {
+            $isLocationRestricted = $request->boolean('is_location_restricted');
+            $lat = $request->filled('allowed_latitude') ? $request->allowed_latitude : null;
+            $lng = $request->filled('allowed_longitude') ? $request->allowed_longitude : null;
+            $radius = $request->filled('allowed_radius_meters') ? (int)$request->allowed_radius_meters : 500;
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'username' => explode('@', $request->email)[0] . rand(100, 999), // Generate unique username
             'password' => Hash::make($request->password),
             'role' => $dbRole,
+            'is_location_restricted' => $isLocationRestricted,
+            'allowed_latitude' => $lat,
+            'allowed_longitude' => $lng,
+            'allowed_radius_meters' => $radius,
         ]);
 
         $user->assignRole($request->role);
@@ -70,6 +86,14 @@ class UserController extends Controller
 
         $user->name = $request->name;
         $user->email = $request->email;
+
+        // Hanya developer yang bisa mengubah setting GPS
+        if (auth()->user()->hasRole('developer') && $request->has('is_location_restricted_present')) {
+            $user->is_location_restricted = $request->boolean('is_location_restricted');
+            $user->allowed_latitude = $request->filled('allowed_latitude') ? $request->allowed_latitude : null;
+            $user->allowed_longitude = $request->filled('allowed_longitude') ? $request->allowed_longitude : null;
+            $user->allowed_radius_meters = $request->filled('allowed_radius_meters') ? (int)$request->allowed_radius_meters : 500;
+        }
 
         $passwordChanged = false;
         if ($request->filled('password')) {

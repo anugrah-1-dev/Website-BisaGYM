@@ -70,6 +70,12 @@
                                         <i class="ph ph-shield-check mr-1.5"></i> {{ $role->name }}
                                     </span>
                                 @endforeach
+
+                                @if($user->is_location_restricted)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/30 ml-2" title="Wajib Login di Radius {{ $user->allowed_radius_meters ?? 500 }} Meter">
+                                        <i class="ph ph-map-pin mr-1"></i> GPS {{ $user->allowed_radius_meters ?? 500 }}m
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap">
                                 <div class="flex items-center justify-end space-x-3">

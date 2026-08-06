@@ -77,14 +77,50 @@
             @endif
         </div>
 
+        <!-- Hidden Geolocation Fields -->
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+
         <!-- Submit Button -->
         <div class="pt-2">
-            <button type="submit" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-darker bg-neon hover:bg-[#c4e600] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neon focus:ring-offset-dark transition-all duration-200">
+            <button type="submit" id="btn-login" class="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-darker bg-neon hover:bg-[#c4e600] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neon focus:ring-offset-dark transition-all duration-200">
                 <i class="ph ph-sign-in mr-2 text-lg"></i>
                 {{ __('Log in') }}
             </button>
         </div>
-        
 
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            document.getElementById('latitude').value = position.coords.latitude;
+                            document.getElementById('longitude').value = position.coords.longitude;
+                        },
+                        function(error) {
+                            console.warn('Geolocation Error / Permission Denied:', error.message);
+                        },
+                        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                    );
+                }
+            });
+
+            // Ensure fresh position on submit if possible
+            const loginForm = document.querySelector('form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    if (navigator.geolocation && !document.getElementById('latitude').value) {
+                        navigator.geolocation.getCurrentPosition(
+                            function(position) {
+                                document.getElementById('latitude').value = position.coords.latitude;
+                                document.getElementById('longitude').value = position.coords.longitude;
+                            },
+                            function() {},
+                            { enableHighAccuracy: true, timeout: 3000, maximumAge: 0 }
+                        );
+                    }
+                });
+            }
+        </script>
     </form>
 </x-guest-layout>

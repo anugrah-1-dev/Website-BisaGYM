@@ -31,6 +31,10 @@ class User extends Authenticatable
         'two_factor_expires_at',
         'two_factor_verified_at',
         'last_session_id',
+        'is_location_restricted',
+        'allowed_latitude',
+        'allowed_longitude',
+        'allowed_radius_meters',
     ];
 
     /**
@@ -55,6 +59,22 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_expires_at' => 'datetime',
             'two_factor_verified_at' => 'datetime',
+            'is_location_restricted' => 'boolean',
+            'allowed_latitude' => 'float',
+            'allowed_longitude' => 'float',
+            'allowed_radius_meters' => 'integer',
+        ];
+    }
+
+    /**
+     * Mendapatkan koordinat target dan radius yang diperbolehkan untuk user.
+     */
+    public function getGeofenceTarget(): array
+    {
+        return [
+            'latitude' => $this->allowed_latitude ?? config('app.gym_latitude', -7.33405),
+            'longitude' => $this->allowed_longitude ?? config('app.gym_longitude', 112.78255),
+            'radius' => $this->allowed_radius_meters ?? config('app.gym_allowed_radius', 500),
         ];
     }
 }
