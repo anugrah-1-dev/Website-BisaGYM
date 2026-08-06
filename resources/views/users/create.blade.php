@@ -75,16 +75,16 @@
                         </p>
                     </div>
 
-                    @role('developer')
+                    @hasanyrole('admin|developer')
                     <!-- Developer Only Geofencing Settings -->
                     <div class="pt-4 mt-4 border-t border-purple-900/50 bg-purple-950/20 p-4 rounded-lg border">
                         <input type="hidden" name="is_location_restricted_present" value="1">
                         <div class="flex items-center justify-between mb-3">
                             <div>
                                 <h4 class="text-purple-300 font-semibold text-sm flex items-center">
-                                    <i class="ph ph-map-pin-line text-lg mr-2"></i> Pembatasan Lokasi GPS (Geofencing)
+                                    <i class="ph ph-map-pin-line text-lg mr-2"></i> Pembatasan Lokasi GPS (Geofencing Opsional Admin)
                                 </h4>
-                                <p class="text-xs text-gray-400">Pengaturan ini hanya dapat dikelola oleh Developer System.</p>
+                                <p class="text-xs text-gray-400">Diatur oleh Developer System. Jika diaktifkan, akun Admin wajib login di lokasi gym.</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" name="is_location_restricted" value="1" 
@@ -137,7 +137,7 @@
                             }
                         });
                     </script>
-                    @endrole
+                    @endhasanyrole
 
                     <div class="flex items-center justify-end mt-4 pt-4 border-t border-gray-800">
                         <button type="submit" class="px-6 py-2 bg-neon hover:bg-[#c4e600] text-darker rounded-lg font-bold transition-colors shadow-lg shadow-neon/20 flex items-center">

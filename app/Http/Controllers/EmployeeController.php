@@ -38,21 +38,16 @@ class EmployeeController extends Controller
 
         $userId = null;
         if ($request->has('create_login') && $request->create_login) {
-            $isRestricted = auth()->user()->hasRole('developer') ? $request->boolean('is_location_restricted') : false;
-            $lat = (auth()->user()->hasRole('developer') && $request->filled('allowed_latitude')) ? $request->allowed_latitude : null;
-            $lng = (auth()->user()->hasRole('developer') && $request->filled('allowed_longitude')) ? $request->allowed_longitude : null;
-            $radius = (auth()->user()->hasRole('developer') && $request->filled('allowed_radius_meters')) ? (int)$request->allowed_radius_meters : 500;
-
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'username' => explode('@', $request->email)[0],
                 'password' => Hash::make($request->password),
                 'role' => 'penjaga', // Database enum hanya mendukung 'admin' dan 'penjaga'
-                'is_location_restricted' => $isRestricted,
-                'allowed_latitude' => $lat,
-                'allowed_longitude' => $lng,
-                'allowed_radius_meters' => $radius,
+                'is_location_restricted' => true, // Akun Penjaga/Karyawan WAJIB login di lokasi gym
+                'allowed_latitude' => $request->filled('allowed_latitude') ? $request->allowed_latitude : null,
+                'allowed_longitude' => $request->filled('allowed_longitude') ? $request->allowed_longitude : null,
+                'allowed_radius_meters' => $request->filled('allowed_radius_meters') ? (int)$request->allowed_radius_meters : 500,
             ]);
             $user->assignRole('kasir'); // Role sebenarnya diatur oleh Spatie Permission
             $userId = $user->id;

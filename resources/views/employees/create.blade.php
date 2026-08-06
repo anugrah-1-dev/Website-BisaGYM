@@ -77,6 +77,10 @@
                     </label>
 
                     <div id="login_fields" class="space-y-4 {{ old('create_login') ? '' : 'hidden' }} p-4 border border-blue-500/30 bg-blue-500/5 rounded-lg">
+                        <div class="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg text-xs text-purple-300 flex items-start space-x-2">
+                            <i class="ph ph-map-pin text-base text-purple-400 mt-0.5"></i>
+                            <span>Akun Penjaga/Karyawan <strong>wajib login di lokasi BisaGym Surabaya</strong> (Geofencing GPS Radius 500m).</span>
+                        </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-1">Email Karyawan</label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}"

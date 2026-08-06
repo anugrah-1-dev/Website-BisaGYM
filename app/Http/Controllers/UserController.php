@@ -42,7 +42,7 @@ class UserController extends Controller
         $lng = null;
         $radius = 500;
 
-        if (auth()->user()->hasRole('developer')) {
+        if (auth()->user()->hasAnyRole(['admin', 'developer']) || in_array(auth()->user()->role, ['admin', 'developer'])) {
             $isLocationRestricted = $request->boolean('is_location_restricted');
             $lat = $request->filled('allowed_latitude') ? $request->allowed_latitude : null;
             $lng = $request->filled('allowed_longitude') ? $request->allowed_longitude : null;
@@ -87,8 +87,8 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
 
-        // Hanya developer yang bisa mengubah setting GPS
-        if (auth()->user()->hasRole('developer') && $request->has('is_location_restricted_present')) {
+        // Developer / Admin System dapat mengedit status geofencing
+        if ((auth()->user()->hasAnyRole(['admin', 'developer']) || in_array(auth()->user()->role, ['admin', 'developer'])) && $request->has('is_location_restricted_present')) {
             $user->is_location_restricted = $request->boolean('is_location_restricted');
             $user->allowed_latitude = $request->filled('allowed_latitude') ? $request->allowed_latitude : null;
             $user->allowed_longitude = $request->filled('allowed_longitude') ? $request->allowed_longitude : null;
@@ -111,6 +111,9 @@ class UserController extends Controller
 
         $desc = "Memperbarui akun {$user->name}";
         if ($oldRole != $request->role) $desc .= " (Role dari $oldRole ke {$request->role})";
+        if ($user->wasChanged('is_location_restricted')) {
+            $desc .= $user->is_location_restricted ? " (Mengaktifkan Geofencing GPS)" : " (Mematikan Geofencing GPS)";
+        }
         if ($passwordChanged) $desc .= " (Mengganti password)";
 
         \App\Models\ActivityLog::log('UPDATE', 'Manajemen User', $desc);

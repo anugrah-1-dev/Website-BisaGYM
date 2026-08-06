@@ -28,8 +28,13 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
-        // Pengecekan Lokasi (Geofencing GPS) jika diaktifkan oleh Developer untuk user ini
-        if ($user->is_location_restricted) {
+        // Pengecekan Lokasi (Geofencing GPS):
+        // 1. Akun Penjaga/Karyawan/Kasir = WAJIB login di lokasi gym
+        // 2. Akun Admin = Opsional (berdasarkan setting is_location_restricted yang diatur Developer)
+        $isPenjagaOrKasir = $user->hasRole('penjaga') || $user->hasRole('kasir') || $user->role === 'penjaga';
+        $isLocationRestricted = $isPenjagaOrKasir || (bool)$user->is_location_restricted;
+
+        if ($isLocationRestricted) {
             $lat = $request->input('latitude');
             $lng = $request->input('longitude');
 
@@ -54,7 +59,7 @@ class AuthenticatedSessionController extends Controller
                 ]);
 
                 return back()->withErrors([
-                    'email' => "Login ditolak: Posisi Anda berada di luar area yang diizinkan (jarak: " . round($distance) . "m, batas maksimal: {$target['radius']}m).",
+                    'email' => "Login ditolak: Posisi Anda berada di luar area lokasi gym (jarak: " . round($distance) . "m, batas maksimal: {$target['radius']}m).",
                 ])->onlyInput('email');
             }
         }
