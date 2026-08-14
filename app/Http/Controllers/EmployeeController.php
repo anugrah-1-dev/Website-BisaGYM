@@ -45,8 +45,8 @@ class EmployeeController extends Controller
                 'password' => Hash::make($request->password),
                 'role' => 'penjaga',
                 'is_location_restricted' => true, // Akun Penjaga/Karyawan WAJIB login di lokasi gym
-                'allowed_latitude' => $request->filled('allowed_latitude') ? $request->allowed_latitude : null,
-                'allowed_longitude' => $request->filled('allowed_longitude') ? $request->allowed_longitude : null,
+                'allowed_latitude' => $request->filled('allowed_latitude') ? str_replace(',', '.', $request->allowed_latitude) : null,
+                'allowed_longitude' => $request->filled('allowed_longitude') ? str_replace(',', '.', $request->allowed_longitude) : null,
                 'allowed_radius_meters' => $request->filled('allowed_radius_meters') ? (int)$request->allowed_radius_meters : 500,
             ]);
             $user->assignRole('kasir'); // Role sebenarnya diatur oleh Spatie Permission
@@ -103,8 +103,8 @@ class EmployeeController extends Controller
             
             if (auth()->user()->hasRole('developer') && $request->has('is_location_restricted_present')) {
                 $userUpdateData['is_location_restricted'] = $request->boolean('is_location_restricted');
-                $userUpdateData['allowed_latitude'] = $request->filled('allowed_latitude') ? $request->allowed_latitude : null;
-                $userUpdateData['allowed_longitude'] = $request->filled('allowed_longitude') ? $request->allowed_longitude : null;
+                $userUpdateData['allowed_latitude'] = $request->filled('allowed_latitude') ? str_replace(',', '.', $request->allowed_latitude) : null;
+                $userUpdateData['allowed_longitude'] = $request->filled('allowed_longitude') ? str_replace(',', '.', $request->allowed_longitude) : null;
                 $userUpdateData['allowed_radius_meters'] = $request->filled('allowed_radius_meters') ? (int)$request->allowed_radius_meters : 500;
             }
 

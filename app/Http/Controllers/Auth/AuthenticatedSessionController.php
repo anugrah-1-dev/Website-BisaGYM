@@ -46,7 +46,12 @@ class AuthenticatedSessionController extends Controller
             }
 
             $target = $user->getGeofenceTarget();
-            $distance = $this->calculateHaversineDistance((float)$lat, (float)$lng, (float)$target['latitude'], (float)$target['longitude']);
+            $targetLat = (float) str_replace(',', '.', (string)$target['latitude']);
+            $targetLng = (float) str_replace(',', '.', (string)$target['longitude']);
+            $inputLat = (float) str_replace(',', '.', (string)$lat);
+            $inputLng = (float) str_replace(',', '.', (string)$lng);
+
+            $distance = $this->calculateHaversineDistance($inputLat, $inputLng, $targetLat, $targetLng);
 
             if ($distance > $target['radius']) {
                 Auth::logout();
@@ -59,7 +64,7 @@ class AuthenticatedSessionController extends Controller
                 ]);
 
                 return back()->withErrors([
-                    'email' => "Login ditolak: Posisi Anda berada di luar area lokasi gym (jarak: " . round($distance) . "m, batas maksimal: {$target['radius']}m).",
+                    'email' => "Login ditolak: Jarak Anda " . round($distance) . "m dari Gym (Maks: {$target['radius']}m). Koordinat Gym: {$targetLat}, {$targetLng} | Posisi Anda: {$inputLat}, {$inputLng}",
                 ])->onlyInput('email');
             }
         }
