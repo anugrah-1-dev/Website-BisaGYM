@@ -62,15 +62,7 @@
                                 {{ $pkg->duration }} {{ ucfirst($pkg->duration_unit) }}
                             </td>
                             <td class="px-6 py-4">
-                                @if($pkg->discount_percentage > 0)
-                                    <div class="text-xs text-gray-500 line-through">Rp {{ number_format($pkg->price, 0, ',', '.') }}</div>
-                                    <div class="text-neon font-bold">
-                                        Rp {{ number_format($pkg->price - ($pkg->price * $pkg->discount_percentage / 100), 0, ',', '.') }}
-                                    </div>
-                                    <div class="text-[10px] text-green-400 font-semibold bg-green-500/10 px-1.5 py-0.5 rounded inline-block mt-0.5">Diskon {{ $pkg->discount_percentage }}%</div>
-                                @else
-                                    <div class="text-neon font-bold">Rp {{ number_format($pkg->price, 0, ',', '.') }}</div>
-                                @endif
+                                <div class="text-neon font-bold">Rp {{ number_format($pkg->price, 0, ',', '.') }}</div>
                             </td>
                             <td class="px-6 py-4 text-gray-400">
                                 Rp {{ number_format($pkg->admin_fee, 0, ',', '.') }}

@@ -106,4 +106,9 @@
     <i class="ph ph-tags text-xl mr-3"></i>
     {{ __('Paket & Harga') }}
 </x-nav-link>
+
+<x-nav-link :href="route('discounts.index')" :active="request()->routeIs('discounts.*')">
+    <i class="ph ph-percent text-xl mr-3"></i>
+    {{ __('Manajemen Diskon') }}
+</x-nav-link>
 @endhasanyrole

@@ -38,11 +38,7 @@
                         <input type="number" name="price" value="{{ old('price', $gymPackage->price) }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                     </div>
 
-                    <!-- Diskon -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Diskon (%)</label>
-                        <input type="number" step="0.01" name="discount_percentage" value="{{ old('discount_percentage', $gymPackage->discount_percentage ?? 0) }}" min="0" max="100" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
-                    </div>
+
 
                     <!-- Biaya Admin -->
                     <div>

@@ -24,7 +24,6 @@ class GymPackageController extends Controller
         $request->validate([
             'name'                => 'required|string|max:255',
             'price'               => 'required|numeric|min:0',
-            'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'admin_fee'           => 'required|numeric|min:0',
             'duration'            => 'required|integer|min:1',
             'duration_unit'       => 'required|in:hari,minggu,bulan,tahun',
@@ -35,7 +34,6 @@ class GymPackageController extends Controller
         $gymPackage = GymPackage::create([
             'name'                => $request->name,
             'price'               => $request->price,
-            'discount_percentage' => $request->discount_percentage ?? 0,
             'admin_fee'           => $request->admin_fee,
             'duration'            => $request->duration,
             'duration_unit'       => $request->duration_unit,
@@ -59,7 +57,6 @@ class GymPackageController extends Controller
         $request->validate([
             'name'                => 'required|string|max:255',
             'price'               => 'required|numeric|min:0',
-            'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'admin_fee'           => 'required|numeric|min:0',
             'duration'            => 'required|integer|min:1',
             'duration_unit'       => 'required|in:hari,minggu,bulan,tahun',
@@ -72,7 +69,6 @@ class GymPackageController extends Controller
         $gymPackage->update([
             'name'                => $request->name,
             'price'               => $request->price,
-            'discount_percentage' => $request->discount_percentage ?? 0,
             'admin_fee'           => $request->admin_fee,
             'duration'            => $request->duration,
             'duration_unit'       => $request->duration_unit,

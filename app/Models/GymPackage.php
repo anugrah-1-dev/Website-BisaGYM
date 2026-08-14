@@ -15,4 +15,12 @@ class GymPackage extends Model
         'is_active' => 'boolean',
         'max_members' => 'integer',
     ];
+
+    /**
+     * Get the discounts that apply to this gym package.
+     */
+    public function discounts()
+    {
+        return $this->belongsToMany(Discount::class, 'discount_gym_package');
+    }
 }

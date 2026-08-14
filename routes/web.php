@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashier/pay-non-member', [\App\Http\Controllers\CashierController::class, 'payNonMember'])->name('cashier.pay-non-member');
 
     Route::resource('gym-packages', \App\Http\Controllers\GymPackageController::class)->middleware('role:admin|developer');
+    Route::resource('discounts', \App\Http\Controllers\DiscountController::class)->middleware('role:admin|developer');
 
     Route::get('/attendance', [\App\Http\Controllers\AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/attendance', [\App\Http\Controllers\AttendanceController::class, 'store'])->name('attendance.store');

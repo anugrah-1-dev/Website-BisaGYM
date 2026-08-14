@@ -26,12 +26,8 @@
                         <input type="number" name="price" value="{{ old('price') }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Diskon (%)</label>
-                        <input type="number" step="0.01" name="discount_percentage" value="{{ old('discount_percentage', 0) }}" min="0" max="100" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Biaya Admin (Rp)</label>
-                        <input type="number" name="admin_fee" value="{{ old('admin_fee', 0) }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                        <label for="admin_fee" class="block text-sm font-medium text-gray-300 mb-1">Biaya Admin (Rp) <span class="text-red-400">*</span></label>
+                        <input type="number" name="admin_fee" id="admin_fee" value="{{ old('admin_fee', 30000) }}" min="0" required class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-1">Kategori</label>

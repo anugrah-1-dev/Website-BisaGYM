@@ -14,7 +14,9 @@ class PublicRegistrationController extends Controller
 {
     public function index()
     {
-        $packages = GymPackage::where('is_active', true)->get();
+        $packages = GymPackage::with(['discounts' => function ($query) {
+            $query->where('is_active', true);
+        }])->where('is_active', true)->get();
         return view('public-registration.index', compact('packages'));
     }
 
@@ -35,6 +37,7 @@ class PublicRegistrationController extends Controller
             'email'          => 'required|email|unique:members,email',
             'photo_data'     => 'nullable|string',
             'package_id'     => 'required|exists:gym_packages,id',
+            'discount_id'    => 'nullable|exists:discounts,id',
         ];
 
         if ($isCouple) {
@@ -66,7 +69,16 @@ class PublicRegistrationController extends Controller
         elseif ($package->duration_unit === 'bulan')  $expiryDate->addMonths($package->duration);
         elseif ($package->duration_unit === 'tahun')  $expiryDate->addYears($package->duration);
 
-        $discountPercentage = $package->discount_percentage ?? 0;
+        $discountPercentage = 0;
+        if ($request->filled('discount_id')) {
+            $discount = \App\Models\Discount::find($request->discount_id);
+            if ($discount) {
+                if ($discount->gymPackages()->where('gym_package_id', $package->id)->exists()) {
+                    $discountPercentage = $discount->percentage;
+                }
+            }
+        }
+
         $discountAmount = ($package->price * $discountPercentage) / 100;
         $lockedPrice = $package->price - $discountAmount;
         $adminFee = $package->admin_fee;

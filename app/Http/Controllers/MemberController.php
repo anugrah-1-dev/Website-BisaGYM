@@ -36,7 +36,9 @@ class MemberController extends Controller
 
     public function create()
     {
-        $packages = GymPackage::where('is_active', true)->get();
+        $packages = GymPackage::with(['discounts' => function ($query) {
+            $query->where('is_active', true);
+        }])->where('is_active', true)->get();
         return view('members.create', compact('packages'));
     }
 
@@ -58,6 +60,7 @@ class MemberController extends Controller
             'email'         => 'required|email|unique:members,email',
             'photo_data'    => 'nullable|string',
             'package_id'    => 'required|exists:gym_packages,id',
+            'discount_id'   => 'nullable|exists:discounts,id',
         ];
 
         if ($isCouple) {
@@ -115,7 +118,17 @@ class MemberController extends Controller
         );
 
         // ── Perhitungan Diskon & Admin Fee (Khusus Registrasi Baru) ──
-        $discountPercentage = $package->discount_percentage ?? 0;
+        $discountPercentage = 0;
+        if ($request->filled('discount_id')) {
+            $discount = \App\Models\Discount::find($request->discount_id);
+            if ($discount) {
+                // Verify the discount is valid for this package
+                if ($discount->gymPackages()->where('gym_package_id', $package->id)->exists()) {
+                    $discountPercentage = $discount->percentage;
+                }
+            }
+        }
+        
         $discountAmount = ($package->price * $discountPercentage) / 100;
         $lockedPrice = $package->price - $discountAmount;
         $adminFee = $package->admin_fee;
@@ -173,7 +186,9 @@ class MemberController extends Controller
 
     public function createExisting()
     {
-        $packages = GymPackage::where('is_active', true)->get();
+        $packages = GymPackage::with(['discounts' => function ($query) {
+            $query->where('is_active', true);
+        }])->where('is_active', true)->get();
         return view('members.create_existing', compact('packages'));
     }
 
@@ -195,6 +210,7 @@ class MemberController extends Controller
             'email'           => 'required|email|unique:members,email',
             'photo_data'      => 'nullable|string',
             'package_id'      => 'required|exists:gym_packages,id',
+            'discount_id'     => 'nullable|exists:discounts,id',
             'activation_date' => 'required|date',
             'expiry_date'     => 'required|date|after_or_equal:activation_date',
             'payment_status'  => 'required|in:paid,unpaid',
@@ -231,7 +247,16 @@ class MemberController extends Controller
         $paymentStatus = $request->payment_status;
         $memberStatus = ($paymentStatus === 'paid') ? 'active' : 'pending';
 
-        $discountPercentage = $package->discount_percentage ?? 0;
+        $discountPercentage = 0;
+        if ($request->filled('discount_id')) {
+            $discount = \App\Models\Discount::find($request->discount_id);
+            if ($discount) {
+                if ($discount->gymPackages()->where('gym_package_id', $package->id)->exists()) {
+                    $discountPercentage = $discount->percentage;
+                }
+            }
+        }
+
         $discountAmount = ($package->price * $discountPercentage) / 100;
         $lockedPrice = $package->price - $discountAmount;
         $adminFee = $package->admin_fee;
@@ -385,7 +410,9 @@ class MemberController extends Controller
             'this_week'              => $member->attendances()->whereBetween('attendance_time', [now()->startOfWeek(), now()->endOfWeek()])->count(),
         ];
         $recentAttendances = $member->attendances()->latest('attendance_time')->take(10)->get();
-        $packages = GymPackage::where('is_active', true)->get();
+        $packages = GymPackage::with(['discounts' => function ($query) {
+            $query->where('is_active', true);
+        }])->where('is_active', true)->get();
 
         return view('members.show', compact('member', 'attendanceStats', 'recentAttendances', 'packages'));
     }
@@ -420,6 +447,7 @@ class MemberController extends Controller
     {
         $request->validate([
             'package_id'     => 'required|exists:gym_packages,id',
+            'discount_id'    => 'nullable|exists:discounts,id',
         ]);
 
         // Cek tagihan belum lunas
@@ -440,14 +468,18 @@ class MemberController extends Controller
         // Cek Grandfathered Rate / Locked Price
         if ($member->locked_package_id === $package->id && $member->locked_price !== null) {
             $renewalAmount = $member->locked_price;
-            // Kita bisa hitung kembali discount_percentage secara kasar (untuk record transaksi)
-            // Atau cukup simpan amount-nya langsung
             if ($package->price > 0 && $package->price > $member->locked_price) {
                 $discountPercentage = (($package->price - $member->locked_price) / $package->price) * 100;
             }
         } else {
-            // Jika dia pindah paket, gunakan harga paket baru beserta diskon paket baru saat ini
-            $discountPercentage = $package->discount_percentage ?? 0;
+            // Jika pindah paket, hitung berdasarkan diskon baru yang dipilih
+            $discountPercentage = 0;
+            if ($request->filled('discount_id')) {
+                $discount = \App\Models\Discount::find($request->discount_id);
+                if ($discount && $discount->gymPackages()->where('gym_package_id', $package->id)->exists()) {
+                    $discountPercentage = $discount->percentage;
+                }
+            }
             $discountAmount = ($package->price * $discountPercentage) / 100;
             $renewalAmount = $package->price - $discountAmount;
             

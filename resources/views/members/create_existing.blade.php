@@ -164,6 +164,7 @@
                             data-category="{{ $pkg->category }}"
                             data-duration="{{ $pkg->duration }}"
                             data-duration-unit="{{ $pkg->duration_unit }}"
+                            data-discounts="{{ json_encode($pkg->discounts->map(function($d) { return ['id' => $d->id, 'name' => $d->name, 'percentage' => $d->percentage]; })) }}"
                             class="peer sr-only"
                             required
                             {{ old('package_id') == $pkg->id ? 'checked' : '' }}>
@@ -195,15 +196,14 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="p-4 border border-gray-700 bg-dark/50 rounded-xl transition-all">
-                    <div class="flex items-center gap-2 mb-2">
-                        <i class="ph ph-tag text-neon text-lg"></i>
-                        <h4 class="text-sm font-medium text-white">Informasi Diskon</h4>
-                    </div>
-                    <p class="text-sm text-gray-400">
-                        Diskon otomatis berlaku mengikuti pengaturan diskon pada paket yang Anda pilih. 
-                        Harga perpanjangan member ini nantinya akan <strong>terkunci (grandfathered)</strong> menggunakan harga diskon yang didapat hari ini.
-                    </p>
+                <div class="p-4 border border-gray-700 bg-dark/50 rounded-xl transition-all" id="discount-container">
+                    <label for="discount_id" class="block text-sm font-medium text-neon mb-2">
+                        <i class="ph ph-percent mr-2"></i> Pilih Diskon (Opsional)
+                    </label>
+                    <select id="discount_id" name="discount_id" autocomplete="off" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                        <option value="">Tidak Ada Diskon</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-2" id="discount-helper">Pilih paket terlebih dahulu untuk melihat daftar diskon.</p>
                 </div>
                 
                 <div class="p-4 border border-gray-700 bg-dark/50 rounded-xl">
@@ -505,8 +505,50 @@
                 expiryInput.value = `${yyyy}-${mm}-${dd}`;
             }
 
+            const discountSelect = document.getElementById('discount_id');
+            const discountHelper = document.getElementById('discount-helper');
+
+            function updateDiscounts(discountsJson) {
+                discountSelect.innerHTML = '<option value="">Tidak Ada Diskon</option>';
+                
+                if (!discountsJson || discountsJson === "[]") {
+                    discountSelect.disabled = true;
+                    discountHelper.textContent = 'Tidak ada promo/diskon yang tersedia untuk paket ini.';
+                    return;
+                }
+
+                try {
+                    const discounts = JSON.parse(discountsJson);
+                    if (discounts.length > 0) {
+                        discountSelect.disabled = false;
+                        discounts.forEach(d => {
+                            const option = document.createElement('option');
+                            option.value = d.id;
+                            option.textContent = `${d.name} (${d.percentage}%)`;
+                            discountSelect.appendChild(option);
+                        });
+                        
+                        const oldVal = "{{ old('discount_id') }}";
+                        if (oldVal) {
+                            discountSelect.value = oldVal;
+                        }
+                        
+                        discountHelper.textContent = 'Pilih diskon yang sesuai dengan kriteria pendaftar.';
+                    } else {
+                        discountSelect.disabled = true;
+                        discountHelper.textContent = 'Tidak ada promo/diskon yang tersedia untuk paket ini.';
+                    }
+                } catch (e) {
+                    discountSelect.disabled = true;
+                    discountHelper.textContent = 'Tidak ada promo/diskon yang tersedia untuk paket ini.';
+                }
+            }
+
             packageRadios.forEach(radio => {
-                radio.addEventListener('change', updateExpiryFromPackage);
+                radio.addEventListener('change', function() {
+                    updateExpiryFromPackage();
+                    updateDiscounts(this.dataset.discounts || "[]");
+                });
             });
             activationInput.addEventListener('change', updateExpiryFromPackage);
 
@@ -568,6 +610,9 @@
             const initialChecked = document.querySelector('input[name="package_id"]:checked');
             if (initialChecked) {
                 toggleCouple(parseInt(initialChecked.dataset.maxMembers || 1) >= 2);
+                updateDiscounts(initialChecked.dataset.discounts || "[]");
+            } else {
+                updateDiscounts("[]");
             }
 
             // ── Webcam & Upload Photo Helper ──
