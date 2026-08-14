@@ -434,9 +434,36 @@ class MemberController extends Controller
             'gender'         => 'required|in:L,P',
             'place_of_birth' => 'required|string',
             'date_of_birth'  => 'required|date',
+            'photo_data'     => 'nullable|string',
         ]);
 
-        $member->update($request->only(['name', 'phone', 'email', 'address', 'job', 'nik', 'gender', 'place_of_birth', 'date_of_birth']));
+        $data = $request->only(['name', 'phone', 'email', 'address', 'job', 'nik', 'gender', 'place_of_birth', 'date_of_birth']);
+
+        // Process photo if provided
+        if ($request->filled('photo_data')) {
+            $imageParts = explode(";base64,", $request->photo_data);
+            if (count($imageParts) == 2) {
+                $imageType   = strtolower(explode("image/", $imageParts[0])[1] ?? 'jpeg');
+                $imageType   = explode(';', $imageType)[0];
+                if ($imageType === 'jpeg') $imageType = 'jpg';
+                
+                $imageBase64 = base64_decode($imageParts[1]);
+                $fileName    = 'member_' . time() . '_' . rand(100, 999) . '.' . $imageType;
+                $photoPath   = 'members/' . $fileName;
+                
+                \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('members');
+                \Illuminate\Support\Facades\Storage::disk('public')->put($photoPath, $imageBase64);
+                
+                // Delete old photo if it exists
+                if ($member->photo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($member->photo_path)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($member->photo_path);
+                }
+
+                $data['photo_path'] = $photoPath;
+            }
+        }
+
+        $member->update($data);
 
         \App\Models\ActivityLog::log('UPDATE', 'Manajemen Member', "Memperbarui profil data member: {$member->name} ({$member->member_id})");
 
