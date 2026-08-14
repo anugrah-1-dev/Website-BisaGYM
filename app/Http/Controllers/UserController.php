@@ -35,7 +35,7 @@ class UserController extends Controller
             'role' => ['required', 'exists:roles,name', 'in:admin,developer'],
         ]);
 
-        $dbRole = ($request->role === 'developer') ? 'admin' : 'admin';
+        $dbRole = $request->role;
 
         $isLocationRestricted = false;
         $lat = null;
@@ -104,6 +104,7 @@ class UserController extends Controller
             $passwordChanged = true;
         }
 
+        $user->role = $request->role;
         $user->save();
 
         // Update role

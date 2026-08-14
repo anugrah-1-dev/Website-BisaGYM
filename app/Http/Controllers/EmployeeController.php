@@ -43,7 +43,7 @@ class EmployeeController extends Controller
                 'email' => $request->email,
                 'username' => explode('@', $request->email)[0],
                 'password' => Hash::make($request->password),
-                'role' => 'penjaga', // Database enum hanya mendukung 'admin' dan 'penjaga'
+                'role' => 'penjaga',
                 'is_location_restricted' => true, // Akun Penjaga/Karyawan WAJIB login di lokasi gym
                 'allowed_latitude' => $request->filled('allowed_latitude') ? $request->allowed_latitude : null,
                 'allowed_longitude' => $request->filled('allowed_longitude') ? $request->allowed_longitude : null,

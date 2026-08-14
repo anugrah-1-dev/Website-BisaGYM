@@ -1,0 +1,7 @@
+
+
+# Large data files - do not push to Git
+gym.data_members.json
+
+# Test scripts
+test_*.php

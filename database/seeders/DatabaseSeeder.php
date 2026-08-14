@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Tejo (Developer)',
                 'username' => 'developer',
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),
-                'role' => 'admin', // the db column enum only has admin/penjaga, so use admin for db col
+                'role' => 'developer',
                 'is_active' => true,
             ]
         );
@@ -77,44 +77,7 @@ class DatabaseSeeder extends Seeder
             ['snack_code' => 'SNK-004', 'name' => 'Fitbar Multigrain', 'category' => 'Makanan', 'stock' => 80, 'capital_price' => 4000, 'selling_price' => 7000, 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        // 5. Members
-        \App\Models\Member::create([
-            'member_id' => 'VIP-20251201-143000-1234',
-            'member_type' => 'Reguler',
-            'name' => 'Reza Rahadian',
-            'place_of_birth' => 'Jakarta',
-            'date_of_birth' => '1990-05-15',
-            'gender' => 'L',
-            'nik' => '3171234567890123',
-            'job' => 'Wiraswasta',
-            'address' => 'Jl. Sudirman No. 10, Jakarta',
-            'phone' => '081234567890',
-            'email' => 'reza@example.com',
-            'photo_path' => null,
-            'registration_date' => \Carbon\Carbon::now(),
-            'activation_date' => \Carbon\Carbon::now(),
-            'expiry_date' => \Carbon\Carbon::now()->addMonths(3),
-            'status' => 'active',
-            'extension_count' => 0,
-        ]);
-        \App\Models\Member::create([
-            'member_id' => 'VIP-20251201-143000-1235',
-            'member_type' => 'Reguler',
-            'name' => 'Anya Geraldine',
-            'place_of_birth' => 'Bandung',
-            'date_of_birth' => '1995-12-05',
-            'gender' => 'P',
-            'nik' => '3271234567890124',
-            'job' => 'Model',
-            'address' => 'Jl. Braga No. 5, Bandung',
-            'phone' => '089876543210',
-            'email' => 'anya@example.com',
-            'photo_path' => null,
-            'registration_date' => \Carbon\Carbon::now(),
-            'activation_date' => \Carbon\Carbon::now(),
-            'expiry_date' => \Carbon\Carbon::now()->addMonths(1),
-            'status' => 'active',
-            'extension_count' => 0,
-        ]);
+        // 5. Members (dari gym.data_members.json)
+        $this->call(MemberSeeder::class);
     }
 }
