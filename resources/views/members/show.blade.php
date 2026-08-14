@@ -107,7 +107,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @foreach($packages as $pkg)
                             <label class="relative block cursor-pointer group">
-                                <input type="radio" name="package_id" value="{{ $pkg->id }}" class="peer sr-only" required>
+                                <input type="radio" name="package_id" value="{{ $pkg->id }}" class="peer sr-only" required data-discounts="{{ json_encode($pkg->discounts->map(function($d) { return ['id' => $d->id, 'name' => $d->name, 'percentage' => $d->percentage]; })) }}">
                                 <div class="rounded-lg border-2 border-gray-700 bg-dark p-3 transition-colors peer-checked:border-neon peer-checked:bg-neon/10 group-hover:border-neon/50 flex justify-between items-center">
                                     <div>
                                         <p class="text-sm font-medium text-white">{{ $pkg->name }}</p>
@@ -118,6 +118,18 @@
                             </label>
                         @endforeach
                     </div>
+
+                    <!-- Discount Selector -->
+                    <div class="mt-4 p-4 border border-gray-700 bg-dark/50 rounded-xl" id="discount-container">
+                        <label for="discount_id" class="block text-sm font-medium text-neon mb-2">
+                            <i class="ph ph-percent mr-2"></i> Pilih Diskon (Opsional)
+                        </label>
+                        <select id="discount_id" name="discount_id" autocomplete="off" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                            <option value="">Tidak Ada Diskon</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-2" id="discount-helper">Pilih paket terlebih dahulu untuk melihat daftar diskon. Diskon hanya berlaku jika Anda pindah ke paket baru. Jika memperpanjang paket yang sama, harga perpanjangan (locked rate) Anda yang akan digunakan.</p>
+                    </div>
+
                     <div class="flex justify-end mt-4">
                         <button type="submit" class="bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-6 rounded-lg transition-colors text-sm flex items-center">
                             <i class="ph ph-receipt text-lg mr-2"></i> Proses Perpanjangan
@@ -154,4 +166,52 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const radioInputs    = document.querySelectorAll('input[name="package_id"]');
+        const discountSelect = document.getElementById('discount_id');
+        const discountHelper = document.getElementById('discount-helper');
+
+        function updateDiscounts(discountsJson) {
+            discountSelect.innerHTML = '<option value="">Tidak Ada Diskon</option>';
+            
+            if (!discountsJson || discountsJson === "[]") {
+                discountSelect.disabled = true;
+                return;
+            }
+
+            try {
+                const discounts = JSON.parse(discountsJson);
+                if (discounts.length > 0) {
+                    discountSelect.disabled = false;
+                    discounts.forEach(d => {
+                        const option = document.createElement('option');
+                        option.value = d.id;
+                        option.textContent = `${d.name} (${d.percentage}%)`;
+                        discountSelect.appendChild(option);
+                    });
+                } else {
+                    discountSelect.disabled = true;
+                }
+            } catch (e) {
+                discountSelect.disabled = true;
+            }
+        }
+
+        radioInputs.forEach(radio => {
+            radio.addEventListener('change', function () {
+                updateDiscounts(this.dataset.discounts || "[]");
+            });
+        });
+
+        // Initialize if already checked (e.g. from old input)
+        const checkedRadio = document.querySelector('input[name="package_id"]:checked');
+        if (checkedRadio) {
+            updateDiscounts(checkedRadio.dataset.discounts || "[]");
+        } else {
+            updateDiscounts("[]");
+        }
+    });
+    </script>
 </x-app-layout>
