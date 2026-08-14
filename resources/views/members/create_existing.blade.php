@@ -445,7 +445,7 @@
                                 </div>
                                 <div>
                                     <label for="member2_email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                                    <input type="email" id="member2_email" name="email" autocomplete="email" value="{{ old('member2_email') }}"
+                                    <input type="email" id="member2_email" name="member2_email" autocomplete="email" value="{{ old('member2_email') }}"
                                         class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-pink-500 focus:border-pink-500 text-sm">
                                 </div>
                                 <div class="md:col-span-2">
