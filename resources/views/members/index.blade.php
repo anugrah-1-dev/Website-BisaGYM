@@ -3,12 +3,22 @@
         {{ __('Data Member') }}
     </x-slot>
 
-    <div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <form method="GET" action="{{ route('members.index') }}" class="relative w-full md:max-w-md">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="ph ph-magnifying-glass text-gray-400"></i>
+    <div class="mb-6 flex flex-col lg:flex-row justify-between items-center gap-4">
+        <form method="GET" action="{{ route('members.index') }}" class="flex flex-col sm:flex-row w-full lg:max-w-2xl gap-2">
+            <div class="relative w-full sm:w-2/3">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ph ph-magnifying-glass text-gray-400"></i>
+                </div>
+                <input type="text" name="search" value="{{ request('search') }}" class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-dark text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon transition-colors" placeholder="Cari nama, NIK, atau ID VIP...">
             </div>
-            <input type="text" name="search" value="{{ request('search') }}" class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-dark text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon transition-colors" placeholder="Cari nama, NIK, atau ID VIP...">
+            <div class="w-full sm:w-1/3">
+                <select name="status" onchange="this.form.submit()" class="block w-full py-2 px-3 border border-gray-700 rounded-lg bg-dark text-white focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon transition-colors cursor-pointer">
+                    <option value="">Semua Status</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Belum Aktif</option>
+                    <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired / Inaktif</option>
+                </select>
+            </div>
         </form>
         
         <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">

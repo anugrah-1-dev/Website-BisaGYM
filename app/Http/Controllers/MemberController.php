@@ -16,14 +16,22 @@ class MemberController extends Controller
     public function index(Request $request)
     {
         $search = $request->query('search');
+        $status = $request->query('status');
         $query = Member::query();
+        
         if ($search) {
-            $query->where('name', 'like', "%{$search}%")
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
                   ->orWhere('member_id', 'like', "%{$search}%")
                   ->orWhere('nik', 'like', "%{$search}%");
+            });
         }
 
-        $members = $query->latest()->paginate(10);
+        if ($status && in_array($status, ['active', 'pending', 'expired'])) {
+            $query->where('status', $status);
+        }
+
+        $members = $query->latest()->paginate(10)->appends(['search' => $search, 'status' => $status]);
         
         $stats = [
             'total'    => Member::count(),
