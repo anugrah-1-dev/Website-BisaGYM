@@ -86,7 +86,7 @@
                             <div class="w-full flex flex-col justify-end">
                                 <p class="text-xs font-semibold text-white leading-snug mb-2 group-hover:text-neon transition-colors line-clamp-2">{{ $snack->name }}</p>
                                 <div class="flex items-center justify-between w-full pt-2 border-t border-gray-800/60 text-xs">
-                                    <span class="text-[10px] text-gray-400 font-mono bg-gray-900 px-2 py-0.5 rounded border border-gray-800">Stok Kulkas: {{ $snack->stock_kulkas }}</span>
+                                    <span class="text-[10px] text-gray-400 font-mono bg-gray-900 px-2 py-0.5 rounded border border-gray-800">Stok Etalase/Kulkas: {{ $snack->stock_kulkas }}</span>
                                     <span class="text-neon font-bold font-mono">Rp{{ number_format($snack->selling_price, 0, ',', '.') }}</span>
                                 </div>
                             </div>

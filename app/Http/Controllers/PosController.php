@@ -47,7 +47,7 @@ class PosController extends Controller
 
                 if ($snack->stock_kulkas < $qty) {
                     DB::rollBack();
-                    return back()->withErrors(['error' => "Stok di kulkas untuk {$snack->name} tidak mencukupi. Tersisa di kulkas: {$snack->stock_kulkas} Pcs"]);
+                    return back()->withErrors(['error' => "Stok di etalase/kulkas untuk {$snack->name} tidak mencukupi. Tersisa: {$snack->stock_kulkas} Pcs"]);
                 }
 
                 $subtotal = $snack->selling_price * $qty;

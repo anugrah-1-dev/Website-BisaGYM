@@ -6,7 +6,7 @@
             </div>
             <div>
                 <h2 class="text-lg font-bold text-white leading-tight">{{ __('Inventaris & Stok Snack') }}</h2>
-                <p class="text-[11px] text-gray-400">Manajemen Stok Gudang, Stok Kulkas POS, dan Laporan Restok</p>
+                <p class="text-[11px] text-gray-400">Manajemen Stok Gudang, Stok Etalase/Kulkas POS, dan Laporan Restok</p>
             </div>
         </div>
     </x-slot>
@@ -37,7 +37,7 @@
                 <h3 class="text-white font-bold text-base flex items-center gap-2">
                     <i class="ph ph-sliders text-neon"></i> Kontrol Stok & Mutasi Snack
                 </h3>
-                <p class="text-xs text-gray-400 mt-0.5">Tambah produk baru, catat barang masuk dari supplier, atau refill kulkas POS</p>
+                <p class="text-xs text-gray-400 mt-0.5">Tambah produk baru, catat barang masuk dari supplier, atau refill Etalase/Kulkas POS</p>
             </div>
 
             <!-- Action Buttons Toolbar -->
@@ -46,7 +46,7 @@
                     <i class="ph ph-plus-circle text-base mr-1.5"></i> + Barang Masuk (Supplier)
                 </button>
                 <button type="button" onclick="openRefillModal()" class="bg-dark hover:bg-gray-800 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 font-semibold py-2 px-3.5 rounded-xl transition-all text-xs flex items-center shadow-md active:scale-95">
-                    <i class="ph ph-arrows-down-up text-base mr-1.5"></i> ❄️ Refill Ke Kulkas
+                    <i class="ph ph-arrows-down-up text-base mr-1.5"></i> 🛒 Refill Etalase/Kulkas
                 </button>
                 <a href="{{ route('snacks.create') }}" class="bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-4 rounded-xl transition-all hover:shadow-[0_0_15px_rgba(224,255,0,0.2)] text-xs flex items-center active:scale-95">
                     <i class="ph ph-sparkle text-base mr-1.5"></i> Tambah Produk Baru
@@ -78,7 +78,7 @@
 
             <div class="bg-card rounded-2xl border border-cyan-500/20 p-5 shadow-lg flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Total Stok Di Kulkas</p>
+                    <p class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Total Stok Etalase/Kulkas</p>
                     <p class="text-2xl font-black text-cyan-400 mt-1 font-mono">{{ number_format($totalKulkas) }} <span class="text-xs text-gray-400 font-normal">Pcs</span></p>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl">
@@ -93,7 +93,7 @@
                 :class="activeTab === 'stok' ? 'border-neon text-neon font-bold bg-neon/10' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800/40'"
                 class="px-4 py-2.5 rounded-xl border text-sm transition-all flex items-center gap-2 font-medium">
                 <i class="ph ph-package text-lg"></i>
-                <span>Daftar Stok Produk (Gudang & Kulkas)</span>
+                <span>Daftar Stok Produk (Gudang & Etalase/Kulkas)</span>
             </button>
             <button type="button" @click="activeTab = 'laporan'"
                 :class="activeTab === 'laporan' ? 'border-neon text-neon font-bold bg-neon/10' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800/40'"
@@ -109,7 +109,7 @@
             <div class="p-4 border-b border-gray-800 bg-dark/40 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
                 <div class="flex items-center gap-2">
                     <i class="ph ph-list-bullets text-neon text-lg"></i>
-                    <h3 class="text-white text-sm font-semibold">Monitoring Stok Fisik Gudang vs Kulkas Display</h3>
+                    <h3 class="text-white text-sm font-semibold">Monitoring Stok Fisik Gudang vs Etalase/Kulkas Display</h3>
                 </div>
                 <span class="text-xs text-gray-400 bg-gray-900 px-3 py-1 rounded-lg border border-gray-800 font-mono">
                     Total fisik: {{ number_format($totalGudang + $totalKulkas) }} Pcs
@@ -123,7 +123,7 @@
                             <th class="px-6 py-4 font-semibold">Produk & Kode</th>
                             <th class="px-6 py-4 font-semibold">Kategori</th>
                             <th class="px-6 py-4 font-semibold text-center">Stok Gudang</th>
-                            <th class="px-6 py-4 font-semibold text-center">Stok Kulkas (POS)</th>
+                            <th class="px-6 py-4 font-semibold text-center">Stok Etalase/Kulkas</th>
                             <th class="px-6 py-4 font-semibold text-center">Total Stok</th>
                             <th class="px-6 py-4 font-semibold">Harga Modal</th>
                             <th class="px-6 py-4 font-semibold">Harga Jual</th>
@@ -184,7 +184,7 @@
                                     <div class="flex items-center justify-end space-x-1.5">
                                         <!-- Button Refill Ke Kulkas -->
                                         <button type="button" onclick="openRefillModal({{ $snack->id }}, '{{ addslashes($snack->name) }}', {{ $snack->stock_gudang }})"
-                                            class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs font-semibold transition-colors" title="Isi ulang kulkas dari gudang">
+                                            class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs font-semibold transition-colors" title="Isi ulang Etalase/Kulkas dari gudang">
                                             <i class="ph ph-arrows-down-up"></i> Refill
                                         </button>
 
@@ -227,7 +227,7 @@
             <div class="p-4 border-b border-gray-800 bg-dark/40 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <i class="ph ph-clock-counter-clockwise text-neon text-lg"></i>
-                    <h3 class="text-white text-sm font-semibold">Laporan Riwayat Barang Masuk & Transfer Kulkas</h3>
+                    <h3 class="text-white text-sm font-semibold">Laporan Riwayat Barang Masuk & Transfer Etalase/Kulkas</h3>
                 </div>
                 <span class="text-xs text-gray-400 italic">Otomatis mencatat pengeluaran operasional & mutasi stok</span>
             </div>
@@ -259,7 +259,7 @@
                                         </span>
                                     @else
                                         <span class="px-2.5 py-1 text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-lg inline-flex items-center gap-1">
-                                            <i class="ph ph-arrows-down-up"></i> Refill Ke Kulkas
+                                            <i class="ph ph-arrows-down-up"></i> Refill Etalase/Kulkas
                                         </span>
                                     @endif
                                 </td>
@@ -272,10 +272,10 @@
                                         @if($r->qty_gudang > 0)
                                             <span class="text-amber-400">+{{ $r->qty_gudang }} Gudang</span>
                                         @else
-                                            <span class="text-cyan-400">+{{ $r->qty_kulkas }} Kulkas</span>
+                                            <span class="text-cyan-400">+{{ $r->qty_kulkas }} Etalase/Kulkas</span>
                                         @endif
                                     @else
-                                        <span class="text-cyan-400 font-semibold">{{ $r->qty_kulkas }} Pcs <span class="text-[10px] text-gray-400 font-normal">(Gudang ➔ Kulkas)</span></span>
+                                        <span class="text-cyan-400 font-semibold">{{ $r->qty_kulkas }} Pcs <span class="text-[10px] text-gray-400 font-normal">(Gudang ➔ Etalase/Kulkas)</span></span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 font-mono text-xs text-gray-400 whitespace-nowrap">
@@ -350,7 +350,7 @@
                         <option value="" disabled selected>-- Pilih Produk --</option>
                         @foreach($snacks as $s)
                             <option value="{{ $s->id }}" data-price="{{ $s->capital_price }}">
-                                {{ $s->name }} ({{ $s->snack_code }}) - Gudang: {{ $s->stock_gudang }} | Kulkas: {{ $s->stock_kulkas }}
+                                {{ $s->name }} ({{ $s->snack_code }}) - Gudang: {{ $s->stock_gudang }} | Etalase/Kulkas: {{ $s->stock_kulkas }}
                             </option>
                         @endforeach
                     </select>
@@ -361,7 +361,7 @@
                         <label class="block text-xs font-semibold text-gray-300 mb-1">Tujuan Penyimpanan</label>
                         <select name="destination" required class="w-full bg-dark border-gray-700 rounded-xl text-white text-sm focus:border-neon focus:ring-neon">
                             <option value="gudang" selected>📦 Gudang Utama</option>
-                            <option value="kulkas">❄️ Kulkas Display POS</option>
+                            <option value="kulkas">🛒 Etalase / Kulkas Display POS</option>
                         </select>
                     </div>
                     <div>
@@ -423,7 +423,7 @@
         <div class="bg-card border border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-gray-800 pb-3">
                 <h3 class="text-white font-bold text-base flex items-center gap-2">
-                    <i class="ph ph-arrows-down-up text-cyan-400 text-xl"></i> Refill Stok Ke Kulkas
+                    <i class="ph ph-arrows-down-up text-cyan-400 text-xl"></i> Refill Stok Etalase/Kulkas
                 </h3>
                 <button onclick="closeRefillModal()" class="text-gray-400 hover:text-white"><i class="ph ph-x text-xl"></i></button>
             </div>
@@ -444,7 +444,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">Jumlah Pindah Ke Kulkas (Pcs)</label>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Jumlah Pindah (Pcs)</label>
                     <input type="number" id="refill_quantity" name="quantity" min="1" value="1" required
                         class="w-full bg-dark border-gray-700 rounded-xl text-white text-sm font-mono font-bold focus:border-cyan-400 focus:ring-cyan-400">
                     <p id="refill_gudang_info" class="text-[11px] text-amber-400 mt-1 italic"></p>
@@ -452,14 +452,14 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-300 mb-1">Catatan Refill (Opsional)</label>
-                    <input type="text" name="notes" placeholder="Contoh: Isi ulang kulkas pagi"
+                    <input type="text" name="notes" placeholder="Contoh: Isi ulang stok display pagi"
                         class="w-full bg-dark border-gray-700 rounded-xl text-white text-xs focus:border-cyan-400 focus:ring-cyan-400">
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="closeRefillModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold">Batal</button>
                     <button type="submit" class="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-darker font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg shadow-cyan-500/20">
-                        <i class="ph ph-check-bold"></i> Pindahkan Ke Kulkas
+                        <i class="ph ph-check-bold"></i> Pindahkan Ke Display (Etalase/Kulkas)
                     </button>
                 </div>
             </form>

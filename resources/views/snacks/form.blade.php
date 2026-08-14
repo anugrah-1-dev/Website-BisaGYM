@@ -49,7 +49,7 @@
                         <input type="number" name="stock_gudang" value="{{ old('stock_gudang', $snack->stock_gudang ?? 0) }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-amber-400 focus:border-amber-400 text-sm font-mono">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-cyan-400 mb-1">Stok Display Kulkas (POS)</label>
+                        <label class="block text-sm font-medium text-cyan-400 mb-1">Stok Display (Etalase/Kulkas)</label>
                         <input type="number" name="stock_kulkas" value="{{ old('stock_kulkas', $snack->stock_kulkas ?? 0) }}" required min="0" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-cyan-400 focus:border-cyan-400 text-sm font-mono">
                     </div>
                 </div>

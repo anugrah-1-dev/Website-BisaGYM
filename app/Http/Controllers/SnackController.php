@@ -57,7 +57,7 @@ class SnackController extends Controller
             'stock' => $totalStock,
         ]);
 
-        \App\Models\ActivityLog::log('CREATE', 'Kantin', "Menambahkan produk baru: {$snack->name} (Gudang: {$stockGudang}, Kulkas: {$stockKulkas})");
+        \App\Models\ActivityLog::log('CREATE', 'Kantin', "Menambahkan produk baru: {$snack->name} (Gudang: {$stockGudang}, Etalase/Kulkas: {$stockKulkas})");
 
         return redirect()->route('snacks.index')->with('success', 'Produk berhasil ditambahkan!');
     }
@@ -102,7 +102,7 @@ class SnackController extends Controller
 
         $desc = "Memperbarui produk {$snack->name}";
         if ($oldStockGudang != $stockGudang || $oldStockKulkas != $stockKulkas) {
-            $desc .= " (Gudang: $oldStockGudang -> $stockGudang, Kulkas: $oldStockKulkas -> $stockKulkas)";
+            $desc .= " (Gudang: $oldStockGudang -> $stockGudang, Etalase/Kulkas: $oldStockKulkas -> $stockKulkas)";
         }
         if ($oldPrice != $snack->selling_price) {
             $desc .= " (Harga dari Rp " . number_format($oldPrice, 0, ',', '.') . " ke Rp " . number_format($snack->selling_price, 0, ',', '.') . ")";
@@ -221,18 +221,18 @@ class SnackController extends Controller
                 'capital_price' => $snack->capital_price,
                 'total_cost' => 0,
                 'supplier' => null,
-                'notes' => $request->notes ?? 'Refill dari Gudang ke Kulkas',
+                'notes' => $request->notes ?? 'Refill dari Gudang ke Etalase/Kulkas',
                 'restock_date' => now(),
             ]);
 
             DB::commit();
 
-            \App\Models\ActivityLog::log('UPDATE', 'Kantin', "Refill Kulkas: Pindah {$qty} pcs {$snack->name} dari Gudang ke Kulkas");
+            \App\Models\ActivityLog::log('UPDATE', 'Kantin', "Refill Etalase/Kulkas: Pindah {$qty} pcs {$snack->name} dari Gudang ke Etalase/Kulkas");
 
-            return redirect()->route('snacks.index')->with('success', "Berhasil memindahkan {$qty} pcs {$snack->name} dari Gudang ke Kulkas!");
+            return redirect()->route('snacks.index')->with('success', "Berhasil memindahkan {$qty} pcs {$snack->name} dari Gudang ke Etalase/Kulkas!");
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Gagal memindahkan ke kulkas: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Gagal memindahkan ke Etalase/Kulkas: ' . $e->getMessage()]);
         }
     }
 }
