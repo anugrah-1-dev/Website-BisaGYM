@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('action'); // CREATE, UPDATE, DELETE, dll
             $table->string('module'); // Manajemen User, Paket Gym, dll
             $table->text('description'); // Deskripsi spesifik
