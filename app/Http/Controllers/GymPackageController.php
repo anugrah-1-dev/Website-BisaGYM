@@ -22,24 +22,26 @@ class GymPackageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'          => 'required|string|max:255',
-            'price'         => 'required|numeric|min:0',
-            'admin_fee'     => 'required|numeric|min:0',
-            'duration'      => 'required|integer|min:1',
-            'duration_unit' => 'required|in:hari,minggu,bulan,tahun',
-            'category'      => 'required|in:member,non-member,couple',
-            'max_members'   => 'required|integer|min:1|max:10',
+            'name'                => 'required|string|max:255',
+            'price'               => 'required|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'admin_fee'           => 'required|numeric|min:0',
+            'duration'            => 'required|integer|min:1',
+            'duration_unit'       => 'required|in:hari,minggu,bulan,tahun',
+            'category'            => 'required|in:member,non-member,couple',
+            'max_members'         => 'required|integer|min:1|max:10',
         ]);
 
         $gymPackage = GymPackage::create([
-            'name'          => $request->name,
-            'price'         => $request->price,
-            'admin_fee'     => $request->admin_fee,
-            'duration'      => $request->duration,
-            'duration_unit' => $request->duration_unit,
-            'category'      => $request->category,
-            'max_members'   => $request->max_members,
-            'is_active'     => $request->has('is_active'),
+            'name'                => $request->name,
+            'price'               => $request->price,
+            'discount_percentage' => $request->discount_percentage ?? 0,
+            'admin_fee'           => $request->admin_fee,
+            'duration'            => $request->duration,
+            'duration_unit'       => $request->duration_unit,
+            'category'            => $request->category,
+            'max_members'         => $request->max_members,
+            'is_active'           => $request->has('is_active'),
         ]);
 
         ActivityLog::log('CREATE', 'Gym Package', "Menambahkan paket gym baru: {$gymPackage->name}");
@@ -55,26 +57,28 @@ class GymPackageController extends Controller
     public function update(Request $request, GymPackage $gymPackage)
     {
         $request->validate([
-            'name'          => 'required|string|max:255',
-            'price'         => 'required|numeric|min:0',
-            'admin_fee'     => 'required|numeric|min:0',
-            'duration'      => 'required|integer|min:1',
-            'duration_unit' => 'required|in:hari,minggu,bulan,tahun',
-            'category'      => 'required|in:member,non-member,couple',
-            'max_members'   => 'required|integer|min:1|max:10',
+            'name'                => 'required|string|max:255',
+            'price'               => 'required|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'admin_fee'           => 'required|numeric|min:0',
+            'duration'            => 'required|integer|min:1',
+            'duration_unit'       => 'required|in:hari,minggu,bulan,tahun',
+            'category'            => 'required|in:member,non-member,couple',
+            'max_members'         => 'required|integer|min:1|max:10',
         ]);
 
         $oldPrice = $gymPackage->price;
 
         $gymPackage->update([
-            'name'          => $request->name,
-            'price'         => $request->price,
-            'admin_fee'     => $request->admin_fee,
-            'duration'      => $request->duration,
-            'duration_unit' => $request->duration_unit,
-            'category'      => $request->category,
-            'max_members'   => $request->max_members,
-            'is_active'     => $request->has('is_active'),
+            'name'                => $request->name,
+            'price'               => $request->price,
+            'discount_percentage' => $request->discount_percentage ?? 0,
+            'admin_fee'           => $request->admin_fee,
+            'duration'            => $request->duration,
+            'duration_unit'       => $request->duration_unit,
+            'category'            => $request->category,
+            'max_members'         => $request->max_members,
+            'is_active'           => $request->has('is_active'),
         ]);
 
         ActivityLog::log('UPDATE', 'Paket Gym', "Mengubah paket gym {$gymPackage->name}" . ($oldPrice != $gymPackage->price ? " (Harga diubah dari Rp " . number_format($oldPrice, 0, ',', '.') . " ke Rp " . number_format($gymPackage->price, 0, ',', '.') . ")" : ""));

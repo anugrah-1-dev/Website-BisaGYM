@@ -109,14 +109,17 @@ class MemberController extends Controller
             now: $now,
             activationDate: $activationDate,
             expiryDate: $expiryDate,
+            status: 'pending',
+            lockedPackageId: $package->id,
+            lockedPrice: $lockedPrice
         );
 
         // ── Perhitungan Diskon & Admin Fee (Khusus Registrasi Baru) ──
-        $isBasicPlan = strtolower(trim($package->name)) === 'basic plan';
-        $discountPercentage = $isBasicPlan ? (int) $request->input('discount_category', 0) : 0;
+        $discountPercentage = $package->discount_percentage ?? 0;
         $discountAmount = ($package->price * $discountPercentage) / 100;
+        $lockedPrice = $package->price - $discountAmount;
         $adminFee = $package->admin_fee;
-        $finalAmount = ($package->price - $discountAmount) + $adminFee;
+        $finalAmount = $lockedPrice + $adminFee;
 
         // ── Transaksi (1 transaksi untuk couple, member_id = member pertama) ──
         $transactionCode = ($isCouple ? 'CPL-' : 'TRX-') . time() . '-' . rand(100, 999);
@@ -157,6 +160,9 @@ class MemberController extends Controller
                 now: $now,
                 activationDate: $activationDate,
                 expiryDate: $expiryDate,
+                status: 'pending',
+                lockedPackageId: $package->id,
+                lockedPrice: $lockedPrice
             );
 
             $successMsg .= ' & ' . $member2->member_id . ' (Couple)';
@@ -225,11 +231,11 @@ class MemberController extends Controller
         $paymentStatus = $request->payment_status;
         $memberStatus = ($paymentStatus === 'paid') ? 'active' : 'pending';
 
-        $isBasicPlan = strtolower(trim($package->name)) === 'basic plan';
-        $discountPercentage = $isBasicPlan ? (int) $request->input('discount_category', 0) : 0;
+        $discountPercentage = $package->discount_percentage ?? 0;
         $discountAmount = ($package->price * $discountPercentage) / 100;
+        $lockedPrice = $package->price - $discountAmount;
         $adminFee = $package->admin_fee;
-        $finalAmount = ($package->price - $discountAmount) + $adminFee;
+        $finalAmount = $lockedPrice + $adminFee;
 
         // ── Buat Member Pertama dengan Manual ID ──
         $member1 = $this->createMember(
@@ -251,6 +257,8 @@ class MemberController extends Controller
             activationDate: $activationDate,
             expiryDate: $expiryDate,
             status: $memberStatus,
+            lockedPackageId: $package->id,
+            lockedPrice: $lockedPrice
         );
 
         $transactionCode = ($isCouple ? 'CPL-MIG-' : 'TRX-MIG-') . time() . '-' . rand(100, 999);
@@ -292,6 +300,8 @@ class MemberController extends Controller
                 activationDate: $activationDate,
                 expiryDate: $expiryDate,
                 status: $memberStatus,
+                lockedPackageId: $package->id,
+                lockedPrice: $lockedPrice
             );
 
             \App\Models\ActivityLog::log('CREATE', 'Manajemen Member', "Registrasi member lama (Couple 2) ID manual: {$member2->name} ({$member2->member_id})");
@@ -311,7 +321,9 @@ class MemberController extends Controller
         Carbon $now,
         Carbon $activationDate,
         Carbon $expiryDate,
-        string $status = 'pending'
+        string $status = 'pending',
+        ?int $lockedPackageId = null,
+        ?float $lockedPrice = null
     ): Member {
         // Process photo
         $photoPath = null;
@@ -348,6 +360,8 @@ class MemberController extends Controller
             'activation_date'  => $activationDate,
             'expiry_date'      => $expiryDate,
             'status'          => $status,
+            'locked_package_id'=> $lockedPackageId,
+            'locked_price'    => $lockedPrice,
             'extension_count' => 0,
         ]);
 
@@ -420,15 +434,41 @@ class MemberController extends Controller
         $package = GymPackage::findOrFail($request->package_id);
         $now     = now();
 
+        $renewalAmount = $package->price;
+        $discountPercentage = 0;
+        
+        // Cek Grandfathered Rate / Locked Price
+        if ($member->locked_package_id === $package->id && $member->locked_price !== null) {
+            $renewalAmount = $member->locked_price;
+            // Kita bisa hitung kembali discount_percentage secara kasar (untuk record transaksi)
+            // Atau cukup simpan amount-nya langsung
+            if ($package->price > 0 && $package->price > $member->locked_price) {
+                $discountPercentage = (($package->price - $member->locked_price) / $package->price) * 100;
+            }
+        } else {
+            // Jika dia pindah paket, gunakan harga paket baru beserta diskon paket baru saat ini
+            $discountPercentage = $package->discount_percentage ?? 0;
+            $discountAmount = ($package->price * $discountPercentage) / 100;
+            $renewalAmount = $package->price - $discountAmount;
+            
+            // Update locked price dan package_id member supaya ke depannya pakai harga paket baru ini
+            $member->update([
+                'locked_package_id' => $package->id,
+                'locked_price'      => $renewalAmount
+            ]);
+        }
+
         MemberTransaction::create([
-            'transaction_code' => 'RNW-' . time() . '-' . rand(100, 999),
-            'member_id'        => $member->id,
-            'gym_package_id'   => $package->id,
-            'user_id'          => Auth::id(),
-            'amount'           => $package->price,
-            'transaction_date' => $now,
-            'transaction_type' => 'renewal',
-            'payment_status'   => 'unpaid',
+            'transaction_code'    => 'RNW-' . time() . '-' . rand(100, 999),
+            'member_id'           => $member->id,
+            'gym_package_id'      => $package->id,
+            'user_id'             => Auth::id(),
+            'amount'              => $renewalAmount,
+            'discount_percentage' => $discountPercentage,
+            'admin_fee'           => 0, // Admin fee biasanya 0 untuk renewal
+            'transaction_date'    => $now,
+            'transaction_type'    => 'renewal',
+            'payment_status'      => 'unpaid',
         ]);
 
         return redirect()->route('members.show', $member)->with('success', "Tagihan perpanjangan paket berhasil dibuat. Silakan lakukan pembayaran di menu Kasir Member.");

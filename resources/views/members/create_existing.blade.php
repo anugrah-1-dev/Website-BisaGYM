@@ -195,17 +195,15 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="p-4 border border-gray-700 bg-dark/50 rounded-xl transition-all" id="discount-container">
-                    <label for="discount_category" class="block text-sm font-medium text-neon mb-2">
-                        <i class="ph ph-percent mr-2"></i> Diskon Profesi <span class="text-xs text-gray-400 font-normal">(Khusus Basic Plan)</span>
-                    </label>
-                    <select id="discount_category" name="discount_category" autocomplete="off" class="w-full border-gray-600 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
-                        <option value="0">Tidak Ada Diskon (0%)</option>
-                        <option value="10">Pelajar, PNS, TNI, dan POLRI (10%)</option>
-                        <option value="15">Pelaku Budaya, Dukun, dan Ulama (15%)</option>
-                        <option value="20">Guru / Tenaga Pendidik (20%)</option>
-                    </select>
-                    <p class="text-xs text-gray-500 mt-2" id="discount-helper">Diskon promo hanya berlaku untuk paket Basic Plan.</p>
+                <div class="p-4 border border-gray-700 bg-dark/50 rounded-xl transition-all">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="ph ph-tag text-neon text-lg"></i>
+                        <h4 class="text-sm font-medium text-white">Informasi Diskon</h4>
+                    </div>
+                    <p class="text-sm text-gray-400">
+                        Diskon otomatis berlaku mengikuti pengaturan diskon pada paket yang Anda pilih. 
+                        Harga perpanjangan member ini nantinya akan <strong>terkunci (grandfathered)</strong> menggunakan harga diskon yang didapat hari ini.
+                    </p>
                 </div>
                 
                 <div class="p-4 border border-gray-700 bg-dark/50 rounded-xl">
@@ -560,40 +558,16 @@
                 }
             }
 
-            const discountContainer = document.getElementById('discount-container');
-            const discountSelect    = document.getElementById('discount_category');
-            const discountHelper    = document.getElementById('discount-helper');
-
-            function togglePromo(packageName) {
-                const isBasicPlan = packageName && packageName.trim().toLowerCase() === 'basic plan';
-                if (discountSelect && discountContainer) {
-                    if (isBasicPlan) {
-                        discountSelect.disabled = false;
-                        discountContainer.classList.remove('opacity-40', 'pointer-events-none');
-                        if (discountHelper) discountHelper.textContent = 'Diskon promo hanya berlaku untuk paket Basic Plan.';
-                    } else {
-                        discountSelect.value = "0";
-                        discountSelect.disabled = true;
-                        discountContainer.classList.add('opacity-40', 'pointer-events-none');
-                        if (discountHelper) discountHelper.textContent = 'Promo diskon tidak tersedia untuk paket ini (khusus Basic Plan).';
-                    }
-                }
-            }
-
             packageRadios.forEach(radio => {
                 radio.addEventListener('change', function () {
                     const maxMembers = parseInt(this.dataset.maxMembers || 1);
                     toggleCouple(maxMembers >= 2);
-                    togglePromo(this.dataset.name || '');
                 });
             });
 
             const initialChecked = document.querySelector('input[name="package_id"]:checked');
             if (initialChecked) {
                 toggleCouple(parseInt(initialChecked.dataset.maxMembers || 1) >= 2);
-                togglePromo(initialChecked.dataset.name || '');
-            } else {
-                togglePromo('');
             }
 
             // ── Webcam & Upload Photo Helper ──

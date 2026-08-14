@@ -66,6 +66,12 @@ class PublicRegistrationController extends Controller
         elseif ($package->duration_unit === 'bulan')  $expiryDate->addMonths($package->duration);
         elseif ($package->duration_unit === 'tahun')  $expiryDate->addYears($package->duration);
 
+        $discountPercentage = $package->discount_percentage ?? 0;
+        $discountAmount = ($package->price * $discountPercentage) / 100;
+        $lockedPrice = $package->price - $discountAmount;
+        $adminFee = $package->admin_fee;
+        $finalAmount = $lockedPrice + $adminFee;
+
         // Create Member 1
         $member1 = $this->createMember(
             vipId: 'VIP-' . now()->format('Ymd-His') . '-' . rand(1000, 9999),
@@ -84,14 +90,10 @@ class PublicRegistrationController extends Controller
             package: $package,
             now: $now,
             activationDate: $activationDate,
-            expiryDate: $expiryDate
+            expiryDate: $expiryDate,
+            lockedPackageId: $package->id,
+            lockedPrice: $lockedPrice
         );
-
-        $isBasicPlan = strtolower(trim($package->name)) === 'basic plan';
-        $discountPercentage = $isBasicPlan ? (int) $request->input('discount_category', 0) : 0;
-        $discountAmount = ($package->price * $discountPercentage) / 100;
-        $adminFee = $package->admin_fee;
-        $finalAmount = ($package->price - $discountAmount) + $adminFee;
 
         $transactionCode = ($isCouple ? 'CPL-' : 'TRX-') . time() . '-' . rand(100, 999);
         MemberTransaction::create([
@@ -126,7 +128,9 @@ class PublicRegistrationController extends Controller
                 package: $package,
                 now: $now,
                 activationDate: $activationDate,
-                expiryDate: $expiryDate
+                expiryDate: $expiryDate,
+                lockedPackageId: $package->id,
+                lockedPrice: $lockedPrice
             );
         }
 
@@ -146,7 +150,9 @@ class PublicRegistrationController extends Controller
         GymPackage $package,
         Carbon $now,
         Carbon $activationDate,
-        Carbon $expiryDate
+        Carbon $expiryDate,
+        ?int $lockedPackageId = null,
+        ?float $lockedPrice = null
     ): Member {
         $photoPath = null;
         if (!empty($data['photo_data'])) {
@@ -182,6 +188,8 @@ class PublicRegistrationController extends Controller
             'activation_date'  => $activationDate,
             'expiry_date'      => $expiryDate,
             'status'          => 'pending',
+            'locked_package_id'=> $lockedPackageId,
+            'locked_price'    => $lockedPrice,
             'extension_count' => 0,
         ]);
 
