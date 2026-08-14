@@ -140,10 +140,9 @@ class MemberSeeder extends Seeder
         $genderRaw = $record['jenis_kelamin'] ?? 'Laki-laki';
         $gender = ($genderRaw === 'Perempuan') ? 'P' : 'L';
 
-        // Map status: status_keanggotaan -> active/pending/expired
-        $status = $this->mapStatus($record['status_keanggotaan'] ?? 'Aktif');
-
-        // Parse dates
+        $statusRaw = $record['status_keanggotaan'] ?? null;
+        
+        // Parse dates first so we can use expiry_date to determine status
         $registrationDate = $this->parseDate(
             $record['waktu_pendaftaran'] ?? $record['tanggal_daftar_str'] ?? null
         );
@@ -153,6 +152,9 @@ class MemberSeeder extends Seeder
         $expiryDate = $this->parseDate(
             $record['tanggal_berlaku_hingga_str'] ?? null
         );
+        
+        $status = $this->mapStatus($statusRaw, $expiryDate);
+
 
         $now = Carbon::now();
 
@@ -181,10 +183,25 @@ class MemberSeeder extends Seeder
 
     /**
      * Map status_keanggotaan to the enum: active, pending, expired.
-     * Semua member dari JSON sudah melakukan pembayaran, jadi status = active.
+     * Cek dari status eksplisit JSON, atau fallback ke pengecekan tanggal expired.
      */
-    private function mapStatus(string $statusRaw): string
+    private function mapStatus(?string $statusRaw, ?string $expiryDate): string
     {
+        if ($statusRaw) {
+            $statusLower = strtolower($statusRaw);
+            if (in_array($statusLower, ['tidak aktif', 'non aktif', 'expired', 'non-aktif'])) {
+                return 'expired';
+            }
+            if (in_array($statusLower, ['pending', 'menunggu'])) {
+                return 'pending';
+            }
+        }
+
+        // Jika tidak ada status eksplisit, tentukan dari expiry_date
+        if ($expiryDate && Carbon::parse($expiryDate)->isPast()) {
+            return 'expired';
+        }
+
         return 'active';
     }
 
