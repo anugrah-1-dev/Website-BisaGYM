@@ -1,24 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between relative z-10">
-            <div>
-                <h2 class="text-2xl font-black text-white flex items-center gap-3 tracking-tight">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon to-[#c4e600] flex items-center justify-center text-darker shadow-lg shadow-neon/20">
-                        <i class="ph ph-percent text-2xl"></i>
-                    </div>
-                    {{ __('Manajemen Diskon / Promo') }}
-                </h2>
-                <p class="text-sm text-gray-400 mt-2 font-medium ml-13">Atur diskon yang berlaku untuk paket membership Anda.</p>
-            </div>
-            <div class="mt-6 sm:mt-0">
-                <a href="{{ route('discounts.create') }}" class="group relative inline-flex items-center gap-2 px-6 py-3 bg-neon hover:bg-[#c4e600] text-darker font-bold rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(212,255,0,0.3)] hover:shadow-[0_0_30px_rgba(212,255,0,0.5)] overflow-hidden">
-                    <div class="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:animate-[shimmer_1s_forwards]"></div>
-                    <i class="ph ph-plus-circle text-xl transition-transform group-hover:rotate-90 duration-300"></i>
-                    <span>Tambah Diskon Baru</span>
-                </a>
-            </div>
+        <div class="flex items-center gap-2">
+            <i class="ph ph-percent text-neon"></i>
+            {{ __('Manajemen Diskon / Promo') }}
         </div>
     </x-slot>
+
+    <!-- Page Header (Main Content) -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between relative z-10 mb-6 mt-2">
+        <div>
+            <h2 class="text-2xl font-black text-white flex items-center gap-3 tracking-tight">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon to-[#c4e600] flex items-center justify-center text-darker shadow-lg shadow-neon/20">
+                    <i class="ph ph-percent text-2xl"></i>
+                </div>
+                Promo Membership
+            </h2>
+            <p class="text-sm text-gray-400 mt-2 font-medium ml-13">Atur diskon yang berlaku untuk paket membership Anda.</p>
+        </div>
+        <div class="mt-6 sm:mt-0">
+            <a href="{{ route('discounts.create') }}" class="group relative inline-flex items-center gap-2 px-6 py-3 bg-neon hover:bg-[#c4e600] text-darker font-bold rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(212,255,0,0.3)] hover:shadow-[0_0_30px_rgba(212,255,0,0.5)] overflow-hidden">
+                <div class="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:animate-[shimmer_1s_forwards]"></div>
+                <i class="ph ph-plus-circle text-xl transition-transform group-hover:rotate-90 duration-300"></i>
+                <span>Tambah Diskon Baru</span>
+            </a>
+        </div>
+    </div>
 
     @if(session('success'))
         <div class="mb-6 p-4 rounded-xl bg-neon/10 border border-neon/30 text-neon flex items-start gap-3">

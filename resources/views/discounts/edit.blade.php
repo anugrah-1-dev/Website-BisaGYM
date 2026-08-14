@@ -1,7 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
+        <div class="flex items-center gap-2">
+            <i class="ph ph-pencil-simple text-neon"></i>
+            Edit Promo Diskon
+        </div>
+    </x-slot>
+
+    <!-- Page Header (Main Content) -->
+    <div class="max-w-4xl mx-auto mb-6 mt-2">
         <div class="flex items-center space-x-4 relative z-10">
-            <a href="{{ route('discounts.index') }}" class="flex items-center justify-center w-10 h-10 rounded-xl bg-dark border border-gray-800 text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/10 transition-all duration-300 group">
+            <a href="{{ route('discounts.index') }}" class="flex items-center justify-center w-10 h-10 rounded-xl bg-dark border border-gray-800 text-gray-400 hover:text-neon hover:border-neon/50 hover:bg-neon/10 transition-all duration-300 group shadow-sm">
                 <i class="ph ph-arrow-left text-xl group-hover:-translate-x-1 transition-transform"></i>
             </a>
             <div>
@@ -11,9 +19,9 @@
                 <p class="text-sm text-gray-400 font-medium">Ubah informasi dan cakupan paket untuk promo ini</p>
             </div>
         </div>
-    </x-slot>
+    </div>
 
-    <div class="max-w-4xl mx-auto relative mt-4">
+    <div class="max-w-4xl mx-auto relative">
         <!-- Ambient background glow -->
         <div class="absolute -inset-4 bg-neon/10 blur-3xl -z-10 rounded-[3rem]"></div>
         
