@@ -559,11 +559,7 @@
                     </div>
                 </div>
 
-                {{-- Discount Benefit Banner --}}
-                <div class="discount-banner-box">
-                    <span class="discount-banner-title">🎁 Diskon Benefit Member:</span>
-                    <span class="discount-banner-val">DISKON {{ $tierDiscount }}% MITRA</span>
-                </div>
+
             </div>
 
         </div>
