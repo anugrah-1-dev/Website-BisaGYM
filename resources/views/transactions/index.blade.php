@@ -74,6 +74,10 @@
                             <td class="px-6 py-4 font-mono text-xs text-gray-400">{{ $trx->transaction_code }}</td>
                             <td class="px-6 py-4">
                                 <a href="{{ route('members.show', $trx->member_id) }}" class="text-white hover:text-neon transition-colors font-medium">{{ $trx->member->name ?? '-' }}</a>
+                                @if($trx->member && $trx->member->linked_member_id && $trx->package && $trx->package->max_members >= 2)
+                                    <span class="text-gray-400 mx-1">&amp;</span>
+                                    <a href="{{ route('members.show', $trx->member->linked_member_id) }}" class="text-white hover:text-neon transition-colors font-medium">{{ $trx->member->linkedMember->name ?? '-' }}</a>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-gray-300">{{ $trx->package->name ?? '-' }}</td>
                             <td class="px-6 py-4">

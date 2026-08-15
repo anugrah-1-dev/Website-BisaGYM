@@ -37,7 +37,12 @@
         <tr>
             <td style="text-align: center; border: 1px solid #000000;">{{ $idx + 1 }}</td>
             <td style="border: 1px solid #000000;">{{ \Carbon\Carbon::parse($trx->transaction_date)->format('d-m-Y H:i') }}</td>
-            <td style="border: 1px solid #000000;">{{ $trx->member->name ?? '-' }} ({{ $trx->member->member_id ?? '' }})</td>
+            <td style="border: 1px solid #000000;">
+                {{ $trx->member->name ?? '-' }} ({{ $trx->member->member_id ?? '' }})
+                @if($trx->member && $trx->member->linked_member_id && $trx->package && $trx->package->max_members >= 2)
+                    &amp; {{ $trx->member->linkedMember->name ?? '-' }} ({{ $trx->member->linkedMember->member_id ?? '' }})
+                @endif
+            </td>
             <td style="border: 1px solid #000000;">{{ $trx->package->name ?? '-' }}</td>
             <td style="text-align: right; border: 1px solid #000000;">{{ $trx->amount }}</td>
         </tr>
