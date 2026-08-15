@@ -68,11 +68,41 @@ class CashierController extends Controller
                 'status'          => 'active',
                 'extension_count' => $member->extension_count + 1,
             ]);
+
+            // Auto-extend linked member if it is a couple package
+            if ($package->max_members >= 2 && $member->linked_member_id) {
+                $linkedMember = $member->linkedMember;
+                if ($linkedMember) {
+                    $linkedBaseDate = ($linkedMember->status === 'active' && \Carbon\Carbon::parse($linkedMember->expiry_date)->isFuture())
+                        ? \Carbon\Carbon::parse($linkedMember->expiry_date)
+                        : $now;
+                    
+                    $linkedNewExpiry = $linkedBaseDate->copy();
+                    if ($package->duration_unit === 'hari')       $linkedNewExpiry->addDays($package->duration);
+                    elseif ($package->duration_unit === 'bulan')  $linkedNewExpiry->addMonths($package->duration);
+                    elseif ($package->duration_unit === 'tahun')  $linkedNewExpiry->addYears($package->duration);
+                    
+                    $linkedMember->update([
+                        'expiry_date'     => $linkedNewExpiry,
+                        'status'          => 'active',
+                        'extension_count' => $linkedMember->extension_count + 1,
+                    ]);
+                }
+            }
         } else {
             // Pendaftaran baru
             // Aktifkan member jika hari ini sudah mencapai/melewati tanggal aktivasi
             if (now()->startOfDay()->greaterThanOrEqualTo(\Carbon\Carbon::parse($member->activation_date)->startOfDay())) {
                 $member->update(['status' => 'active']);
+            }
+
+            // Auto-activate linked member for new registration if couple package
+            $package = $transaction->package;
+            if ($package && $package->max_members >= 2 && $member->linked_member_id) {
+                $linkedMember = $member->linkedMember;
+                if ($linkedMember && now()->startOfDay()->greaterThanOrEqualTo(\Carbon\Carbon::parse($linkedMember->activation_date)->startOfDay())) {
+                    $linkedMember->update(['status' => 'active']);
+                }
             }
         }
 

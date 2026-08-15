@@ -17,4 +17,9 @@ class Member extends Model
     {
         return $this->hasMany(MemberAttendance::class);
     }
+
+    public function linkedMember()
+    {
+        return $this->belongsTo(Member::class, 'linked_member_id');
+    }
 }

@@ -186,6 +186,10 @@ class MemberController extends Controller
                 lockedPrice: $lockedPrice
             );
 
+            // Link members
+            $member1->update(['linked_member_id' => $member2->id]);
+            $member2->update(['linked_member_id' => $member1->id]);
+
             $successMsg .= ' & ' . $member2->member_id . ' (Couple)';
         }
 
@@ -336,6 +340,10 @@ class MemberController extends Controller
                 lockedPackageId: $package->id,
                 lockedPrice: $lockedPrice
             );
+
+            // Link members
+            $member1->update(['linked_member_id' => $member2->id]);
+            $member2->update(['linked_member_id' => $member1->id]);
 
             \App\Models\ActivityLog::log('CREATE', 'Manajemen Member', "Registrasi member lama (Couple 2) ID manual: {$member2->name} ({$member2->member_id})");
             $successMsg .= ' & ' . $member2->member_id . ' (Couple)';
@@ -492,6 +500,15 @@ class MemberController extends Controller
         
         if ($hasUnpaid) {
             return back()->with('error', 'Member ini masih memiliki tagihan yang BELUM LUNAS. Silakan bayar di Kasir terlebih dahulu.');
+        }
+
+        if ($member->linked_member_id) {
+            $hasUnpaidPartner = \App\Models\MemberTransaction::where('member_id', $member->linked_member_id)
+                ->where('payment_status', 'unpaid')
+                ->exists();
+            if ($hasUnpaidPartner) {
+                return back()->with('error', 'Pasangan member ini masih memiliki tagihan perpanjangan yang BELUM LUNAS. Anda cukup melunasi satu tagihan untuk memperpanjang keduanya.');
+            }
         }
 
         $package = GymPackage::findOrFail($request->package_id);
