@@ -55,6 +55,22 @@
                         <i class="ph ph-pencil-simple"></i><span>Edit Data</span>
                     </a>
                 </div>
+
+                @if($member->linked_member_id)
+                    <div class="mt-4 p-3 bg-neon/10 border border-neon/30 rounded-lg text-left">
+                        <p class="text-xs text-neon mb-1 font-medium">Pasangan (Couple)</p>
+                        <a href="{{ route('members.show', $member->linked_member_id) }}" class="text-white hover:text-neon font-medium text-sm flex items-center">
+                            <i class="ph ph-link mr-2"></i> {{ $member->linkedMember->name ?? 'Unknown' }}
+                        </a>
+                    </div>
+                @else
+                    <div class="mt-4">
+                        <button type="button" onclick="document.getElementById('link-partner-modal').classList.remove('hidden')" class="w-full flex items-center justify-center space-x-2 bg-purple-500/20 text-purple-400 hover:bg-purple-500 hover:text-white border border-purple-500/50 py-2 px-3 rounded-lg text-xs font-bold transition-all shadow-[0_0_10px_rgba(168,85,247,0.2)] hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                            <i class="ph ph-users-three text-lg"></i>
+                            <span>Tautkan Pasangan (Upgrade)</span>
+                        </button>
+                    </div>
+                @endif
             </div>
 
             <!-- Stats Absensi -->
@@ -213,5 +229,109 @@
             updateDiscounts("[]");
         }
     });
+    </script>
+    <!-- Modal Link Partner -->
+    <div id="link-partner-modal" class="fixed inset-0 z-50 hidden bg-black/60 flex items-center justify-center p-4">
+        <div class="bg-card w-full max-w-lg rounded-xl border border-gray-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-dark">
+                <h3 class="text-lg font-bold text-white"><i class="ph ph-users-three text-neon mr-2"></i>Tautkan Pasangan</h3>
+                <button type="button" onclick="document.getElementById('link-partner-modal').classList.add('hidden')" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto">
+                <form method="POST" action="{{ route('members.link_partner', $member->id) }}" id="link-partner-form">
+                    @csrf
+                    
+                    <div class="mb-5 flex space-x-2 bg-dark p-1 rounded-lg border border-gray-700">
+                        <label class="flex-1 text-center cursor-pointer">
+                            <input type="radio" name="link_type" value="existing" class="peer sr-only" checked onchange="togglePartnerForm(this.value)">
+                            <div class="py-2 text-sm text-gray-400 peer-checked:bg-neon peer-checked:text-darker rounded-md font-medium transition-colors">Member Terdaftar</div>
+                        </label>
+                        <label class="flex-1 text-center cursor-pointer">
+                            <input type="radio" name="link_type" value="new" class="peer sr-only" onchange="togglePartnerForm(this.value)">
+                            <div class="py-2 text-sm text-gray-400 peer-checked:bg-neon peer-checked:text-darker rounded-md font-medium transition-colors">Daftarkan Baru</div>
+                        </label>
+                    </div>
+
+                    <!-- Existing Partner -->
+                    <div id="existing-partner-section" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">ID Member Pasangan <span class="text-red-500">*</span></label>
+                            <input type="text" name="partner_member_id" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm" placeholder="Contoh: P-240815-ABCD" required>
+                            <p class="text-xs text-gray-500 mt-1">Masukkan ID Member yang sudah terdaftar di sistem.</p>
+                        </div>
+                    </div>
+
+                    <!-- New Partner -->
+                    <div id="new-partner-section" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Nama Lengkap Pasangan <span class="text-red-500">*</span></label>
+                            <input type="text" name="partner_name" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm" placeholder="Nama lengkap">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">Jenis Kelamin <span class="text-red-500">*</span></label>
+                                <select name="partner_gender" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm">
+                                    <option value="L">Laki-laki</option>
+                                    <option value="P">Perempuan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">No. HP/WhatsApp</label>
+                                <input type="text" name="partner_phone" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">Tempat Lahir</label>
+                                <input type="text" name="partner_place_of_birth" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">Tanggal Lahir</label>
+                                <input type="date" name="partner_date_of_birth" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">NIK (KTP)</label>
+                            <input type="text" name="partner_nik" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm">
+                        </div>
+                        <div class="mt-2 text-xs text-gray-400 bg-gray-800/50 p-2 rounded border border-gray-700">
+                            <i class="ph ph-info mr-1"></i> Data lainnya (foto, pekerjaan, alamat lengkap) bisa dilengkapi nanti melalui menu <b>Edit Data</b> di profil pasangannya.
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button type="button" onclick="document.getElementById('link-partner-modal').classList.add('hidden')" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Batal</button>
+                        <button type="submit" class="bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-6 rounded-lg transition-colors text-sm">
+                            Tautkan & Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePartnerForm(type) {
+            const existingSection = document.getElementById('existing-partner-section');
+            const newSection = document.getElementById('new-partner-section');
+            const form = document.getElementById('link-partner-form');
+
+            if (type === 'existing') {
+                existingSection.classList.remove('hidden');
+                newSection.classList.add('hidden');
+                
+                form.querySelector('input[name="partner_member_id"]').required = true;
+                form.querySelector('input[name="partner_name"]').required = false;
+            } else {
+                existingSection.classList.add('hidden');
+                newSection.classList.remove('hidden');
+                
+                form.querySelector('input[name="partner_member_id"]').required = false;
+                form.querySelector('input[name="partner_name"]').required = true;
+            }
+        }
     </script>
 </x-app-layout>

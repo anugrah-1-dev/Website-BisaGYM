@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('members', \App\Http\Controllers\MemberController::class);
     Route::get('/members/{member}/ecard', [\App\Http\Controllers\MemberController::class, 'ecard'])->name('members.ecard');
     Route::post('/members/{member}/renewal', [\App\Http\Controllers\MemberController::class, 'renewal'])->name('members.renewal');
+    Route::post('/members/{member}/link-partner', [MemberController::class, 'linkPartner'])->name('members.link_partner');
 
     Route::get('/cashier/member', [\App\Http\Controllers\CashierController::class, 'index'])->name('cashier.member');
     Route::post('/cashier/pay/{transaction}', [\App\Http\Controllers\CashierController::class, 'pay'])->name('cashier.pay');

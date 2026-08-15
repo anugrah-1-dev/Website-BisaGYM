@@ -485,7 +485,83 @@ class MemberController extends Controller
 
         return redirect()->route('members.show', $member)->with('success', 'Data member berhasil diperbarui.');
     }
+    public function linkPartner(Request $request, Member $member)
+    {
+        $request->validate([
+            'link_type' => 'required|in:existing,new',
+        ]);
 
+        if ($member->linked_member_id) {
+            return back()->with('error', 'Member ini sudah memiliki pasangan tertaut.');
+        }
+
+        if ($request->link_type === 'existing') {
+            $request->validate([
+                'partner_member_id' => 'required|exists:members,member_id',
+            ]);
+
+            $partner = Member::where('member_id', $request->partner_member_id)->first();
+
+            if ($partner->id === $member->id) {
+                return back()->with('error', 'Tidak dapat menautkan ke diri sendiri.');
+            }
+
+            if ($partner->linked_member_id) {
+                return back()->with('error', 'Member yang dipilih sudah memiliki pasangan.');
+            }
+
+            // Link them
+            $member->update(['linked_member_id' => $partner->id]);
+            $partner->update(['linked_member_id' => $member->id]);
+
+            \App\Models\ActivityLog::log('UPDATE', 'Manajemen Member', "Menautkan {$member->name} dengan pasangan {$partner->name} (Couple)");
+
+            return back()->with('success', 'Berhasil menautkan pasangan. Anda sekarang bisa memperpanjang paket Couple.');
+        } else {
+            // Register New Partner
+            $request->validate([
+                'partner_name' => 'required|string|max:255',
+                'partner_phone' => 'nullable|string|max:20',
+                'partner_gender' => 'required|in:L,P',
+                'partner_nik' => 'nullable|string|max:20',
+                'partner_place_of_birth' => 'nullable|string|max:100',
+                'partner_date_of_birth' => 'nullable|date',
+                'partner_job' => 'nullable|string|max:100',
+                'partner_address' => 'nullable|string',
+                'partner_email' => 'nullable|email|max:255',
+            ]);
+
+            $now = now();
+            // Generate ID manually here since we don't have a specific package yet
+            $randomString = strtoupper(Str::random(4));
+            $vipId = 'P-' . $now->format('ymd') . '-' . $randomString;
+
+            $partner = Member::create([
+                'member_id' => $vipId,
+                'member_type' => $member->member_type ?? 'Member',
+                'name' => $request->partner_name,
+                'phone' => $request->partner_phone,
+                'gender' => $request->partner_gender,
+                'nik' => $request->partner_nik,
+                'place_of_birth' => $request->partner_place_of_birth,
+                'date_of_birth' => $request->partner_date_of_birth,
+                'job' => $request->partner_job,
+                'address' => $request->partner_address,
+                'email' => $request->partner_email,
+                'registration_date' => $now,
+                'activation_date' => $now,
+                'expiry_date' => $now, // Expired by default until paid
+                'status' => 'pending',
+                'linked_member_id' => $member->id,
+            ]);
+
+            $member->update(['linked_member_id' => $partner->id]);
+
+            \App\Models\ActivityLog::log('CREATE', 'Manajemen Member', "Mendaftarkan pasangan baru (Couple): {$partner->name} ({$partner->member_id}) untuk {$member->name}");
+
+            return back()->with('success', 'Berhasil mendaftarkan dan menautkan pasangan baru. Anda sekarang bisa memperpanjang paket Couple.');
+        }
+    }
     public function renewal(Request $request, Member $member)
     {
         $request->validate([
