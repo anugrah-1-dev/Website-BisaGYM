@@ -101,6 +101,23 @@ class MemberController extends Controller
         elseif ($package->duration_unit === 'bulan')  $expiryDate->addMonths($package->duration);
         elseif ($package->duration_unit === 'tahun')  $expiryDate->addYears($package->duration);
 
+        // ── Perhitungan Diskon & Admin Fee (Khusus Registrasi Baru) ──
+        $discountPercentage = 0;
+        if ($request->filled('discount_id')) {
+            $discount = \App\Models\Discount::find($request->discount_id);
+            if ($discount) {
+                // Verify the discount is valid for this package
+                if ($discount->gymPackages()->where('gym_package_id', $package->id)->exists()) {
+                    $discountPercentage = $discount->percentage;
+                }
+            }
+        }
+        
+        $discountAmount = ($package->price * $discountPercentage) / 100;
+        $lockedPrice = $package->price - $discountAmount;
+        $adminFee = $package->admin_fee;
+        $finalAmount = $lockedPrice + $adminFee;
+
         // ── Buat Member Pertama ──
         $member1 = $this->createMember(
             vipId: 'VIP-' . now()->format('Ymd-His') . '-' . rand(1000, 9999),
@@ -124,23 +141,6 @@ class MemberController extends Controller
             lockedPackageId: $package->id,
             lockedPrice: $lockedPrice
         );
-
-        // ── Perhitungan Diskon & Admin Fee (Khusus Registrasi Baru) ──
-        $discountPercentage = 0;
-        if ($request->filled('discount_id')) {
-            $discount = \App\Models\Discount::find($request->discount_id);
-            if ($discount) {
-                // Verify the discount is valid for this package
-                if ($discount->gymPackages()->where('gym_package_id', $package->id)->exists()) {
-                    $discountPercentage = $discount->percentage;
-                }
-            }
-        }
-        
-        $discountAmount = ($package->price * $discountPercentage) / 100;
-        $lockedPrice = $package->price - $discountAmount;
-        $adminFee = $package->admin_fee;
-        $finalAmount = $lockedPrice + $adminFee;
 
         // ── Transaksi (1 transaksi untuk couple, member_id = member pertama) ──
         $transactionCode = ($isCouple ? 'CPL-' : 'TRX-') . time() . '-' . rand(100, 999);
