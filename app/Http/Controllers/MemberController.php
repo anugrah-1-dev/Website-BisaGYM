@@ -533,7 +533,7 @@ class MemberController extends Controller
 
             $now = now();
             // Generate ID manually here since we don't have a specific package yet
-            $randomString = strtoupper(Str::random(4));
+            $randomString = strtoupper(\Illuminate\Support\Str::random(4));
             $vipId = 'P-' . $now->format('ymd') . '-' . $randomString;
 
             $partner = Member::create([
