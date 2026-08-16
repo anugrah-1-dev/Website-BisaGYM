@@ -37,13 +37,16 @@ class AttendanceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'member_id' => 'required|string'
+            'identifier' => 'required|string'
         ]);
 
-        $member = Member::where('member_id', $request->member_id)->first();
+        $identifier = $request->identifier;
+        $member = Member::where('member_id', $identifier)
+            ->orWhere('name', 'like', "%{$identifier}%")
+            ->first();
 
         if (!$member) {
-            return back()->with('error', 'Member tidak ditemukan. Pastikan ID / Barcode benar.');
+            return back()->with('error', 'Member tidak ditemukan. Pastikan ID / Nama / Barcode benar.');
         }
 
         if ($member->status === 'pending') {

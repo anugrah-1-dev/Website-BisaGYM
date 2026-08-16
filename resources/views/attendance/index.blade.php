@@ -82,14 +82,14 @@
                 <form method="POST" action="{{ route('attendance.store') }}" class="relative z-10 space-y-4">
                     @csrf
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Arahkan Scanner atau ketik VIP ID</label>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Arahkan Scanner, ketik VIP ID, atau Nama Member</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="ph ph-scan text-neon text-xl"></i>
                             </div>
-                            <input type="text" name="member_id" id="member_id" required autofocus autocomplete="off"
+                            <input type="text" name="identifier" id="identifier" required autofocus autocomplete="off"
                                 class="block w-full pl-10 pr-3 py-3 border border-neon rounded-lg bg-dark text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon transition-colors text-lg font-mono shadow-[0_0_15px_rgba(224,255,0,0.1)]" 
-                                placeholder="VIP-YYYYMMDD-...">
+                                placeholder="VIP-... atau Nama Member">
                         </div>
                     </div>
                     
