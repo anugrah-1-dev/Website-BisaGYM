@@ -598,17 +598,24 @@
             const imgTag = photoEl ? photoEl.querySelector('img') : null;
             
             if (imgTag && imgTag.src) {
-                html2canvas(photoEl, {
-                    scale: 4,
-                    backgroundColor: null,
-                    logging: false,
-                    useCORS: true
-                }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `Foto_Profile_${memberVipId()}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                });
+                fetch(imgTag.src)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        const extension = imgTag.src.split('.').pop().split('?')[0] || 'jpg';
+                        link.href = url;
+                        link.download = `Foto_Profile_${memberVipId()}.${extension}`;
+                        link.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(e => {
+                        const link = document.createElement('a');
+                        link.href = imgTag.src;
+                        link.target = '_blank';
+                        link.download = `Foto_Profile_${memberVipId()}`;
+                        link.click();
+                    });
             } else {
                 alert('Member ini belum memiliki foto profil.');
             }
