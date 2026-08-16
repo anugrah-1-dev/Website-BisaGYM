@@ -123,7 +123,7 @@ class PublicRegistrationController extends Controller
 
         if ($isCouple) {
             sleep(1);
-            $this->createMember(
+            $member2 = $this->createMember(
                 vipId: 'VIP-' . now()->format('Ymd-His') . '-' . rand(1000, 9999),
                 data: [
                     'name'           => $request->member2_name,
@@ -144,6 +144,10 @@ class PublicRegistrationController extends Controller
                 lockedPackageId: $package->id,
                 lockedPrice: $lockedPrice
             );
+
+            // Tautkan kedua member
+            $member1->update(['linked_member_id' => $member2->id]);
+            $member2->update(['linked_member_id' => $member1->id]);
         }
 
         \App\Models\ActivityLog::create([
