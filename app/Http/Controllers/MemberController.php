@@ -307,7 +307,7 @@ class MemberController extends Controller
             'amount'              => $finalAmount,
             'discount_percentage' => $discountPercentage,
             'admin_fee'           => $adminFee,
-            'transaction_date'    => $now,
+            'transaction_date'    => $activationDate,
             'transaction_type'    => 'new',
             'payment_status'      => $paymentStatus,
             'payment_method'      => $paymentStatus === 'paid' ? 'cash' : null,
@@ -498,6 +498,23 @@ class MemberController extends Controller
         \App\Models\ActivityLog::log('UPDATE', 'Manajemen Member', "Mengubah status kartu member: {$member->name} dari {$oldStatus} menjadi {$request->status}");
 
         return back()->with('success', 'Status kartu member berhasil diubah secara manual.');
+    }
+
+    public function updateDates(Request $request, Member $member)
+    {
+        $request->validate([
+            'activation_date' => 'required|date',
+            'expiry_date'     => 'required|date|after_or_equal:activation_date'
+        ]);
+
+        $member->update([
+            'activation_date' => $request->activation_date,
+            'expiry_date'     => $request->expiry_date
+        ]);
+
+        \App\Models\ActivityLog::log('UPDATE', 'Manajemen Member', "Mengubah tanggal aktif/expired manual: {$member->name}");
+
+        return back()->with('success', 'Tanggal aktif dan expired berhasil diubah.');
     }
 
     public function linkPartner(Request $request, Member $member)

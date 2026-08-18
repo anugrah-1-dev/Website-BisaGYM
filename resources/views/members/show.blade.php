@@ -45,8 +45,23 @@
 
                 <div class="mt-4 pt-4 border-t border-gray-800 text-left text-sm space-y-2">
                     <div class="flex justify-between"><span class="text-gray-400">Tipe</span><span class="text-white">{{ ucfirst($member->member_type) }}</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400">Aktif</span><span class="text-white">{{ \Carbon\Carbon::parse($member->activation_date)->format('d M Y') }}</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400">Expired</span><span class="text-{{ $member->status === 'expired' ? 'red' : 'white' }}-400">{{ \Carbon\Carbon::parse($member->expiry_date)->format('d M Y') }}</span></div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Aktif</span>
+                        <div class="flex items-center">
+                            <span class="text-white">{{ \Carbon\Carbon::parse($member->activation_date)->format('d M Y') }}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Expired</span>
+                        <div class="flex items-center">
+                            <span class="text-{{ $member->status === 'expired' ? 'red' : 'white' }}-400">{{ \Carbon\Carbon::parse($member->expiry_date)->format('d M Y') }}</span>
+                            @role('developer')
+                            <button type="button" onclick="document.getElementById('update-dates-modal').classList.remove('hidden')" class="ml-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors border border-gray-700" title="Ubah Tanggal Aktif & Expired">
+                                <i class="ph ph-pencil-simple text-xs"></i>
+                            </button>
+                            @endrole
+                        </div>
+                    </div>
                     <div class="flex justify-between"><span class="text-gray-400">Perpanjangan</span><span class="text-white">{{ $member->extension_count }}x</span></div>
                 </div>
 
@@ -369,4 +384,40 @@
             </div>
         </div>
     </div>
+
+    @role('developer')
+    <!-- Modal Update Dates (Developer Only) -->
+    <div id="update-dates-modal" class="fixed inset-0 z-50 hidden bg-black/60 flex items-center justify-center p-4">
+        <div class="bg-card w-full max-w-sm rounded-xl border border-gray-800 shadow-2xl overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-dark">
+                <h3 class="text-lg font-bold text-white"><i class="ph ph-calendar text-neon mr-2"></i>Ubah Tanggal Aktif/Expired</h3>
+                <button type="button" onclick="document.getElementById('update-dates-modal').classList.add('hidden')" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form method="POST" action="{{ route('members.update_dates', $member->id) }}">
+                    @csrf
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Tanggal Aktif</label>
+                            <input type="date" name="activation_date" value="{{ \Carbon\Carbon::parse($member->activation_date)->format('Y-m-d') }}" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Tanggal Expired</label>
+                            <input type="date" name="expiry_date" value="{{ \Carbon\Carbon::parse($member->expiry_date)->format('Y-m-d') }}" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm" required>
+                        </div>
+                        <p class="mt-2 text-xs text-gray-500">Fitur ini hanya tersedia untuk Developer untuk keperluan koreksi data.</p>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="document.getElementById('update-dates-modal').classList.add('hidden')" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Batal</button>
+                        <button type="submit" class="bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-6 rounded-lg transition-colors text-sm">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endrole
 </x-app-layout>

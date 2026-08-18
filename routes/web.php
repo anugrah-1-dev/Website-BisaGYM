@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/transactions/{transaction}', [\App\Http\Controllers\TransactionController::class, 'destroy'])->name('transactions.destroy');
         Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show']);
         Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::post('/members/{member}/update-dates', [\App\Http\Controllers\MemberController::class, 'updateDates'])->name('members.update_dates');
     });
 
     Route::middleware('role:admin|developer')->group(function () {
