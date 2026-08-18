@@ -30,7 +30,7 @@
                 <h2 class="text-xl font-bold text-white">{{ $member->name }}</h2>
                 <p class="text-neon font-mono text-sm mt-1">{{ $member->member_id }}</p>
 
-                <div class="mt-3">
+                <div class="mt-3 flex items-center justify-center">
                     @if($member->status === 'active')
                         <span class="px-3 py-1 text-sm rounded-full bg-green-500/20 text-green-400 border border-green-500/30">Aktif</span>
                     @elseif($member->status === 'pending')
@@ -38,6 +38,9 @@
                     @else
                         <span class="px-3 py-1 text-sm rounded-full bg-red-500/20 text-red-400 border border-red-500/30">Expired</span>
                     @endif
+                    <button type="button" onclick="document.getElementById('update-status-modal').classList.remove('hidden')" class="ml-2 w-7 h-7 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors border border-gray-700" title="Ubah Status Manual">
+                        <i class="ph ph-pencil-simple text-sm"></i>
+                    </button>
                 </div>
 
                 <div class="mt-4 pt-4 border-t border-gray-800 text-left text-sm space-y-2">
@@ -334,4 +337,36 @@
             }
         }
     </script>
+
+    <!-- Modal Update Status -->
+    <div id="update-status-modal" class="fixed inset-0 z-50 hidden bg-black/60 flex items-center justify-center p-4">
+        <div class="bg-card w-full max-w-sm rounded-xl border border-gray-800 shadow-2xl overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-dark">
+                <h3 class="text-lg font-bold text-white"><i class="ph ph-pencil-simple text-neon mr-2"></i>Ubah Status Kartu</h3>
+                <button type="button" onclick="document.getElementById('update-status-modal').classList.add('hidden')" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form method="POST" action="{{ route('members.update_status', $member->id) }}">
+                    @csrf
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Status Saat Ini: <strong>{{ ucfirst($member->status) }}</strong></label>
+                        <select name="status" class="w-full bg-dark border-gray-700 text-white rounded-lg focus:ring-neon focus:border-neon text-sm" required>
+                            <option value="active" {{ $member->status === 'active' ? 'selected' : '' }}>Aktif</option>
+                            <option value="pending" {{ $member->status === 'pending' ? 'selected' : '' }}>Belum Aktif (Pending)</option>
+                            <option value="expired" {{ $member->status === 'expired' ? 'selected' : '' }}>Expired</option>
+                        </select>
+                        <p class="mt-2 text-xs text-gray-500">Ubah manual jika terjadi kesalahan pada status (contoh: kartu seharusnya aktif tapi pending).</p>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="document.getElementById('update-status-modal').classList.add('hidden')" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Batal</button>
+                        <button type="submit" class="bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-6 rounded-lg transition-colors text-sm">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </x-app-layout>

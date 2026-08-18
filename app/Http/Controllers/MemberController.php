@@ -485,6 +485,21 @@ class MemberController extends Controller
 
         return redirect()->route('members.show', $member)->with('success', 'Data member berhasil diperbarui.');
     }
+
+    public function updateStatus(Request $request, Member $member)
+    {
+        $request->validate([
+            'status' => 'required|in:active,pending,expired'
+        ]);
+
+        $oldStatus = $member->status;
+        $member->update(['status' => $request->status]);
+
+        \App\Models\ActivityLog::log('UPDATE', 'Manajemen Member', "Mengubah status kartu member: {$member->name} dari {$oldStatus} menjadi {$request->status}");
+
+        return back()->with('success', 'Status kartu member berhasil diubah secara manual.');
+    }
+
     public function linkPartner(Request $request, Member $member)
     {
         $request->validate([

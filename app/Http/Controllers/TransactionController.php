@@ -58,4 +58,61 @@ class TransactionController extends Controller
             ->header('Content-Type', 'application/vnd.ms-excel')
             ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
     }
+
+    public function destroy($id)
+    {
+        $transaction = MemberTransaction::findOrFail($id);
+        
+        if ($transaction->transaction_type === 'renewal' && $transaction->payment_status === 'paid') {
+            $member = $transaction->member;
+            $package = $transaction->package;
+            
+            // revert expiry date
+            if ($member && $package) {
+                $currentExpiry = \Carbon\Carbon::parse($member->expiry_date);
+                if ($package->duration_unit === 'hari')       $currentExpiry->subDays($package->duration);
+                elseif ($package->duration_unit === 'bulan')  $currentExpiry->subMonths($package->duration);
+                elseif ($package->duration_unit === 'tahun')  $currentExpiry->subYears($package->duration);
+                
+                $status = 'active';
+                if (now()->greaterThan($currentExpiry)) {
+                    $status = 'expired';
+                }
+                
+                $member->update([
+                    'expiry_date' => $currentExpiry,
+                    'status' => $status,
+                    'extension_count' => max(0, $member->extension_count - 1),
+                ]);
+
+                // revert linked member if applicable
+                if ($package->max_members >= 2 && $member->linked_member_id) {
+                    $linkedMember = $member->linkedMember;
+                    if ($linkedMember) {
+                        $linkedCurrentExpiry = \Carbon\Carbon::parse($linkedMember->expiry_date);
+                        if ($package->duration_unit === 'hari')       $linkedCurrentExpiry->subDays($package->duration);
+                        elseif ($package->duration_unit === 'bulan')  $linkedCurrentExpiry->subMonths($package->duration);
+                        elseif ($package->duration_unit === 'tahun')  $linkedCurrentExpiry->subYears($package->duration);
+                        
+                        $linkedStatus = 'active';
+                        if (now()->greaterThan($linkedCurrentExpiry)) {
+                            $linkedStatus = 'expired';
+                        }
+                        
+                        $linkedMember->update([
+                            'expiry_date' => $linkedCurrentExpiry,
+                            'status' => $linkedStatus,
+                            'extension_count' => max(0, $linkedMember->extension_count - 1),
+                        ]);
+                    }
+                }
+            }
+        }
+        
+        $transaction->delete();
+        
+        \App\Models\ActivityLog::log('DELETE', 'Transaksi', "Menghapus transaksi: {$transaction->transaction_code}");
+        
+        return back()->with('success', 'Transaksi berhasil dihapus dan data perpanjangan (jika ada) telah dikembalikan.');
+    }
 }

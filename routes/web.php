@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('members', \App\Http\Controllers\MemberController::class);
     Route::get('/members/{member}/ecard', [\App\Http\Controllers\MemberController::class, 'ecard'])->name('members.ecard');
     Route::post('/members/{member}/renewal', [\App\Http\Controllers\MemberController::class, 'renewal'])->name('members.renewal');
+    Route::post('/members/{member}/update-status', [\App\Http\Controllers\MemberController::class, 'updateStatus'])->name('members.update_status');
     Route::post('/members/{member}/link-partner', [\App\Http\Controllers\MemberController::class, 'linkPartner'])->name('members.link_partner');
 
     Route::get('/cashier/member', [\App\Http\Controllers\CashierController::class, 'index'])->name('cashier.member');
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-employee-info', [\App\Http\Controllers\EmployeeInfoController::class, 'index'])->name('employee.my-info');
 
     Route::middleware('role:developer')->group(function () {
+        Route::delete('/transactions/{transaction}', [\App\Http\Controllers\TransactionController::class, 'destroy'])->name('transactions.destroy');
         Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show']);
         Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
     });

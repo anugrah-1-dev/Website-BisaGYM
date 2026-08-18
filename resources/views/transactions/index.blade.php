@@ -3,6 +3,13 @@
         {{ __('Laporan Transaksi') }}
     </x-slot>
 
+    <!-- Success Message -->
+    @if(session('success'))
+        <div class="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/50 text-green-400 flex items-center">
+            <i class="ph ph-check-circle text-xl mr-3"></i> {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Filter Bar -->
     <form method="GET" action="{{ route('transactions.index') }}" class="bg-card rounded-xl border border-gray-800 p-4 shadow-lg mb-6 flex flex-wrap gap-4 items-end">
         <div>
@@ -66,6 +73,9 @@
                         <th class="px-6 py-4 font-medium">Petugas</th>
                         <th class="px-6 py-4 font-medium text-right">Nominal</th>
                         <th class="px-6 py-4 font-medium">Waktu</th>
+                        @role('developer')
+                        <th class="px-6 py-4 font-medium text-center">Aksi</th>
+                        @endrole
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-800 text-sm">
@@ -101,6 +111,17 @@
                             <td class="px-6 py-4 text-gray-400 text-xs">{{ $trx->user->name ?? '-' }}</td>
                             <td class="px-6 py-4 text-right text-neon font-bold">Rp {{ number_format($trx->amount, 0, ',', '.') }}</td>
                             <td class="px-6 py-4 text-gray-400 text-xs">{{ \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y H:i') }}</td>
+                            @role('developer')
+                            <td class="px-6 py-4 text-center">
+                                <form action="{{ route('transactions.destroy', $trx->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus transaksi ini? Jika ini perpanjangan, masa aktif akan dikembalikan seperti semula.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 p-1.5 rounded transition-colors" title="Hapus Transaksi">
+                                        <i class="ph ph-trash text-lg"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            @endrole
                         </tr>
                     @empty
                         <tr><td colspan="8" class="px-6 py-8 text-center text-gray-500">Tidak ada data transaksi member pada periode ini.</td></tr>
