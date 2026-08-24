@@ -66,7 +66,7 @@
                         <span class="px-2.5 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-md text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 w-fit mb-2">
                             <i class="ph ph-sun text-sm"></i> Shift 1 (Pagi)
                         </span>
-                        <h3 class="text-lg font-bold text-white">Shift Pagi (07:00 - 15:00)</h3>
+                        <h3 class="text-lg font-bold text-white">Shift Pagi (23:00 - 15:00)</h3>
                     </div>
                     @if($reconciliationPagi && !is_null($reconciliationPagi->real_cash))
                         @php
@@ -94,7 +94,7 @@
 
                 <!-- Rincian Sistem -->
                 <div class="p-6 space-y-4">
-                    <h4 class="text-xs uppercase tracking-wider text-gray-400 font-bold border-b border-gray-800 pb-2">Pendapatan Sistem (Jam 07:00 - 15:00)</h4>
+                    <h4 class="text-xs uppercase tracking-wider text-gray-400 font-bold border-b border-gray-800 pb-2">Pendapatan Sistem (Jam 23:00 - 15:00)</h4>
                     
                     <div class="grid grid-cols-2 gap-3">
                         <div class="bg-dark p-3.5 rounded-lg border border-gray-800">
