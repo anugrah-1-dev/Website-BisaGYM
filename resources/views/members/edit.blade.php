@@ -132,41 +132,32 @@
                         return this.packages.find(p => p.id == this.selectedPackageId);
                     },
                     
-                    get finalPrice() {
-                        if (!this.selectedPackage) return '';
-                        let base = this.selectedPackage.price;
+                    updatePrice() {
+                        let pkg = this.selectedPackage;
+                        if (!pkg) {
+                            this.customPrice = '';
+                            return;
+                        }
+                        let base = parseFloat(pkg.price);
                         if (this.selectedDiscountId) {
-                            let discount = this.selectedPackage.discounts.find(d => d.id == this.selectedDiscountId);
+                            let discount = pkg.discounts.find(d => d.id == this.selectedDiscountId);
                             if (discount) {
+                                let amt = parseFloat(discount.amount);
                                 if (discount.discount_type === 'percentage') {
-                                    base = base - (base * discount.amount / 100);
+                                    base = base - (base * amt / 100);
                                 } else {
-                                    base = base - discount.amount;
+                                    base = base - amt;
                                 }
                             }
                         }
-                        return Math.max(0, base);
-                    },
-                    
-                    updatePrice() {
-                        this.customPrice = this.finalPrice;
-                    },
-
-                    init() {
-                        this.$watch('selectedPackageId', () => {
-                            this.selectedDiscountId = '';
-                            this.updatePrice();
-                        });
-                        this.$watch('selectedDiscountId', () => {
-                            this.updatePrice();
-                        });
+                        this.customPrice = Math.max(0, base);
                     }
                 }">
                     <h3 class="text-lg font-medium text-neon mb-4"><i class="ph ph-warning-circle mr-2"></i>Area Khusus Developer (Koreksi Data)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-1">Paket Gym Terkunci</label>
-                            <select x-model="selectedPackageId" name="locked_package_id" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                            <select x-model="selectedPackageId" @change="selectedDiscountId = ''; updatePrice()" name="locked_package_id" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
                                 <option value="">-- Tidak Terkunci --</option>
                                 <template x-for="pkg in packages" :key="pkg.id">
                                     <option :value="pkg.id" x-text="pkg.name + ' (Rp ' + new Intl.NumberFormat('id-ID').format(pkg.price) + ')'" :selected="pkg.id == selectedPackageId"></option>
@@ -176,7 +167,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-1">Diskon (Opsional)</label>
-                            <select x-model="selectedDiscountId" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm" :disabled="!selectedPackage || selectedPackage.discounts.length === 0">
+                            <select x-model="selectedDiscountId" @change="updatePrice()" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm" :disabled="!selectedPackage || selectedPackage.discounts.length === 0">
                                 <option value="">-- Tanpa Diskon --</option>
                                 <template x-if="selectedPackage">
                                     <template x-for="disc in selectedPackage.discounts" :key="disc.id">
