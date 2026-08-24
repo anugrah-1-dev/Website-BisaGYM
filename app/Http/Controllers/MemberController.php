@@ -435,7 +435,11 @@ class MemberController extends Controller
 
     public function edit(Member $member)
     {
-        return view('members.edit', compact('member'));
+        $packages = \App\Models\GymPackage::with(['discounts' => function ($query) {
+            $query->where('is_active', true);
+        }])->where('is_active', true)->get();
+
+        return view('members.edit', compact('member', 'packages'));
     }
 
     public function update(Request $request, Member $member)

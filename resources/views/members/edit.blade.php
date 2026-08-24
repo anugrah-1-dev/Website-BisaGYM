@@ -122,18 +122,76 @@
                 </div>
                 
                 @role('developer')
-                <div class="mt-6 pt-6 border-t border-gray-800">
+                <div class="mt-6 pt-6 border-t border-gray-800" x-data="{
+                    packages: {{ Js::from($packages) }},
+                    selectedPackageId: '{{ old('locked_package_id', $member->locked_package_id) }}',
+                    selectedDiscountId: '',
+                    customPrice: '{{ old('locked_price', $member->locked_price) }}',
+                    
+                    get selectedPackage() {
+                        return this.packages.find(p => p.id == this.selectedPackageId);
+                    },
+                    
+                    get finalPrice() {
+                        if (!this.selectedPackage) return '';
+                        let base = this.selectedPackage.price;
+                        if (this.selectedDiscountId) {
+                            let discount = this.selectedPackage.discounts.find(d => d.id == this.selectedDiscountId);
+                            if (discount) {
+                                if (discount.discount_type === 'percentage') {
+                                    base = base - (base * discount.amount / 100);
+                                } else {
+                                    base = base - discount.amount;
+                                }
+                            }
+                        }
+                        return Math.max(0, base);
+                    },
+                    
+                    updatePrice() {
+                        this.customPrice = this.finalPrice;
+                    },
+
+                    init() {
+                        this.$watch('selectedPackageId', () => {
+                            this.selectedDiscountId = '';
+                            this.updatePrice();
+                        });
+                        this.$watch('selectedDiscountId', () => {
+                            this.updatePrice();
+                        });
+                    }
+                }">
                     <h3 class="text-lg font-medium text-neon mb-4"><i class="ph ph-warning-circle mr-2"></i>Area Khusus Developer (Koreksi Data)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Paket Gym Terkunci (ID)</label>
-                            <input type="number" name="locked_package_id" value="{{ old('locked_package_id', $member->locked_package_id) }}" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Paket Gym Terkunci</label>
+                            <select x-model="selectedPackageId" name="locked_package_id" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                                <option value="">-- Tidak Terkunci --</option>
+                                <template x-for="pkg in packages" :key="pkg.id">
+                                    <option :value="pkg.id" x-text="pkg.name + ' (Rp ' + new Intl.NumberFormat('id-ID').format(pkg.price) + ')'" :selected="pkg.id == selectedPackageId"></option>
+                                </template>
+                            </select>
                         </div>
+                        
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Harga Terkunci (Rp) - Cth jika lupa diskon</label>
-                            <input type="number" name="locked_price" value="{{ old('locked_price', $member->locked_price) }}" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Diskon (Opsional)</label>
+                            <select x-model="selectedDiscountId" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm" :disabled="!selectedPackage || selectedPackage.discounts.length === 0">
+                                <option value="">-- Tanpa Diskon --</option>
+                                <template x-if="selectedPackage">
+                                    <template x-for="disc in selectedPackage.discounts" :key="disc.id">
+                                        <option :value="disc.id" x-text="disc.name + ' (' + (disc.discount_type === 'percentage' ? disc.amount + '%' : 'Rp ' + new Intl.NumberFormat('id-ID').format(disc.amount)) + ')'"></option>
+                                    </template>
+                                </template>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Harga Terkunci Final (Rp)</label>
+                            <input type="number" name="locked_price" x-model="customPrice" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm" placeholder="Otomatis atau ketik manual...">
                         </div>
                     </div>
+                    <p class="text-xs text-gray-500"><i class="ph ph-info mr-1"></i> Pilih paket dan diskon untuk menghitung harga otomatis, atau ketik langsung nominal akhirnya.</p>
                 </div>
                 @endrole
                 
