@@ -105,7 +105,7 @@
             </div>
             
             <!-- Attendance Stats -->
-            <div class="mt-6 grid grid-cols-2 gap-4">
+            <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-card rounded-xl border border-gray-800 p-4 shadow-lg text-center">
                     <p class="text-xs text-gray-400 mb-1">Total Hadir <br>(Tanggal Terpilih)</p>
                     <p class="text-2xl font-bold text-neon">{{ $totalSelectedDate }}</p>
@@ -113,6 +113,14 @@
                 <div class="bg-card rounded-xl border border-gray-800 p-4 shadow-lg text-center">
                     <p class="text-xs text-gray-400 mb-1">Rata-rata <br>Harian (Total)</p>
                     <p class="text-2xl font-bold text-white">{{ $averageDaily }}</p>
+                </div>
+                <div class="bg-card rounded-xl border border-gray-800 p-4 shadow-lg text-center">
+                    <p class="text-xs text-gray-400 mb-1">Rata-rata <br>Mingguan (Total)</p>
+                    <p class="text-2xl font-bold text-white">{{ $averageWeekly }}</p>
+                </div>
+                <div class="bg-card rounded-xl border border-gray-800 p-4 shadow-lg text-center">
+                    <p class="text-xs text-gray-400 mb-1">Rata-rata <br>Bulanan (Total)</p>
+                    <p class="text-2xl font-bold text-white">{{ $averageMonthly }}</p>
                 </div>
             </div>
         </div>

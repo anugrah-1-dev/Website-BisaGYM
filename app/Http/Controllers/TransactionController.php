@@ -115,4 +115,28 @@ class TransactionController extends Controller
         
         return back()->with('success', 'Transaksi berhasil dihapus dan data perpanjangan (jika ada) telah dikembalikan.');
     }
+
+    public function update(Request $request, $id)
+    {
+        $transaction = MemberTransaction::findOrFail($id);
+
+        $request->validate([
+            'amount'         => 'required|numeric|min:0',
+            'payment_status' => 'required|in:paid,unpaid',
+            'payment_method' => 'nullable|string',
+        ]);
+
+        $oldAmount = $transaction->amount;
+        $oldStatus = $transaction->payment_status;
+        
+        $transaction->update([
+            'amount'         => $request->amount,
+            'payment_status' => $request->payment_status,
+            'payment_method' => $request->payment_method,
+        ]);
+
+        \App\Models\ActivityLog::log('UPDATE', 'Transaksi', "Edit transaksi {$transaction->transaction_code}: Nominal lama Rp " . number_format($oldAmount, 0, ',', '.') . " menjadi Rp " . number_format($request->amount, 0, ',', '.') . ", Status: {$oldStatus} -> {$request->payment_status}");
+
+        return back()->with('success', 'Transaksi berhasil diperbarui.');
+    }
 }

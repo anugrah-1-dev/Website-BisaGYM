@@ -112,7 +112,10 @@
                             <td class="px-6 py-4 text-right text-neon font-bold">Rp {{ number_format($trx->amount, 0, ',', '.') }}</td>
                             <td class="px-6 py-4 text-gray-400 text-xs">{{ \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y H:i') }}</td>
                             @role('developer')
-                            <td class="px-6 py-4 text-center">
+                            <td class="px-6 py-4 text-center space-x-2">
+                                <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-transaction-{{ $trx->id }}')" class="text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 p-1.5 rounded transition-colors" title="Edit Transaksi">
+                                    <i class="ph ph-pencil-simple text-lg"></i>
+                                </button>
                                 <form action="{{ route('transactions.destroy', $trx->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus transaksi ini? Jika ini perpanjangan, masa aktif akan dikembalikan seperti semula.');">
                                     @csrf
                                     @method('DELETE')
@@ -120,6 +123,50 @@
                                         <i class="ph ph-trash text-lg"></i>
                                     </button>
                                 </form>
+                                
+                                <x-modal name="edit-transaction-{{ $trx->id }}" focusable>
+                                    <form method="post" action="{{ route('transactions.update', $trx->id) }}" class="p-6">
+                                        @csrf
+                                        @method('PUT')
+                                        <h2 class="text-lg font-medium text-white mb-4 text-left">
+                                            {{ __('Edit Transaksi ') . $trx->transaction_code }}
+                                        </h2>
+                                        
+                                        <div class="space-y-4 text-left">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-300 mb-1">Nominal (Rp)</label>
+                                                <input type="number" name="amount" value="{{ $trx->amount }}" class="w-full border-gray-700 rounded bg-dark text-white focus:ring-neon" required>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-300 mb-1">Status Pembayaran</label>
+                                                <select name="payment_status" class="w-full border-gray-700 rounded bg-dark text-white focus:ring-neon" required>
+                                                    <option value="paid" {{ $trx->payment_status == 'paid' ? 'selected' : '' }}>Paid</option>
+                                                    <option value="unpaid" {{ $trx->payment_status == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-300 mb-1">Metode Pembayaran</label>
+                                                <select name="payment_method" class="w-full border-gray-700 rounded bg-dark text-white focus:ring-neon">
+                                                    <option value="">-- Kosong --</option>
+                                                    <option value="cash" {{ $trx->payment_method == 'cash' ? 'selected' : '' }}>Cash</option>
+                                                    <option value="transfer" {{ $trx->payment_method == 'transfer' ? 'selected' : '' }}>Transfer</option>
+                                                    <option value="gratis" {{ $trx->payment_method == 'gratis' ? 'selected' : '' }}>Gratis</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-6 flex justify-end">
+                                            <x-secondary-button type="button" x-on:click="$dispatch('close')">
+                                                {{ __('Batal') }}
+                                            </x-secondary-button>
+                                            <x-primary-button class="ml-3">
+                                                {{ __('Simpan Perubahan') }}
+                                            </x-primary-button>
+                                        </div>
+                                    </form>
+                                </x-modal>
                             </td>
                             @endrole
                         </tr>

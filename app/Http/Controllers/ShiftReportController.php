@@ -18,8 +18,8 @@ class ShiftReportController extends Controller
         $carbonDate = Carbon::parse($date);
 
         // Shift Time Ranges
-        // Shift Pagi: 07:00:00 - 14:59:59
-        $pagiStart = $carbonDate->copy()->setTime(7, 0, 0);
+        // Shift Pagi: 23:00:00 (hari sebelumnya) - 14:59:59
+        $pagiStart = $carbonDate->copy()->subDay()->setTime(23, 0, 0);
         $pagiEnd   = $carbonDate->copy()->setTime(14, 59, 59);
 
         // Shift Malam: 15:00:00 - 22:59:59
@@ -105,7 +105,7 @@ class ShiftReportController extends Controller
         $carbonDate = Carbon::parse($request->date);
 
         if ($request->shift_type === 'pagi') {
-            $start = $carbonDate->copy()->setTime(7, 0, 0);
+            $start = $carbonDate->copy()->subDay()->setTime(23, 0, 0);
             $end   = $carbonDate->copy()->setTime(14, 59, 59);
         } else {
             $start = $carbonDate->copy()->setTime(15, 0, 0);

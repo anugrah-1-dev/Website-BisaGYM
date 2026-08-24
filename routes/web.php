@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-employee-info', [\App\Http\Controllers\EmployeeInfoController::class, 'index'])->name('employee.my-info');
 
     Route::middleware('role:developer')->group(function () {
+        Route::put('/transactions/{transaction}', [\App\Http\Controllers\TransactionController::class, 'update'])->name('transactions.update');
         Route::delete('/transactions/{transaction}', [\App\Http\Controllers\TransactionController::class, 'destroy'])->name('transactions.destroy');
         Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show']);
         Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');

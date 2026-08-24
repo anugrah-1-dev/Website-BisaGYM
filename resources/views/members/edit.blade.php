@@ -121,6 +121,22 @@
                     <textarea name="address" rows="3" required class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">{{ old('address', $member->address) }}</textarea>
                 </div>
                 
+                @role('developer')
+                <div class="mt-6 pt-6 border-t border-gray-800">
+                    <h3 class="text-lg font-medium text-neon mb-4"><i class="ph ph-warning-circle mr-2"></i>Area Khusus Developer (Koreksi Data)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Paket Gym Terkunci (ID)</label>
+                            <input type="number" name="locked_package_id" value="{{ old('locked_package_id', $member->locked_package_id) }}" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Harga Terkunci (Rp) - Cth jika lupa diskon</label>
+                            <input type="number" name="locked_price" value="{{ old('locked_price', $member->locked_price) }}" class="w-full border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                        </div>
+                    </div>
+                </div>
+                @endrole
+                
                 <div class="flex justify-end space-x-3 pt-4 border-t border-gray-800 mt-6">
                     <a href="{{ route('members.show', $member->id) }}" class="px-5 py-2.5 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors text-sm font-medium">Batal</a>
                     <button type="submit" class="px-6 py-2.5 bg-neon hover:bg-[#c4e600] text-darker rounded-lg font-bold transition-colors text-sm shadow-lg shadow-neon/20 flex items-center">

@@ -25,13 +25,24 @@ class AttendanceController extends Controller
         $totalSelectedDate = $attendances->count();
         
         $totalAllAttendances = MemberAttendance::count();
+        
         $uniqueDays = DB::table('member_attendances')
             ->selectRaw('COUNT(DISTINCT DATE(attendance_time)) as count')
             ->value('count') ?: 1;
             
-        $averageDaily = round($totalAllAttendances / $uniqueDays, 1);
+        $uniqueWeeks = DB::table('member_attendances')
+            ->selectRaw('COUNT(DISTINCT YEARWEEK(attendance_time, 1)) as count')
+            ->value('count') ?: 1;
             
-        return view('attendance.index', compact('attendances', 'selectedDate', 'totalSelectedDate', 'averageDaily'));
+        $uniqueMonths = DB::table('member_attendances')
+            ->selectRaw('COUNT(DISTINCT DATE_FORMAT(attendance_time, "%Y-%m")) as count')
+            ->value('count') ?: 1;
+            
+        $averageDaily = round($totalAllAttendances / $uniqueDays, 1);
+        $averageWeekly = round($totalAllAttendances / $uniqueWeeks, 1);
+        $averageMonthly = round($totalAllAttendances / $uniqueMonths, 1);
+            
+        return view('attendance.index', compact('attendances', 'selectedDate', 'totalSelectedDate', 'averageDaily', 'averageWeekly', 'averageMonthly'));
     }
 
     public function store(Request $request)

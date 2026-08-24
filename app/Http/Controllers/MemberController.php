@@ -440,7 +440,7 @@ class MemberController extends Controller
 
     public function update(Request $request, Member $member)
     {
-        $request->validate([
+        $validationRules = [
             'name'           => 'required|string|min:3',
             'phone'          => 'required|string',
             'email'          => 'required|email|unique:members,email,' . $member->id,
@@ -451,9 +451,25 @@ class MemberController extends Controller
             'place_of_birth' => 'required|string',
             'date_of_birth'  => 'required|date',
             'photo_data'     => 'nullable|string',
-        ]);
+        ];
+
+        if (auth()->user()->hasRole('developer')) {
+            $validationRules['locked_package_id'] = 'nullable|exists:gym_packages,id';
+            $validationRules['locked_price'] = 'nullable|numeric|min:0';
+        }
+
+        $request->validate($validationRules);
 
         $data = $request->only(['name', 'phone', 'email', 'address', 'job', 'nik', 'gender', 'place_of_birth', 'date_of_birth']);
+
+        if (auth()->user()->hasRole('developer')) {
+            if ($request->has('locked_package_id')) {
+                $data['locked_package_id'] = $request->locked_package_id;
+            }
+            if ($request->has('locked_price')) {
+                $data['locked_price'] = $request->locked_price;
+            }
+        }
 
         // Process photo if provided
         if ($request->filled('photo_data')) {
