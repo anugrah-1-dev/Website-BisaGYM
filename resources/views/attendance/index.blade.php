@@ -202,7 +202,7 @@
             // Extra safety measure for scanners that don't send Enter automatically
             // Standard barcode scanners send Enter at the end, which triggers standard form submit.
             // If they don't, this snippet submits if length matches standard VIP ID length.
-            const input = document.getElementById('member_id');
+            const input = document.getElementById('identifier');
             if(input) {
                 input.addEventListener('input', function() {
                     if (this.value.startsWith('VIP-') && this.value.length >= 24) { // Length of VIP-YYYYMMDD-HHMMSS-XXXX
