@@ -9,7 +9,7 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="ph ph-magnifying-glass text-gray-400"></i>
                 </div>
-                <input type="text" name="search" value="{{ request('search') }}" oninput="clearTimeout(this.delay); this.delay = setTimeout(() => { this.form.submit() }, 500)" class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-dark text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon transition-colors" placeholder="Cari nama, NIK, atau ID VIP...">
+                <input type="text" name="search" value="{{ request('search') }}" class="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-dark text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon transition-colors" placeholder="Cari nama, NIK, atau ID VIP...">
             </div>
             <div class="w-full sm:w-1/3">
                 <select name="status" onchange="this.form.submit()" class="block w-full py-2 px-3 border border-gray-700 rounded-lg bg-dark text-white focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon transition-colors cursor-pointer">

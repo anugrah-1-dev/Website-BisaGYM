@@ -80,6 +80,13 @@
                         <a href="{{ route('members.show', $member->linked_member_id) }}" class="text-white hover:text-neon font-medium text-sm flex items-center">
                             <i class="ph ph-link mr-2"></i> {{ $member->linkedMember->name ?? 'Unknown' }}
                         </a>
+                        <form method="POST" action="{{ route('members.unlink_partner', $member->id) }}" onsubmit="return confirm('Yakin ingin menghapus tautan pasangan ini?')" class="mt-3">
+                            @csrf
+                            <button type="submit" class="w-full flex items-center justify-center space-x-2 bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/50 py-1.5 px-3 rounded-lg text-xs font-bold transition-all shadow-[0_0_10px_rgba(239,68,68,0.2)] hover:shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+                                <i class="ph ph-link-break text-lg"></i>
+                                <span>Hapus Pasangan</span>
+                            </button>
+                        </form>
                     </div>
                 @else
                     <div class="mt-4">

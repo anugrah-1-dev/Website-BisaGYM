@@ -614,6 +614,24 @@ class MemberController extends Controller
             return back()->with('success', 'Berhasil mendaftarkan dan menautkan pasangan baru. Anda sekarang bisa memperpanjang paket Couple.');
         }
     }
+
+    public function unlinkPartner(Request $request, Member $member)
+    {
+        if (!$member->linked_member_id) {
+            return back()->with('error', 'Member ini tidak memiliki pasangan.');
+        }
+
+        $partner = Member::find($member->linked_member_id);
+        
+        $member->update(['linked_member_id' => null]);
+        if ($partner) {
+            $partner->update(['linked_member_id' => null]);
+            \App\Models\ActivityLog::log('UPDATE', 'Manajemen Member', "Menghapus tautan pasangan (Couple) antara {$member->name} dan {$partner->name}");
+        }
+
+        return back()->with('success', 'Berhasil menghapus tautan pasangan.');
+    }
+
     public function renewal(Request $request, Member $member)
     {
         $request->validate([

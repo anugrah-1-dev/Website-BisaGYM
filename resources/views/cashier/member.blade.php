@@ -34,7 +34,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="ph ph-identification-card text-gray-500 text-xl"></i>
                             </div>
-                            <input type="text" name="vip_id" value="{{ $vip_id ?? '' }}" oninput="clearTimeout(this.delay); this.delay = setTimeout(() => { this.form.submit() }, 500)" class="block w-full pl-10 pr-3 py-3 border border-gray-700 rounded-lg bg-dark text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon font-mono text-lg transition-colors" placeholder="VIP-XXXXXXXX-XXXX" autofocus required autocomplete="off">
+                            <input type="text" name="vip_id" value="{{ $vip_id ?? '' }}" class="block w-full pl-10 pr-3 py-3 border border-gray-700 rounded-lg bg-dark text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-neon focus:border-neon font-mono text-lg transition-colors" placeholder="VIP-XXXXXXXX-XXXX" autofocus required autocomplete="off">
                         </div>
                         <p class="text-xs text-gray-500 mt-2">Scan barcode di E-Card member atau ketik manual VIP ID-nya.</p>
                     </div>

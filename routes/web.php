@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/members/{member}/renewal', [\App\Http\Controllers\MemberController::class, 'renewal'])->name('members.renewal');
     Route::post('/members/{member}/update-status', [\App\Http\Controllers\MemberController::class, 'updateStatus'])->name('members.update_status');
     Route::post('/members/{member}/link-partner', [\App\Http\Controllers\MemberController::class, 'linkPartner'])->name('members.link_partner');
+    Route::post('/members/{member}/unlink-partner', [\App\Http\Controllers\MemberController::class, 'unlinkPartner'])->name('members.unlink_partner');
 
     Route::get('/cashier/member', [\App\Http\Controllers\CashierController::class, 'index'])->name('cashier.member');
     Route::post('/cashier/pay/{transaction}', [\App\Http\Controllers\CashierController::class, 'pay'])->name('cashier.pay');
