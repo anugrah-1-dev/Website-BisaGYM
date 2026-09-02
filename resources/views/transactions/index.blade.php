@@ -12,6 +12,7 @@
 
     <!-- Filter Bar -->
     <form method="GET" action="{{ route('transactions.index') }}" class="bg-card rounded-xl border border-gray-800 p-4 shadow-lg mb-6 flex flex-wrap gap-4 items-end">
+        <input type="hidden" name="type" value="{{ $type }}">
         <div>
             <label class="block text-xs text-gray-400 mb-1">Dari Tanggal</label>
             <input type="date" name="date_from" value="{{ $dateFrom }}" class="border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
@@ -20,12 +21,23 @@
             <label class="block text-xs text-gray-400 mb-1">Sampai Tanggal</label>
             <input type="date" name="date_to" value="{{ $dateTo }}" class="border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
         </div>
+        <div>
+            <label class="block text-xs text-gray-400 mb-1">Metode Pembayaran</label>
+            <select name="payment_method" class="border-gray-700 rounded-lg bg-dark text-white focus:ring-neon focus:border-neon text-sm">
+                <option value="all" {{ ($paymentMethod ?? 'all') === 'all' ? 'selected' : '' }}>Semua</option>
+                <option value="cash" {{ ($paymentMethod ?? 'all') === 'cash' ? 'selected' : '' }}>Cash</option>
+                <option value="transfer" {{ ($paymentMethod ?? 'all') === 'transfer' ? 'selected' : '' }}>Transfer</option>
+                <option value="qris" {{ ($paymentMethod ?? 'all') === 'qris' ? 'selected' : '' }}>QRIS</option>
+                <option value="debit" {{ ($paymentMethod ?? 'all') === 'debit' ? 'selected' : '' }}>Debit</option>
+                <option value="gratis" {{ ($paymentMethod ?? 'all') === 'gratis' ? 'selected' : '' }}>Gratis</option>
+            </select>
+        </div>
         <button type="submit" class="bg-neon hover:bg-[#c4e600] text-darker font-bold py-2 px-4 rounded-lg transition-colors text-sm">
             <i class="ph ph-funnel"></i> Filter
         </button>
-        <a href="{{ route('transactions.index') }}" class="border border-gray-700 text-gray-300 hover:bg-gray-800 py-2 px-4 rounded-lg text-sm transition-colors">Reset</a>
+        <a href="{{ route('transactions.index', ['type' => $type]) }}" class="border border-gray-700 text-gray-300 hover:bg-gray-800 py-2 px-4 rounded-lg text-sm transition-colors">Reset</a>
         
-        <a href="{{ route('transactions.export', ['type' => $type, 'date_from' => $dateFrom, 'date_to' => $dateTo]) }}" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm ml-auto flex items-center shadow-[0_0_15px_rgba(22,163,74,0.2)]">
+        <a href="{{ route('transactions.export', ['type' => $type, 'date_from' => $dateFrom, 'date_to' => $dateTo, 'payment_method' => $paymentMethod ?? 'all']) }}" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm ml-auto flex items-center shadow-[0_0_15px_rgba(22,163,74,0.2)]">
             <i class="ph ph-file-xls text-lg mr-2"></i> Export Excel
         </a>
     </form>
@@ -51,10 +63,10 @@
 
     <!-- Tabs -->
     <div class="flex space-x-1 mb-4 bg-dark rounded-lg p-1 w-fit border border-gray-800">
-        <a href="?type=member&date_from={{ $dateFrom }}&date_to={{ $dateTo }}" class="px-4 py-2 rounded-md text-sm font-medium transition-colors {{ $type === 'member' ? 'bg-neon text-darker' : 'text-gray-400 hover:text-white' }}">
+        <a href="?type=member&date_from={{ $dateFrom }}&date_to={{ $dateTo }}&payment_method={{ $paymentMethod ?? 'all' }}" class="px-4 py-2 rounded-md text-sm font-medium transition-colors {{ $type === 'member' ? 'bg-neon text-darker' : 'text-gray-400 hover:text-white' }}">
             <i class="ph ph-users mr-1"></i> Transaksi Member
         </a>
-        <a href="?type=snack&date_from={{ $dateFrom }}&date_to={{ $dateTo }}" class="px-4 py-2 rounded-md text-sm font-medium transition-colors {{ $type === 'snack' ? 'bg-neon text-darker' : 'text-gray-400 hover:text-white' }}">
+        <a href="?type=snack&date_from={{ $dateFrom }}&date_to={{ $dateTo }}&payment_method={{ $paymentMethod ?? 'all' }}" class="px-4 py-2 rounded-md text-sm font-medium transition-colors {{ $type === 'snack' ? 'bg-neon text-darker' : 'text-gray-400 hover:text-white' }}">
             <i class="ph ph-storefront mr-1"></i> Transaksi Snack
         </a>
     </div>

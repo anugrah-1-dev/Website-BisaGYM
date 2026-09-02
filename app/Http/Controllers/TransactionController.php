@@ -14,22 +14,29 @@ class TransactionController extends Controller
         $type = $request->get('type', 'member');
         $dateFrom = $request->get('date_from', Carbon::today()->format('Y-m-d'));
         $dateTo = $request->get('date_to', Carbon::today()->format('Y-m-d'));
+        $paymentMethod = $request->get('payment_method', 'all');
 
-        $memberTransactions = MemberTransaction::with(['member', 'package', 'user'])
-            ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
-            ->latest('transaction_date')
-            ->get();
+        $memberQuery = MemberTransaction::with(['member', 'package', 'user'])
+            ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59']);
+        
+        if ($paymentMethod !== 'all') {
+            $memberQuery->where('payment_method', $paymentMethod);
+        }
+        $memberTransactions = $memberQuery->latest('transaction_date')->get();
 
-        $snackTransactions = SnackTransaction::with(['user', 'details.snack'])
-            ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
-            ->latest('transaction_date')
-            ->get();
+        $snackQuery = SnackTransaction::with(['user', 'details.snack'])
+            ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59']);
+            
+        if ($paymentMethod !== 'all') {
+            $snackQuery->where('payment_method', $paymentMethod);
+        }
+        $snackTransactions = $snackQuery->latest('transaction_date')->get();
 
         $memberTotal = $memberTransactions->where('payment_status', 'paid')->where('payment_method', '!=', 'gratis')->sum('amount');
         $snackTotal = $snackTransactions->sum('total_amount');
 
         return view('transactions.index', compact(
-            'type', 'dateFrom', 'dateTo',
+            'type', 'dateFrom', 'dateTo', 'paymentMethod',
             'memberTransactions', 'snackTransactions',
             'memberTotal', 'snackTotal'
         ));
@@ -39,18 +46,21 @@ class TransactionController extends Controller
         $type = $request->get('type', 'member');
         $dateFrom = $request->get('date_from', Carbon::today()->format('Y-m-d'));
         $dateTo = $request->get('date_to', Carbon::today()->format('Y-m-d'));
+        $paymentMethod = $request->get('payment_method', 'all');
 
         if ($type === 'member') {
-            $transactions = MemberTransaction::with(['member', 'package', 'user'])
-                ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
-                ->latest('transaction_date')
-                ->get();
+            $query = MemberTransaction::with(['member', 'package', 'user'])
+                ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59']);
         } else {
-            $transactions = SnackTransaction::with(['user', 'details.snack'])
-                ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
-                ->latest('transaction_date')
-                ->get();
+            $query = SnackTransaction::with(['user', 'details.snack'])
+                ->whereBetween('transaction_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59']);
         }
+        
+        if ($paymentMethod !== 'all') {
+            $query->where('payment_method', $paymentMethod);
+        }
+        
+        $transactions = $query->latest('transaction_date')->get();
 
         $fileName = 'laporan_transaksi_' . $type . '_' . $dateFrom . '_' . $dateTo . '.xls';
 
