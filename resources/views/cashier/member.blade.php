@@ -64,7 +64,7 @@
                     
                     <div class="pt-2">
                         <label class="block text-sm font-medium text-gray-400 mb-2">Metode Pembayaran</label>
-                        <div class="grid grid-cols-3 gap-2">
+                        <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
                             <label @click="method = 'cash'" :class="method === 'cash' ? 'border-pink-500 bg-pink-500/10' : 'border-gray-700 hover:border-gray-500'" class="relative flex items-center justify-center p-2 border rounded-lg cursor-pointer transition-colors">
                                 <input type="radio" name="payment_method" value="cash" class="sr-only" required checked>
                                 <div class="text-center">
@@ -78,6 +78,22 @@
                                 <div class="text-center">
                                     <i class="ph ph-bank text-xl transition-colors" :class="method === 'transfer' ? 'text-pink-400' : 'text-gray-400'"></i>
                                     <div class="text-xs font-medium" :class="method === 'transfer' ? 'text-white' : 'text-gray-300'">Transfer</div>
+                                </div>
+                            </label>
+
+                            <label @click="method = 'qris'" :class="method === 'qris' ? 'border-pink-500 bg-pink-500/10' : 'border-gray-700 hover:border-gray-500'" class="relative flex items-center justify-center p-2 border rounded-lg cursor-pointer transition-colors">
+                                <input type="radio" name="payment_method" value="qris" class="sr-only" required>
+                                <div class="text-center">
+                                    <i class="ph ph-qr-code text-xl transition-colors" :class="method === 'qris' ? 'text-pink-400' : 'text-gray-400'"></i>
+                                    <div class="text-xs font-medium" :class="method === 'qris' ? 'text-white' : 'text-gray-300'">QRIS</div>
+                                </div>
+                            </label>
+
+                            <label @click="method = 'debit'" :class="method === 'debit' ? 'border-pink-500 bg-pink-500/10' : 'border-gray-700 hover:border-gray-500'" class="relative flex items-center justify-center p-2 border rounded-lg cursor-pointer transition-colors">
+                                <input type="radio" name="payment_method" value="debit" class="sr-only" required>
+                                <div class="text-center">
+                                    <i class="ph ph-credit-card text-xl transition-colors" :class="method === 'debit' ? 'text-pink-400' : 'text-gray-400'"></i>
+                                    <div class="text-xs font-medium" :class="method === 'debit' ? 'text-white' : 'text-gray-300'">Debit</div>
                                 </div>
                             </label>
 
@@ -186,12 +202,12 @@
                                 @csrf
                                 <div class="mb-6">
                                     <label class="block text-sm font-medium text-gray-400 mb-3">Pilih Metode Pembayaran</label>
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
                                         <label @click="method = 'cash'" :class="method === 'cash' ? 'border-neon bg-neon/10' : 'border-gray-700 hover:border-gray-500'" class="relative flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer transition-colors">
                                             <input type="radio" name="payment_method" value="cash" class="sr-only payment-method-radio" required checked>
                                             <div class="text-center">
                                                 <i class="ph ph-money text-3xl mb-2 transition-colors" :class="method === 'cash' ? 'text-neon' : 'text-gray-400'"></i>
-                                                <div class="font-medium" :class="method === 'cash' ? 'text-white' : 'text-gray-300'">Cash (Tunai)</div>
+                                                <div class="font-medium text-sm" :class="method === 'cash' ? 'text-white' : 'text-gray-300'">Cash</div>
                                             </div>
                                         </label>
                                         
@@ -199,7 +215,23 @@
                                             <input type="radio" name="payment_method" value="transfer" class="sr-only payment-method-radio" required>
                                             <div class="text-center">
                                                 <i class="ph ph-bank text-3xl mb-2 transition-colors" :class="method === 'transfer' ? 'text-neon' : 'text-gray-400'"></i>
-                                                <div class="font-medium" :class="method === 'transfer' ? 'text-white' : 'text-gray-300'">Transfer / QRIS</div>
+                                                <div class="font-medium text-sm" :class="method === 'transfer' ? 'text-white' : 'text-gray-300'">Transfer</div>
+                                            </div>
+                                        </label>
+
+                                        <label @click="method = 'qris'" :class="method === 'qris' ? 'border-neon bg-neon/10' : 'border-gray-700 hover:border-gray-500'" class="relative flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer transition-colors">
+                                            <input type="radio" name="payment_method" value="qris" class="sr-only payment-method-radio" required>
+                                            <div class="text-center">
+                                                <i class="ph ph-qr-code text-3xl mb-2 transition-colors" :class="method === 'qris' ? 'text-neon' : 'text-gray-400'"></i>
+                                                <div class="font-medium text-sm" :class="method === 'qris' ? 'text-white' : 'text-gray-300'">QRIS</div>
+                                            </div>
+                                        </label>
+
+                                        <label @click="method = 'debit'" :class="method === 'debit' ? 'border-neon bg-neon/10' : 'border-gray-700 hover:border-gray-500'" class="relative flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer transition-colors">
+                                            <input type="radio" name="payment_method" value="debit" class="sr-only payment-method-radio" required>
+                                            <div class="text-center">
+                                                <i class="ph ph-credit-card text-3xl mb-2 transition-colors" :class="method === 'debit' ? 'text-neon' : 'text-gray-400'"></i>
+                                                <div class="font-medium text-sm" :class="method === 'debit' ? 'text-white' : 'text-gray-300'">Debit</div>
                                             </div>
                                         </label>
 
@@ -207,8 +239,7 @@
                                             <input type="radio" name="payment_method" value="gratis" class="sr-only payment-method-radio" required>
                                             <div class="text-center">
                                                 <i class="ph ph-gift text-3xl mb-2 transition-colors" :class="method === 'gratis' ? 'text-neon' : 'text-gray-400'"></i>
-                                                <div class="font-medium" :class="method === 'gratis' ? 'text-white' : 'text-gray-300'">Gratis</div>
-                                                <div class="text-[11px] text-gray-400 mt-1">Gratis member Mr. Abie</div>
+                                                <div class="font-medium text-sm" :class="method === 'gratis' ? 'text-white' : 'text-gray-300'">Gratis</div>
                                             </div>
                                         </label>
                                     </div>

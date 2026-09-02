@@ -102,8 +102,12 @@
                                     <span class="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400 border border-red-500/30"><i class="ph ph-warning-circle mr-1"></i>Belum Bayar</span>
                                 @elseif($trx->payment_method === 'transfer')
                                     <span class="px-2 py-0.5 text-xs rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30"><i class="ph ph-bank mr-1"></i>Transfer</span>
+                                @elseif($trx->payment_method === 'qris')
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30"><i class="ph ph-qr-code mr-1"></i>QRIS</span>
+                                @elseif($trx->payment_method === 'debit')
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30"><i class="ph ph-credit-card mr-1"></i>Debit</span>
                                 @elseif($trx->payment_method === 'gratis')
-                                    <span class="px-2 py-0.5 text-xs rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30"><i class="ph ph-gift mr-1"></i>Gratis (Mr. Abie)</span>
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30"><i class="ph ph-gift mr-1"></i>Gratis</span>
                                 @else
                                     <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"><i class="ph ph-money mr-1"></i>Cash</span>
                                 @endif
@@ -152,6 +156,8 @@
                                                     <option value="">-- Kosong --</option>
                                                     <option value="cash" {{ $trx->payment_method == 'cash' ? 'selected' : '' }}>Cash</option>
                                                     <option value="transfer" {{ $trx->payment_method == 'transfer' ? 'selected' : '' }}>Transfer</option>
+                                                    <option value="qris" {{ $trx->payment_method == 'qris' ? 'selected' : '' }}>QRIS</option>
+                                                    <option value="debit" {{ $trx->payment_method == 'debit' ? 'selected' : '' }}>Debit</option>
                                                     <option value="gratis" {{ $trx->payment_method == 'gratis' ? 'selected' : '' }}>Gratis</option>
                                                 </select>
                                             </div>
@@ -201,8 +207,8 @@
                                 @endforeach
                             </td>
                             <td class="px-6 py-4">
-                                @if(($trx->payment_method ?? 'cash') === 'transfer')
-                                    <span class="px-2 py-0.5 text-xs rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30"><i class="ph ph-bank mr-1"></i>Non-Tunai</span>
+                                @if(in_array(($trx->payment_method ?? 'cash'), ['transfer', 'qris', 'debit']))
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30"><i class="ph ph-bank mr-1"></i>Non-Tunai ({{ ucfirst($trx->payment_method) }})</span>
                                 @else
                                     <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"><i class="ph ph-money mr-1"></i>Tunai</span>
                                 @endif

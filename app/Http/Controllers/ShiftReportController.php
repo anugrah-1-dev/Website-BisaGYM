@@ -35,7 +35,7 @@ class ShiftReportController extends Controller
 
         $pagiMemberTransfer = MemberTransaction::where('payment_status', 'paid')
             ->whereBetween('transaction_date', [$pagiStart, $pagiEnd])
-            ->where('payment_method', 'transfer')
+            ->whereIn('payment_method', ['transfer', 'qris', 'debit'])
             ->sum('amount');
 
         $pagiSnackCash = SnackTransaction::whereBetween('transaction_date', [$pagiStart, $pagiEnd])
@@ -44,7 +44,7 @@ class ShiftReportController extends Controller
             })->sum('total_amount');
 
         $pagiSnackTransfer = SnackTransaction::whereBetween('transaction_date', [$pagiStart, $pagiEnd])
-            ->where('payment_method', 'transfer')
+            ->whereIn('payment_method', ['transfer', 'qris', 'debit'])
             ->sum('total_amount');
 
         $pagiSystemCash = $pagiMemberCash + $pagiSnackCash;
@@ -59,7 +59,7 @@ class ShiftReportController extends Controller
 
         $malamMemberTransfer = MemberTransaction::where('payment_status', 'paid')
             ->whereBetween('transaction_date', [$malamStart, $malamEnd])
-            ->where('payment_method', 'transfer')
+            ->whereIn('payment_method', ['transfer', 'qris', 'debit'])
             ->sum('amount');
 
         $malamSnackCash = SnackTransaction::whereBetween('transaction_date', [$malamStart, $malamEnd])
@@ -68,7 +68,7 @@ class ShiftReportController extends Controller
             })->sum('total_amount');
 
         $malamSnackTransfer = SnackTransaction::whereBetween('transaction_date', [$malamStart, $malamEnd])
-            ->where('payment_method', 'transfer')
+            ->whereIn('payment_method', ['transfer', 'qris', 'debit'])
             ->sum('total_amount');
 
         $malamSystemCash = $malamMemberCash + $malamSnackCash;
@@ -121,7 +121,7 @@ class ShiftReportController extends Controller
 
         $memberTransfer = MemberTransaction::where('payment_status', 'paid')
             ->whereBetween('transaction_date', [$start, $end])
-            ->where('payment_method', 'transfer')
+            ->whereIn('payment_method', ['transfer', 'qris', 'debit'])
             ->sum('amount');
 
         $snackCash = SnackTransaction::whereBetween('transaction_date', [$start, $end])
@@ -130,7 +130,7 @@ class ShiftReportController extends Controller
             })->sum('total_amount');
 
         $snackTransfer = SnackTransaction::whereBetween('transaction_date', [$start, $end])
-            ->where('payment_method', 'transfer')
+            ->whereIn('payment_method', ['transfer', 'qris', 'debit'])
             ->sum('total_amount');
 
         $systemCash = $memberCash + $snackCash;

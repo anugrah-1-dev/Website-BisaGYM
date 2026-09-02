@@ -169,7 +169,7 @@
                         <!-- Payment Method Toggle -->
                         <div class="mb-4">
                             <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Metode Pembayaran</label>
-                            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+                            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;" class="sm:grid-cols-4">
                                 <label class="cursor-pointer border rounded-xl p-2.5 text-center transition-all flex items-center justify-center space-x-2 text-xs"
                                     :class="paymentMethod === 'cash' ? 'border-neon bg-neon/10 text-neon font-bold shadow-[0_0_10px_rgba(224,255,0,0.1)]' : 'border-gray-800 bg-dark text-gray-400 hover:border-gray-700'">
                                     <input type="radio" name="payment_method" value="cash" x-model="paymentMethod" class="hidden">
@@ -179,8 +179,20 @@
                                 <label class="cursor-pointer border rounded-xl p-2.5 text-center transition-all flex items-center justify-center space-x-2 text-xs"
                                     :class="paymentMethod === 'transfer' ? 'border-neon bg-neon/10 text-neon font-bold shadow-[0_0_10px_rgba(224,255,0,0.1)]' : 'border-gray-800 bg-dark text-gray-400 hover:border-gray-700'">
                                     <input type="radio" name="payment_method" value="transfer" x-model="paymentMethod" class="hidden">
+                                    <i class="ph ph-bank text-base"></i>
+                                    <span>Transfer</span>
+                                </label>
+                                <label class="cursor-pointer border rounded-xl p-2.5 text-center transition-all flex items-center justify-center space-x-2 text-xs"
+                                    :class="paymentMethod === 'qris' ? 'border-neon bg-neon/10 text-neon font-bold shadow-[0_0_10px_rgba(224,255,0,0.1)]' : 'border-gray-800 bg-dark text-gray-400 hover:border-gray-700'">
+                                    <input type="radio" name="payment_method" value="qris" x-model="paymentMethod" class="hidden">
                                     <i class="ph ph-qr-code text-base"></i>
-                                    <span>Non-Tunai</span>
+                                    <span>QRIS</span>
+                                </label>
+                                <label class="cursor-pointer border rounded-xl p-2.5 text-center transition-all flex items-center justify-center space-x-2 text-xs"
+                                    :class="paymentMethod === 'debit' ? 'border-neon bg-neon/10 text-neon font-bold shadow-[0_0_10px_rgba(224,255,0,0.1)]' : 'border-gray-800 bg-dark text-gray-400 hover:border-gray-700'">
+                                    <input type="radio" name="payment_method" value="debit" x-model="paymentMethod" class="hidden">
+                                    <i class="ph ph-credit-card text-base"></i>
+                                    <span>Debit</span>
                                 </label>
                             </div>
                         </div>

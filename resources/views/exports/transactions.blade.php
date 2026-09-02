@@ -69,7 +69,7 @@
                     {{ $d->snack->name ?? '?' }} (x{{ $d->quantity }})
                 @endforeach
             </td>
-            <td style="text-align: center; border: 1px solid #000000;">{{ ($trx->payment_method ?? 'cash') === 'transfer' ? 'Non-Tunai' : 'Tunai' }}</td>
+            <td style="text-align: center; border: 1px solid #000000;">{{ in_array(($trx->payment_method ?? 'cash'), ['transfer', 'qris', 'debit']) ? 'Non-Tunai (' . ucfirst($trx->payment_method) . ')' : 'Tunai' }}</td>
             <td style="border: 1px solid #000000;">{{ $trx->user->name ?? '-' }}</td>
             <td style="text-align: right; border: 1px solid #000000;">{{ $trx->total_amount }}</td>
         </tr>

@@ -24,7 +24,7 @@ class PosController extends Controller
             'items' => 'required|array|min:1',
             'items.*.snack_id' => 'required|exists:snacks,id',
             'items.*.qty' => 'required|integer|min:1',
-            'payment_method' => 'required|in:cash,transfer',
+            'payment_method' => 'required|in:cash,transfer,qris,debit',
             'cash_given' => 'nullable|numeric|min:0',
         ]);
 
