@@ -21,7 +21,10 @@
                 <h3 class="text-white font-medium">Log Aktivitas</h3>
                 
                 <form method="GET" action="{{ route('activity-logs.index') }}" class="flex items-center space-x-2">
-                    <select name="user_id" class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-neon focus:border-neon block w-full p-2.5">
+                    <input type="date" name="date_from" value="{{ request('date_from') }}" class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-neon focus:border-neon block p-2.5" title="Dari Tanggal">
+                    <input type="date" name="date_to" value="{{ request('date_to') }}" class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-neon focus:border-neon block p-2.5" title="Sampai Tanggal">
+                    
+                    <select name="user_id" class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-neon focus:border-neon block w-48 p-2.5">
                         <option value="">Semua Akun</option>
                         @foreach($users as $user)
                             <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
@@ -29,10 +32,11 @@
                             </option>
                         @endforeach
                     </select>
+                    
                     <button type="submit" class="px-4 py-2.5 bg-neon hover:bg-neon/90 text-black font-semibold rounded-lg text-sm transition-colors flex items-center">
                         <i class="ph ph-funnel mr-2"></i> Filter
                     </button>
-                    @if(request()->filled('user_id'))
+                    @if(request()->filled('user_id') || request()->filled('date_from') || request()->filled('date_to'))
                         <a href="{{ route('activity-logs.index') }}" class="px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg text-sm transition-colors flex items-center">
                             Reset
                         </a>

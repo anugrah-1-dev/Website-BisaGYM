@@ -15,6 +15,14 @@ class ActivityLogController extends Controller
             $query->where('user_id', $request->user_id);
         }
 
+        if ($request->filled('date_from')) {
+            $query->where('created_at', '>=', $request->date_from . ' 00:00:00');
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('created_at', '<=', $request->date_to . ' 23:59:59');
+        }
+
         $logs = $query->paginate(15)->appends($request->all());
         
         $users = \App\Models\User::orderBy('name')->get();

@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashier/pay/{transaction}', [\App\Http\Controllers\CashierController::class, 'pay'])->name('cashier.pay');
     Route::post('/cashier/pay-non-member', [\App\Http\Controllers\CashierController::class, 'payNonMember'])->name('cashier.pay-non-member');
 
+    Route::post('/gym-packages/non-member', [\App\Http\Controllers\GymPackageController::class, 'storeNonMember'])->name('gym-packages.store-non-member')->middleware('role:admin|developer');
+    Route::put('/gym-packages/{gymPackage}/non-member', [\App\Http\Controllers\GymPackageController::class, 'updateNonMember'])->name('gym-packages.update-non-member')->middleware('role:admin|developer');
     Route::resource('gym-packages', \App\Http\Controllers\GymPackageController::class)->middleware('role:admin|developer');
     Route::resource('discounts', \App\Http\Controllers\DiscountController::class)->middleware('role:admin|developer');
 

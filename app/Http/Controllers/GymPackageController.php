@@ -10,8 +10,9 @@ class GymPackageController extends Controller
 {
     public function index()
     {
-        $packages = GymPackage::all();
-        return view('packages.index', compact('packages'));
+        $memberPackages = GymPackage::whereIn('category', ['member', 'couple'])->get();
+        $nonMemberPackages = GymPackage::where('category', 'non-member')->get();
+        return view('packages.index', compact('memberPackages', 'nonMemberPackages'));
     }
 
     public function create()
@@ -45,6 +46,30 @@ class GymPackageController extends Controller
         ActivityLog::log('CREATE', 'Gym Package', "Menambahkan paket gym baru: {$gymPackage->name}");
 
         return redirect()->route('gym-packages.index')->with('success', 'Paket baru berhasil ditambahkan!');
+    }
+
+    public function storeNonMember(Request $request)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $pkg = GymPackage::create([
+            'name'          => $request->name,
+            'price'         => $request->price,
+            'category'      => 'non-member',
+            'duration'      => 1,
+            'duration_unit' => 'hari',
+            'admin_fee'     => 0,
+            'max_members'   => 1,
+            'is_active'     => $request->has('is_active'),
+        ]);
+
+        ActivityLog::log('CREATE', 'Paket Gym', "Menambahkan tarif kunjungan harian: {$pkg->name} (Rp " . number_format($pkg->price, 0, ',', '.') . ")");
+
+        return redirect()->route('gym-packages.index', ['tab' => 'non-member'])
+            ->with('success', 'Tarif kunjungan harian berhasil ditambahkan!');
     }
 
     public function edit(GymPackage $gymPackage)
@@ -82,13 +107,37 @@ class GymPackageController extends Controller
         return redirect()->route('gym-packages.index')->with('success', 'Paket berhasil diperbarui!');
     }
 
+    public function updateNonMember(Request $request, GymPackage $gymPackage)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $oldPrice = $gymPackage->price;
+
+        $gymPackage->update([
+            'name'      => $request->name,
+            'price'     => $request->price,
+            'is_active' => $request->has('is_active'),
+        ]);
+
+        ActivityLog::log('UPDATE', 'Paket Gym', "Mengubah tarif kunjungan harian {$gymPackage->name}" . ($oldPrice != $gymPackage->price ? " (Rp " . number_format($oldPrice, 0, ',', '.') . " → Rp " . number_format($gymPackage->price, 0, ',', '.') . ")" : ""));
+
+        return redirect()->route('gym-packages.index', ['tab' => 'non-member'])
+            ->with('success', 'Tarif kunjungan harian berhasil diperbarui!');
+    }
+
     public function destroy(GymPackage $gymPackage)
     {
-        $name = $gymPackage->name;
+        $name     = $gymPackage->name;
+        $category = $gymPackage->category;
         $gymPackage->delete();
 
         ActivityLog::log('DELETE', 'Paket Gym', "Menghapus paket gym: {$name}");
 
-        return redirect()->route('gym-packages.index')->with('success', 'Paket berhasil dihapus!');
+        $tab = $category === 'non-member' ? 'non-member' : 'member';
+        return redirect()->route('gym-packages.index', ['tab' => $tab])
+            ->with('success', 'Paket berhasil dihapus!');
     }
 }
