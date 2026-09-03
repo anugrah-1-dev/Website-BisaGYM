@@ -242,7 +242,7 @@
                         },
                         y: {
                             beginAtZero: true,
-                            ticks: { color: '#9CA3AF', stepSize: 1, font: { family: 'Inter' } },
+                            ticks: { color: '#9CA3AF', precision: 0, font: { family: 'Inter' } },
                             grid: { color: 'rgba(255, 255, 255, 0.05)' }
                         }
                     }
@@ -285,7 +285,7 @@
                         },
                         y: {
                             beginAtZero: true,
-                            ticks: { color: '#9CA3AF', stepSize: 1, font: { family: 'Inter' } },
+                            ticks: { color: '#9CA3AF', precision: 0, font: { family: 'Inter' } },
                             grid: { color: 'rgba(255, 255, 255, 0.05)' }
                         }
                     }
@@ -347,7 +347,7 @@
                             scales: {
                                 x: {
                                     beginAtZero: true,
-                                    ticks: { color: '#9CA3AF', stepSize: 1, font: { family: 'Inter' } },
+                                    ticks: { color: '#9CA3AF', precision: 0, font: { family: 'Inter' } },
                                     grid: { color: 'rgba(255, 255, 255, 0.05)' }
                                 },
                                 y: {
