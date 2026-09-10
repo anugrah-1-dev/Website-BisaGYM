@@ -131,21 +131,28 @@ class TransactionController extends Controller
         $transaction = MemberTransaction::findOrFail($id);
 
         $request->validate([
-            'amount'         => 'required|numeric|min:0',
-            'payment_status' => 'required|in:paid,unpaid',
-            'payment_method' => 'nullable|string',
+            'amount'           => 'required|numeric|min:0',
+            'payment_status'   => 'required|in:paid,unpaid',
+            'payment_method'   => 'nullable|string',
+            'transaction_date' => 'required|date',
         ]);
 
-        $oldAmount = $transaction->amount;
-        $oldStatus = $transaction->payment_status;
+        $oldAmount  = $transaction->amount;
+        $oldStatus  = $transaction->payment_status;
+        $oldDate    = $transaction->transaction_date;
         
         $transaction->update([
-            'amount'         => $request->amount,
-            'payment_status' => $request->payment_status,
-            'payment_method' => $request->payment_method,
+            'amount'           => $request->amount,
+            'payment_status'   => $request->payment_status,
+            'payment_method'   => $request->payment_method,
+            'transaction_date' => $request->transaction_date,
         ]);
 
-        \App\Models\ActivityLog::log('UPDATE', 'Transaksi', "Edit transaksi {$transaction->transaction_code}: Nominal lama Rp " . number_format($oldAmount, 0, ',', '.') . " menjadi Rp " . number_format($request->amount, 0, ',', '.') . ", Status: {$oldStatus} -> {$request->payment_status}");
+        $dateChanged = Carbon::parse($oldDate)->format('Y-m-d H:i') !== Carbon::parse($request->transaction_date)->format('Y-m-d H:i')
+            ? ' | Tanggal: ' . Carbon::parse($oldDate)->format('d/m/Y H:i') . ' -> ' . Carbon::parse($request->transaction_date)->format('d/m/Y H:i')
+            : '';
+
+        \App\Models\ActivityLog::log('UPDATE', 'Transaksi', "Edit transaksi {$transaction->transaction_code}: Nominal lama Rp " . number_format($oldAmount, 0, ',', '.') . " menjadi Rp " . number_format($request->amount, 0, ',', '.') . ", Status: {$oldStatus} -> {$request->payment_status}{$dateChanged}");
 
         return back()->with('success', 'Transaksi berhasil diperbarui.');
     }

@@ -173,6 +173,20 @@
                                                     <option value="gratis" {{ $trx->payment_method == 'gratis' ? 'selected' : '' }}>Gratis</option>
                                                 </select>
                                             </div>
+
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-300 mb-1">
+                                                    <i class="ph ph-calendar mr-1"></i>Tanggal & Waktu Transaksi
+                                                </label>
+                                                <input
+                                                    type="datetime-local"
+                                                    name="transaction_date"
+                                                    value="{{ \Carbon\Carbon::parse($trx->transaction_date)->format('Y-m-d\TH:i') }}"
+                                                    class="w-full border-gray-700 rounded bg-dark text-white focus:ring-neon"
+                                                    required
+                                                >
+                                                <p class="text-xs text-gray-500 mt-1">⚠️ Mengubah tanggal transaksi akan mempengaruhi laporan keuangan.</p>
+                                            </div>
                                         </div>
 
                                         <div class="mt-6 flex justify-end">
