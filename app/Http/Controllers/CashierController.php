@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Discount;
 
 class CashierController extends Controller
 {
@@ -11,6 +12,7 @@ class CashierController extends Controller
         $vip_id = $request->get('vip_id');
         $member = null;
         $unpaidTransaction = null;
+        $availableDiscounts = collect();
 
         if ($vip_id) {
             $member = \App\Models\Member::where('member_id', $vip_id)->first();
@@ -21,16 +23,26 @@ class CashierController extends Controller
                     ->where('payment_status', 'unpaid')
                     ->latest()
                     ->first();
+
+                // Ambil diskon aktif yang berlaku untuk paket ini
+                if ($unpaidTransaction && $unpaidTransaction->package) {
+                    $availableDiscounts = Discount::where('is_active', true)
+                        ->whereHas('gymPackages', function ($q) use ($unpaidTransaction) {
+                            $q->where('id', $unpaidTransaction->gym_package_id);
+                        })
+                        ->get();
+                }
             }
         }
 
-        return view('cashier.member', compact('vip_id', 'member', 'unpaidTransaction'));
+        return view('cashier.member', compact('vip_id', 'member', 'unpaidTransaction', 'availableDiscounts'));
     }
 
     public function pay(Request $request, \App\Models\MemberTransaction $transaction)
     {
         $request->validate([
             'payment_method' => 'required|in:cash,transfer,qris,debit,gratis',
+            'discount_id'    => 'nullable|exists:discounts,id',
         ]);
 
         if ($transaction->payment_status === 'paid') {
@@ -38,13 +50,34 @@ class CashierController extends Controller
         }
 
         $updateData = [
-            'payment_status' => 'paid',
-            'payment_method' => $request->payment_method,
-            'transaction_date' => now(), 
+            'payment_status'  => 'paid',
+            'payment_method'  => $request->payment_method,
+            'transaction_date' => now(),
         ];
 
         if ($request->payment_method === 'gratis') {
-            $updateData['amount'] = 0;
+            $updateData['amount']              = 0;
+            $updateData['discount_percentage'] = 0;
+        } elseif ($request->filled('discount_id')) {
+            // Kasir memilih diskon saat pembayaran
+            $discount = Discount::find($request->discount_id);
+            if ($discount && $discount->is_active && $transaction->package) {
+                // Pastikan diskon berlaku untuk paket ini
+                $isApplicable = $discount->gymPackages()
+                    ->where('id', $transaction->gym_package_id)
+                    ->exists();
+
+                if ($isApplicable) {
+                    $package            = $transaction->package;
+                    $discountPct        = $discount->percentage;
+                    $discountAmount     = ($package->price * $discountPct) / 100;
+                    $lockedPrice        = $package->price - $discountAmount;
+                    $newAmount          = $lockedPrice + ($transaction->admin_fee ?? 0);
+
+                    $updateData['discount_percentage'] = $discountPct;
+                    $updateData['amount']              = $newAmount;
+                }
+            }
         }
 
         $transaction->update($updateData);

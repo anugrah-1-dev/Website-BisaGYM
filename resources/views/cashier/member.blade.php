@@ -193,13 +193,54 @@
                                 @endif
                             </div>
                             
+                            {{-- ===== PILIH DISKON ===== --}}
+                            @if($availableDiscounts->count() > 0)
+                            <div class="mb-6 p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5" id="discountSection">
+                                <h4 class="text-sm font-medium text-yellow-400 mb-3 flex items-center gap-2">
+                                    <i class="ph ph-tag"></i> Pilih Diskon (Opsional)
+                                </h4>
+                                <div class="grid grid-cols-1 gap-2">
+                                    <label class="flex items-center gap-3 p-3 rounded-lg border border-gray-700 hover:border-gray-600 cursor-pointer transition-colors has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-500/10">
+                                        <input type="radio" name="discount_id_radio" value="" class="sr-only discount-radio" checked>
+                                        <div class="w-4 h-4 rounded-full border-2 border-gray-500 flex items-center justify-center discount-dot">
+                                            <div class="w-2 h-2 rounded-full bg-yellow-400 hidden discount-dot-fill"></div>
+                                        </div>
+                                        <div>
+                                            <p class="text-white text-sm font-medium">Tidak Ada Diskon</p>
+                                            <p class="text-gray-500 text-xs">Bayar harga normal</p>
+                                        </div>
+                                    </label>
+                                    @foreach($availableDiscounts as $disc)
+                                    <label class="flex items-center gap-3 p-3 rounded-lg border border-gray-700 hover:border-yellow-500/50 cursor-pointer transition-colors has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-500/10">
+                                        <input type="radio" name="discount_id_radio" value="{{ $disc->id }}" class="sr-only discount-radio"
+                                            data-percentage="{{ $disc->percentage }}"
+                                            data-base-price="{{ $unpaidTransaction->package->price }}"
+                                            data-admin-fee="{{ $unpaidTransaction->admin_fee ?? 0 }}">
+                                        <div class="w-4 h-4 rounded-full border-2 border-gray-500 flex items-center justify-center discount-dot">
+                                            <div class="w-2 h-2 rounded-full bg-yellow-400 hidden discount-dot-fill"></div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-white text-sm font-medium">{{ $disc->name }}</p>
+                                            <p class="text-yellow-400 text-xs">Diskon {{ $disc->percentage }}%</p>
+                                        </div>
+                                        <span class="text-yellow-400 text-sm font-bold">
+                                            -Rp {{ number_format(($unpaidTransaction->package->price * $disc->percentage) / 100, 0, ',', '.') }}
+                                        </span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+
                             <div class="bg-dark p-6 rounded-xl border border-gray-800 mb-6 flex justify-between items-center">
                                 <span class="text-gray-400 text-lg">Total Dibayar</span>
                                 <span class="text-3xl font-bold text-neon" id="totalAmount" data-amount="{{ $unpaidTransaction->amount }}">Rp {{ number_format($unpaidTransaction->amount, 0, ',', '.') }}</span>
                             </div>
 
-                            <form method="POST" action="{{ route('cashier.pay', $unpaidTransaction->id) }}" x-data="{ method: 'cash' }">
+                            <form method="POST" action="{{ route('cashier.pay', $unpaidTransaction->id) }}" x-data="{ method: 'cash' }" id="paymentForm">
                                 @csrf
+                                {{-- Hidden input diskon, diupdate oleh JS saat pilih diskon --}}
+                                <input type="hidden" name="discount_id" id="discountIdInput" value="">
                                 <div class="mb-6">
                                     <label class="block text-sm font-medium text-gray-400 mb-3">Pilih Metode Pembayaran</label>
                                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
@@ -325,7 +366,12 @@
             const totalAmountElement = document.getElementById('totalAmount');
             if (!totalAmountElement) return; // Mencegah error jika elemen tidak ada
             
-            const totalAmount = parseInt(totalAmountElement.getAttribute('data-amount')) || 0;
+            let baseAmount = parseInt(totalAmountElement.getAttribute('data-amount')) || 0;
+            let totalAmount = baseAmount;
+
+            // ===== LOGIKA DISKON =====
+            const discountRadios = document.querySelectorAll('.discount-radio');
+            const discountIdInput = document.getElementById('discountIdInput');
 
             function formatRupiah(number) {
                 return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
@@ -334,6 +380,57 @@
             function parseRupiah(str) {
                 return parseInt(str.replace(/[^0-9]/g, '')) || 0;
             }
+
+            function updateTotalDisplay() {
+                totalAmountElement.textContent = formatRupiah(totalAmount);
+                totalAmountElement.setAttribute('data-amount', totalAmount);
+                // Reset kalkulator
+                if (receivedAmountInput) {
+                    receivedAmountInput.value = '';
+                    if (changeAmountDisplay) changeAmountDisplay.textContent = formatRupiah(0);
+                }
+            }
+
+            function updateDiscountDots() {
+                discountRadios.forEach(radio => {
+                    const label = radio.closest('label');
+                    const dot = label.querySelector('.discount-dot');
+                    const dotFill = label.querySelector('.discount-dot-fill');
+                    if (radio.checked) {
+                        dot.classList.add('border-yellow-400');
+                        dot.classList.remove('border-gray-500');
+                        dotFill.classList.remove('hidden');
+                    } else {
+                        dot.classList.remove('border-yellow-400');
+                        dot.classList.add('border-gray-500');
+                        dotFill.classList.add('hidden');
+                    }
+                });
+            }
+
+            discountRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const pct = parseFloat(this.getAttribute('data-percentage') || 0);
+                    const basePrice = parseFloat(this.getAttribute('data-base-price') || 0);
+                    const adminFee = parseFloat(this.getAttribute('data-admin-fee') || 0);
+                    const discId = this.value;
+
+                    if (discId && pct > 0) {
+                        const discountAmt = (basePrice * pct) / 100;
+                        totalAmount = (basePrice - discountAmt) + adminFee;
+                    } else {
+                        totalAmount = baseAmount;
+                    }
+
+                    if (discountIdInput) discountIdInput.value = discId;
+                    updateTotalDisplay();
+                    updateDiscountDots();
+                });
+            });
+
+            // Init dot state
+            updateDiscountDots();
+            // ===== END LOGIKA DISKON =====
 
             function updateChange() {
                 const received = parseRupiah(receivedAmountInput.value);
