@@ -195,13 +195,32 @@
                             
                             {{-- ===== PILIH DISKON ===== --}}
                             @if($availableDiscounts->count() > 0 && $unpaidTransaction->package)
-                            <div class="mb-6 p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5" id="discountSection">
-                                <h4 class="text-sm font-medium text-yellow-400 mb-3 flex items-center gap-2">
-                                    <i class="ph ph-tag"></i> Pilih Diskon (Opsional)
-                                </h4>
-                                <div class="grid grid-cols-1 gap-2">
+                            <div class="mb-6" x-data="{ openDiscount: false, selectedDiscount: '' }">
+                                {{-- Tombol toggle --}}
+                                <button type="button"
+                                    @click="openDiscount = !openDiscount"
+                                    class="w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-colors"
+                                    :class="openDiscount ? 'border-yellow-500/60 bg-yellow-500/10 text-yellow-400' : 'border-gray-700 bg-dark text-gray-400 hover:border-yellow-500/40 hover:text-yellow-400'">
+                                    <span class="flex items-center gap-2 text-sm font-medium">
+                                        <i class="ph ph-tag"></i>
+                                        <span x-text="selectedDiscount ? 'Diskon: ' + selectedDiscount : 'Pilih Diskon (Opsional)'"></span>
+                                    </span>
+                                    <i class="ph transition-transform duration-200" :class="openDiscount ? 'ph-caret-up' : 'ph-caret-down'"></i>
+                                </button>
+
+                                {{-- Panel pilihan diskon (collapsible) --}}
+                                <div x-show="openDiscount"
+                                    x-transition:enter="transition ease-out duration-150"
+                                    x-transition:enter-start="opacity-0 -translate-y-2"
+                                    x-transition:enter-end="opacity-100 translate-y-0"
+                                    x-transition:leave="transition ease-in duration-100"
+                                    x-transition:leave-start="opacity-100 translate-y-0"
+                                    x-transition:leave-end="opacity-0 -translate-y-2"
+                                    class="mt-2 p-3 rounded-xl border border-yellow-500/30 bg-yellow-500/5 grid grid-cols-1 gap-2">
+
                                     <label class="flex items-center gap-3 p-3 rounded-lg border border-gray-700 hover:border-gray-600 cursor-pointer transition-colors has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-500/10">
-                                        <input type="radio" name="discount_id_radio" value="" class="sr-only discount-radio" checked>
+                                        <input type="radio" name="discount_id_radio" value="" class="sr-only discount-radio" checked
+                                            @change="selectedDiscount = ''; openDiscount = false">
                                         <div class="w-4 h-4 rounded-full border-2 border-gray-500 flex items-center justify-center discount-dot">
                                             <div class="w-2 h-2 rounded-full bg-yellow-400 hidden discount-dot-fill"></div>
                                         </div>
@@ -210,12 +229,15 @@
                                             <p class="text-gray-500 text-xs">Bayar harga normal</p>
                                         </div>
                                     </label>
+
                                     @foreach($availableDiscounts as $disc)
                                     <label class="flex items-center gap-3 p-3 rounded-lg border border-gray-700 hover:border-yellow-500/50 cursor-pointer transition-colors has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-500/10">
                                         <input type="radio" name="discount_id_radio" value="{{ $disc->id }}" class="sr-only discount-radio"
                                             data-percentage="{{ $disc->percentage }}"
                                             data-base-price="{{ $unpaidTransaction->package->price ?? 0 }}"
-                                            data-admin-fee="{{ $unpaidTransaction->admin_fee ?? 0 }}">
+                                            data-admin-fee="{{ $unpaidTransaction->admin_fee ?? 0 }}"
+                                            data-label="{{ $disc->name }} ({{ $disc->percentage }}%)"
+                                            @change="selectedDiscount = '{{ $disc->name }} ({{ $disc->percentage }}%)'; openDiscount = false">
                                         <div class="w-4 h-4 rounded-full border-2 border-gray-500 flex items-center justify-center discount-dot">
                                             <div class="w-2 h-2 rounded-full bg-yellow-400 hidden discount-dot-fill"></div>
                                         </div>
