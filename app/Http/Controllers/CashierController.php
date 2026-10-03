@@ -28,7 +28,7 @@ class CashierController extends Controller
                 if ($unpaidTransaction && $unpaidTransaction->package) {
                     $availableDiscounts = Discount::where('is_active', true)
                         ->whereHas('gymPackages', function ($q) use ($unpaidTransaction) {
-                            $q->where('id', $unpaidTransaction->gym_package_id);
+                            $q->where('gym_packages.id', $unpaidTransaction->gym_package_id);
                         })
                         ->get();
                 }
@@ -64,7 +64,7 @@ class CashierController extends Controller
             if ($discount && $discount->is_active && $transaction->package) {
                 // Pastikan diskon berlaku untuk paket ini
                 $isApplicable = $discount->gymPackages()
-                    ->where('id', $transaction->gym_package_id)
+                    ->where('gym_packages.id', $transaction->gym_package_id)
                     ->exists();
 
                 if ($isApplicable) {
