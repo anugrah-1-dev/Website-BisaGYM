@@ -210,17 +210,12 @@
 
                                 {{-- Panel pilihan diskon (collapsible) --}}
                                 <div x-show="openDiscount"
-                                    x-transition:enter="transition ease-out duration-150"
-                                    x-transition:enter-start="opacity-0 -translate-y-2"
-                                    x-transition:enter-end="opacity-100 translate-y-0"
-                                    x-transition:leave="transition ease-in duration-100"
-                                    x-transition:leave-start="opacity-100 translate-y-0"
-                                    x-transition:leave-end="opacity-0 -translate-y-2"
+                                    x-transition
                                     class="mt-2 p-3 rounded-xl border border-yellow-500/30 bg-yellow-500/5 grid grid-cols-1 gap-2">
 
                                     <label class="flex items-center gap-3 p-3 rounded-lg border border-gray-700 hover:border-gray-600 cursor-pointer transition-colors has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-500/10">
                                         <input type="radio" name="discount_id_radio" value="" class="sr-only discount-radio" checked
-                                            @change="selectedDiscount = ''; openDiscount = false">
+                                            @change="selectedDiscount = ''; setTimeout(() => openDiscount = false, 150)">
                                         <div class="w-4 h-4 rounded-full border-2 border-gray-500 flex items-center justify-center discount-dot">
                                             <div class="w-2 h-2 rounded-full bg-yellow-400 hidden discount-dot-fill"></div>
                                         </div>
@@ -237,7 +232,7 @@
                                             data-base-price="{{ $unpaidTransaction->package->price ?? 0 }}"
                                             data-admin-fee="{{ $unpaidTransaction->admin_fee ?? 0 }}"
                                             data-label="{{ $disc->name }} ({{ $disc->percentage }}%)"
-                                            @change="selectedDiscount = '{{ $disc->name }} ({{ $disc->percentage }}%)'; openDiscount = false">
+                                            @change="selectedDiscount = '{{ $disc->name }} ({{ $disc->percentage }}%)'; setTimeout(() => openDiscount = false, 150)">
                                         <div class="w-4 h-4 rounded-full border-2 border-gray-500 flex items-center justify-center discount-dot">
                                             <div class="w-2 h-2 rounded-full bg-yellow-400 hidden discount-dot-fill"></div>
                                         </div>
