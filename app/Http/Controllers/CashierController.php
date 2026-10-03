@@ -86,24 +86,26 @@ class CashierController extends Controller
 
         if ($transaction->transaction_type === 'renewal') {
             $package = $transaction->package;
-            $now = now();
-            $baseDate = ($member->status === 'active' && \Carbon\Carbon::parse($member->expiry_date)->isFuture())
-                ? \Carbon\Carbon::parse($member->expiry_date)
-                : $now;
+            if ($package) {
+                $now = now();
+                $baseDate = ($member->status === 'active' && \Carbon\Carbon::parse($member->expiry_date)->isFuture())
+                    ? \Carbon\Carbon::parse($member->expiry_date)
+                    : $now;
 
-            $newExpiry = $baseDate->copy();
-            if ($package->duration_unit === 'hari')       $newExpiry->addDays($package->duration);
-            elseif ($package->duration_unit === 'bulan')  $newExpiry->addMonths($package->duration);
-            elseif ($package->duration_unit === 'tahun')  $newExpiry->addYears($package->duration);
+                $newExpiry = $baseDate->copy();
+                if ($package->duration_unit === 'hari')       $newExpiry->addDays($package->duration);
+                elseif ($package->duration_unit === 'bulan')  $newExpiry->addMonths($package->duration);
+                elseif ($package->duration_unit === 'tahun')  $newExpiry->addYears($package->duration);
 
-            $member->update([
-                'expiry_date'     => $newExpiry,
-                'status'          => 'active',
-                'extension_count' => $member->extension_count + 1,
-            ]);
+                $member->update([
+                    'expiry_date'     => $newExpiry,
+                    'status'          => 'active',
+                    'extension_count' => $member->extension_count + 1,
+                ]);
+            }
 
             // Auto-extend linked member if it is a couple package
-            if ($package->max_members >= 2 && $member->linked_member_id) {
+            if ($package && $package->max_members >= 2 && $member->linked_member_id) {
                 $linkedMember = $member->linkedMember;
                 if ($linkedMember) {
                     $linkedBaseDate = ($linkedMember->status === 'active' && \Carbon\Carbon::parse($linkedMember->expiry_date)->isFuture())
