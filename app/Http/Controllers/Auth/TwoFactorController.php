@@ -21,7 +21,15 @@ class TwoFactorController extends Controller
             return redirect()->route('login');
         }
 
-        return view('auth.two-factor');
+        $user = User::find($request->session()->get('2fa_user_id'));
+
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
+        $autoCode = $user->two_factor_code;
+
+        return view('auth.two-factor', compact('autoCode', 'user'));
     }
 
     /**
@@ -105,7 +113,12 @@ class TwoFactorController extends Controller
         $user->save();
 
         // Send email
-        Mail::to($user->email)->send(new TwoFactorCodeMail($user->two_factor_code, $user));
+        try {
+            Mail::to($user->email)->send(new TwoFactorCodeMail($user->two_factor_code, $user));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mengirim email OTP: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengirim email OTP (' . $e->getMessage() . '). Pastikan koneksi atau kredensial SMTP aktif.');
+        }
 
         // Log Activity
         ActivityLog::create([

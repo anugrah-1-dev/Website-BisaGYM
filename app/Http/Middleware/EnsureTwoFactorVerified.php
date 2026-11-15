@@ -37,7 +37,11 @@ class EnsureTwoFactorVerified
                 $user->save();
 
                 // Send email
-                Mail::to($user->email)->send(new TwoFactorCodeMail($user->two_factor_code, $user));
+                try {
+                    Mail::to($user->email)->send(new TwoFactorCodeMail($user->two_factor_code, $user));
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('Gagal mengirim email OTP: ' . $e->getMessage());
+                }
 
                 // Log Activity
                 ActivityLog::create([

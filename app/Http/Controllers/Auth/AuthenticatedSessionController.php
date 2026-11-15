@@ -76,7 +76,11 @@ class AuthenticatedSessionController extends Controller
             $user->two_factor_expires_at = now()->addMinutes(15);
             $user->save();
 
-            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code, $user));
+            try {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code, $user));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Gagal mengirim email OTP: ' . $e->getMessage());
+            }
 
             \App\Models\ActivityLog::create([
                 'user_id' => $user->id,

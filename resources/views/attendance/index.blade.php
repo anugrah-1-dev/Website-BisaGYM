@@ -151,19 +151,23 @@
                             @forelse ($attendances as $att)
                                 @php
                                     $today = \Carbon\Carbon::today();
-                                    $expiry = \Carbon\Carbon::parse($att->member->expiry_date)->startOfDay();
-                                    $daysLeft = (int) $today->diffInDays($expiry, false);
+                                    $expiry = $att->member && $att->member->expiry_date ? \Carbon\Carbon::parse($att->member->expiry_date)->startOfDay() : null;
+                                    $daysLeft = $expiry ? (int) $today->diffInDays($expiry, false) : 0;
                                 @endphp
                                 <tr class="hover:bg-dark/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <span class="font-mono text-neon">{{ \Carbon\Carbon::parse($att->attendance_time)->format('H:i') }}</span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <p class="font-medium text-white">{{ $att->member->name }}</p>
-                                        <p class="text-xs text-gray-500 font-mono">{{ $att->member->member_id }}</p>
+                                        <p class="font-medium text-white">{{ $att->member->name ?? '(Member Tidak Ditemukan/Dihapus)' }}</p>
+                                        <p class="text-xs text-gray-500 font-mono">{{ $att->member->member_id ?? '-' }}</p>
                                     </td>
                                     <td class="px-6 py-4">
-                                        @if($daysLeft > 7)
+                                        @if(!$att->member)
+                                            <span class="px-2.5 py-1 text-xs rounded-md bg-gray-500/10 text-gray-400 border border-gray-500/30 font-mono font-medium inline-flex items-center">
+                                                -
+                                            </span>
+                                        @elseif($daysLeft > 7)
                                             <span class="px-2.5 py-1 text-xs rounded-md bg-green-500/10 text-green-400 border border-green-500/30 font-mono font-medium inline-flex items-center">
                                                 <i class="ph ph-hourglass-high mr-1 text-sm"></i> {{ $daysLeft }} Hari Lagi
                                             </span>

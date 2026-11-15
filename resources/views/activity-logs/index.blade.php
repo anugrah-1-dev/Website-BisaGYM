@@ -72,8 +72,8 @@
                                                 </a>
                                                 <div class="text-xs text-gray-500">{{ $log->user?->roles->first()?->name ?? '-' }}</div>
                                             @else
-                                                <div class="text-white font-medium">{{ $log->module === 'Pendaftaran Mandiri' ? 'Member (Public)' : 'User Terhapus' }}</div>
-                                                <div class="text-xs text-neon font-semibold">{{ $log->module === 'Pendaftaran Mandiri' ? 'Self-Registration' : '-' }}</div>
+                                                <div class="text-white font-medium">{{ $log->module === 'Pendaftaran Mandiri' ? 'Member (Public)' : ($log->module === 'Scheduler' ? 'Sistem (Otomatis)' : 'User Terhapus / Sistem') }}</div>
+                                                <div class="text-xs text-neon font-semibold">{{ $log->module === 'Pendaftaran Mandiri' ? 'Self-Registration' : ($log->module === 'Scheduler' ? 'Cron / Scheduler' : '-') }}</div>
                                             @endif
                                         </div>
                                     </div>
